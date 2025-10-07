@@ -261,6 +261,33 @@ body, .card, .fractal-bg, nav {
 .container {
   padding-top: 380px !important;
 }
+/* === PATCH 07/10 — Hauteur réduite + effet glissement doux === */
+
+/* Ajuste la hauteur du header fractal */
+.hero-pure {
+  height: 240px !important; /* Réduit la hauteur */
+  margin: 0;
+  padding: 0;
+  transition: all 0.8s ease-out; /* Effet de glissement doux */
+}
+
+/* Ajuste le placement du contenu principal */
+.container {
+  padding-top: 260px !important; /* Réduit l’espace vertical sous la bannière */
+  transition: padding 0.8s ease-out;
+}
+
+/* Optionnel : légère animation au scroll pour un effet “slide bas” */
+@media (prefers-reduced-motion: no-preference) {
+  .fractal-bg img {
+    transform: translateY(-10px);
+    transition: transform 1.5s ease-in-out;
+  }
+
+  body:has(.container:hover) .fractal-bg img {
+    transform: translateY(0);
+  }
+}
 
 
 
