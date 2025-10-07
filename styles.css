@@ -288,6 +288,22 @@ body, .card, .fractal-bg, nav {
     transform: translateY(0);
   }
 }
+/* Bloc Vision + Disclaimer côte à côte sans casser le flux */
+.vision-disclaimer-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.vision-disclaimer-wrapper .card {
+  flex: 1 1 420px;
+  min-width: 380px;
+  max-width: 600px;
+}
 
 
 
