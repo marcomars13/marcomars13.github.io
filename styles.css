@@ -190,6 +190,20 @@ footer {
   .hero-inner h1 { font-size: 34px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
+/* ------------ Chrome / Safari alignment fix ------------ */
+.fractal-bg {
+  z-index: -1; /* force le fond derrière tout */
+}
+
+.fractal-bg::after {
+  background: radial-gradient(
+      circle at center,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.7) 70%,
+      rgba(0, 0, 0, 1) 100%
+  );
+  mix-blend-mode: multiply;
+}
 
 
 
