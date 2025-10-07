@@ -1,0 +1,16 @@
+{
+  "name": "Fractys",
+  "symbol": "FTS",
+  "description": "Fractys est le token fractal de l’écosystème Mirovia : offre fixe, mint verrouillé, liquidité Raydium, et une vision artistique/scientifique de la valeur.",
+  "image": "https://marcomars13.github.io/logo.png",
+  "external_url": "https://marcomars13.github.io/",
+  "seller_fee_basis_points": 0,
+  "attributes": [
+    { "trait_type": "Supply", "value": "Fixed" },
+    { "trait_type": "Chain", "value": "Solana" }
+  ],
+  "properties": {
+    "category": "image",
+    "files": [{ "uri": "https://marcomars13.github.io/logo.png", "type": "image/png" }]
+  }
+}
