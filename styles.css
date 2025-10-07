@@ -5,6 +5,9 @@
 /* =========================================
    FRACTUS — Banner Stable Cross-Browser (Final v2)
    ========================================= */
+/* =========================================
+   FRACTUS — Final Cross-Browser Banner (v3)
+   ========================================= */
 
 :root {
   --bg: #000;
@@ -32,40 +35,36 @@ a:hover { text-decoration: underline; }
 
 /* ------------ Calque fractal ------------ */
 .fractal-bg {
-  position: fixed;
-  top: 58px;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 420px;
   z-index: 0;
   overflow: hidden;
-  pointer-events: none;
-  isolation: isolate;
 }
 
 .fractal-bg::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: url("fractus-banner.png") center top / cover no-repeat;
-  filter: brightness(1.45) contrast(1.3) saturate(1.2);
-  transform: scale(1.02);
-  will-change: transform;
+  filter: brightness(1.45) contrast(1.25) saturate(1.15);
   opacity: 1;
-  animation: bannerFloat 20s ease-in-out infinite alternate;
-}
-
-@keyframes bannerFloat {
-  0%   { transform: scale(1.02) translateY(0);   opacity: 1; }
-  50%  { transform: scale(1.025) translateY(-2px); opacity: 0.98; }
-  100% { transform: scale(1.02) translateY(0);   opacity: 1; }
+  transform: scale(1.02);
+  animation: bannerFloat 22s ease-in-out infinite alternate;
 }
 
 .fractal-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,1) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 65%, rgba(0,0,0,1) 100%);
+  z-index: 1;
+}
+
+@keyframes bannerFloat {
+  0%   { transform: scale(1.02) translateY(0); }
+  50%  { transform: scale(1.03) translateY(-2px); }
+  100% { transform: scale(1.02) translateY(0); }
 }
 
 /* ------------ Navigation ------------ */
@@ -93,15 +92,15 @@ nav .links a { margin-left: 16px; opacity: .95; }
 
 /* ------------ Hero ------------ */
 .hero {
-  position: relative;
+  position: absolute;
+  top: 58px;
+  width: 100%;
   height: 420px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   text-align: center;
-  border-bottom: 1px solid rgba(127,255,212,0.25);
-  background: transparent;
   z-index: 1;
 }
 
@@ -127,7 +126,7 @@ nav .links a { margin-left: 16px; opacity: .95; }
 }
 
 /* ------------ Contenu ------------ */
-.container { max-width: 1040px; margin: 0 auto; padding: 24px; }
+.container { max-width: 1040px; margin: 460px auto 0; padding: 24px; }
 section { padding: 26px 0; }
 
 .grid {
@@ -183,6 +182,7 @@ footer {
   .hero-inner h1 { font-size: 34px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
+
 
 
 
