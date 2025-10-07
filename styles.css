@@ -61,7 +61,7 @@ nav .links a:hover {
 }
 
 
-/* ------------ BANNIÈRE FRACTALE (version halo) ------------ */
+/* ------------ BANNIÈRE FRACTALE — HALO INTENSE + PULSATION LENTE ------------ */
 .fractal-bg {
   position: fixed;
   top: 58px;
@@ -81,27 +81,40 @@ nav .links a:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.95;
-  filter: brightness(1.8) contrast(1.4) saturate(1.25) blur(0.3px);
-  will-change: transform;
-  animation: fractusFloat 30s ease-in-out infinite alternate;
-  mix-blend-mode: lighten;
-  box-shadow: 0 0 80px rgba(127, 255, 212, 0.25);
+  opacity: 0.98;
+  filter: brightness(2.2) contrast(1.45) saturate(1.3) blur(0.2px);
+  will-change: transform, filter;
+  animation: fractusFloat 30s ease-in-out infinite alternate,
+             fractusPulse 12s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 120px rgba(127, 255, 212, 0.35);
   background-color: #000;
 }
 
 @keyframes fractusFloat {
   0% { transform: translateX(-50%) translateY(0) scale(1); }
-  100% { transform: translateX(-50%) translateY(-5px) scale(1.02); }
+  100% { transform: translateX(-50%) translateY(-8px) scale(1.03); }
+}
+
+@keyframes fractusPulse {
+  0% {
+    filter: brightness(1.8) contrast(1.35) saturate(1.2) blur(0.3px);
+    opacity: 0.9;
+  }
+  100% {
+    filter: brightness(2.4) contrast(1.55) saturate(1.4) blur(0.15px);
+    opacity: 1;
+  }
 }
 
 .fractal-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.95) 100%);
   z-index: 6;
 }
+
 
 
 /* ------------ HERO ------------ */
