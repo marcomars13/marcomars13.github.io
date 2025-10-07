@@ -249,6 +249,18 @@ body, .card, .fractal-bg, nav {
   -webkit-font-smoothing: antialiased;
   background-color: #000 !important;
 }
+/* HERO PURE (no text, full fractal) */
+.hero-pure {
+  height: 360px;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+/* Supprime toute marge résiduelle sous la bannière */
+.container {
+  padding-top: 380px !important;
+}
 
 
 
