@@ -1,6 +1,6 @@
 /* =========================================
-   FRACTUS — Styles officiels
-   Version : 1.4 (Universal Stable — Safari, Chrome, Firefox)
+   FRACTYS — Styles officiels
+   Version : 1.5 (Universal Stable — Safari, Chrome, Firefox)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -60,8 +60,7 @@ nav .links a:hover {
   text-shadow: 0 0 6px var(--accent);
 }
 
-
-/* ------------ BANNIÈRE FRACTALE — HALO INTENSE + PULSATION LENTE ------------ */
+/* ------------ BANNIÈRE FRACTALE ------------ */
 .fractal-bg {
   position: fixed;
   top: 58px;
@@ -82,40 +81,29 @@ nav .links a:hover {
   height: 100%;
   object-fit: cover;
   opacity: 0.98;
-  filter: brightness(2.2) contrast(1.45) saturate(1.3) blur(0.2px);
-  will-change: transform, filter;
+  filter: brightness(2.1) contrast(1.4) saturate(1.3);
   animation: fractusFloat 30s ease-in-out infinite alternate,
              fractusPulse 12s ease-in-out infinite alternate;
   mix-blend-mode: screen;
   box-shadow: 0 0 120px rgba(127, 255, 212, 0.35);
-  background-color: #000;
 }
 
 @keyframes fractusFloat {
   0% { transform: translateX(-50%) translateY(0) scale(1); }
   100% { transform: translateX(-50%) translateY(-8px) scale(1.03); }
 }
-
 @keyframes fractusPulse {
-  0% {
-    filter: brightness(1.8) contrast(1.35) saturate(1.2) blur(0.3px);
-    opacity: 0.9;
-  }
-  100% {
-    filter: brightness(2.4) contrast(1.55) saturate(1.4) blur(0.15px);
-    opacity: 1;
-  }
+  0% { filter: brightness(1.8) contrast(1.35) saturate(1.2); opacity: 0.9; }
+  100% { filter: brightness(2.4) contrast(1.55) saturate(1.4); opacity: 1; }
 }
 
 .fractal-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.95) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
   z-index: 6;
 }
-
-
 
 /* ------------ HERO ------------ */
 .hero {
@@ -140,6 +128,7 @@ nav .links a:hover {
   margin: 0;
   color: var(--accent);
   text-shadow: 0 0 14px rgba(127,255,212,0.4);
+  text-align: center;
 }
 
 .hero-inner .sub {
@@ -152,17 +141,21 @@ nav .links a:hover {
 
 /* ------------ CONTENU ------------ */
 .container {
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 460px 24px 24px; /* espace sous la bannière */
+  padding: 460px 24px 40px;
   position: relative;
   z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 22px;
+  width: 100%;
 }
 
 .card {
@@ -171,6 +164,10 @@ nav .links a:hover {
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,255,255,0.08);
+  transition: transform 0.2s ease-out;
+}
+.card:hover {
+  transform: translateY(-4px);
 }
 
 .card h3 {
@@ -178,36 +175,13 @@ nav .links a:hover {
   font-weight: 600;
   margin: 0 0 8px;
 }
-
 .card p {
   font-size: 15px;
   line-height: 1.5;
   color: var(--fg);
 }
 
-/* ------------ BOUTONS & LIENS (UNIVERSAL FIX) ------------ */
-@supports (color: color(display-p3 1 1 1)) {
-  :root {
-    color-scheme: dark;
-    color: color(display-p3 0.9 1 0.97);
-  }
-}
-
-/* Liens normaux */
-a, a:link, a:visited, a:active {
-  color: var(--accent);
-  text-decoration: none;
-  filter: brightness(1.1);
-  transition: color 0.25s ease;
-}
-
-a:hover {
-  color: #9fffe0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Boutons lumineux */
+/* ------------ BOUTONS ------------ */
 .btn {
   display: inline-block;
   padding: 10px 16px;
@@ -219,154 +193,47 @@ a:hover {
   letter-spacing: 0.3px;
   transition: all 0.25s ease;
 }
-
 .btn:hover {
   background: var(--accent);
   color: #000;
   box-shadow: 0 0 15px var(--accent);
   filter: brightness(1.2);
 }
-/* === GLOBAL FOOTER (centré sur toutes les pages) === */
-footer {
-  text-align: center;
-  color: #9ff;
-  font-size: 0.9rem;
-  opacity: 0.8;
-  margin-top: 40px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 255, 180, 0.25);
-  max-width: 100%;
-  display: block;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
 
-/* === Mise en page Vision + Disclaimer alignés === */
+/* ------------ VISION + DISCLAIMER ------------ */
 .vision-disclaimer-wrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 22px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 60px auto;
+  margin: 60px auto;
 }
 
 .vision-disclaimer-wrapper .card {
   flex: 1 1 420px;
-  min-width: 380px;
-  max-width: 600px;
+  min-width: 340px;
+  max-width: 560px;
 }
 
-
-/* ------------ RESPONSIVE ------------ */
-@media (max-width: 700px) {
-  .fractal-bg, .hero { height: 300px; }
-  .hero-inner h1 { font-size: 34px; }
-  nav { flex-direction: column; height: auto; padding: 10px 0; }
-}
-
-/* ------------ GPU / RENDU UNIFIÉ ------------ */
-body, .card, .fractal-bg, nav {
-  image-rendering: -webkit-optimize-contrast;
-  -webkit-font-smoothing: antialiased;
-  background-color: #000 !important;
-}
-/* HERO PURE (no text, full fractal) */
-.hero-pure {
-  height: 360px;
-  background: transparent;
-  margin: 0;
-  padding: 0;
-}
-
-/* Supprime toute marge résiduelle sous la bannière */
-.container {
-  padding-top: 380px !important;
-}
-/* === PATCH 07/10 — Hauteur réduite + effet glissement doux === */
-
-/* Ajuste la hauteur du header fractal */
-.hero-pure {
-  height: 240px !important; /* Réduit la hauteur */
-  margin: 0;
-  padding: 0;
-  transition: all 0.8s ease-out; /* Effet de glissement doux */
-}
-
-/* Ajuste le placement du contenu principal */
-.container {
-  padding-top: 260px !important; /* Réduit l’espace vertical sous la bannière */
-  transition: padding 0.8s ease-out;
-}
-
-/* Optionnel : légère animation au scroll pour un effet “slide bas” */
-@media (prefers-reduced-motion: no-preference) {
-  .fractal-bg img {
-    transform: translateY(-10px);
-    transition: transform 1.5s ease-in-out;
-  }
-
-  body:has(.container:hover) .fractal-bg img {
-    transform: translateY(0);
-  }
-}
-/* Bloc Vision + Disclaimer côte à côte sans casser le flux */
-.vision-disclaimer-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 22px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.vision-disclaimer-wrapper .card {
-  flex: 1 1 420px;
-  min-width: 380px;
-  max-width: 600px;
-}
-/* === Centrage global du footer === */
+/* ------------ FOOTER ------------ */
 footer {
-  width: 100%;
-  max-width: 1200px;
-  margin: 40px auto 0 auto;
-  padding-top: 15px;
   text-align: center;
   color: #9ff;
   font-size: 0.9rem;
   opacity: 0.85;
+  margin-top: 60px;
+  padding-top: 15px;
   border-top: 1px solid rgba(0, 255, 180, 0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* === Vision + Disclaimer côte à côte === */
-.vision-disclaimer-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 22px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 60px auto;
 }
 
-.vision-disclaimer-wrapper .card {
-  flex: 1 1 420px;
-  min-width: 380px;
-  max-width: 600px;
-}
-
-/* === Centrage du contenu principal === */
-main.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* ------------ RESPONSIVE ------------ */
+@media (max-width: 700px) {
+  .fractal-bg, .hero { height: 300px; }
+  .hero-inner h1 { font-size: 36px; }
+  .container { padding-top: 320px; }
+  nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
 
 
