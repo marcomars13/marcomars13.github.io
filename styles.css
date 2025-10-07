@@ -79,14 +79,18 @@ nav .links a {
 /* fractale fixe et lumineuse */
 .hero::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  background: url('fractus-banner.png') center/cover no-repeat fixed;
+  position: fixed; /* <-- changement clé : passe de absolute à fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 420px; /* hauteur de la bannière */
+  background: url('fractus-banner.png') center/cover no-repeat;
   opacity: 1;
   filter: brightness(1.55) contrast(1.4) saturate(1.25)
           drop-shadow(0 0 12px rgba(127,255,212,0.4));
-  z-index: 0;
+  z-index: -1; /* reste derrière le contenu */
 }
+
 
 /* voile d'équilibre visuel */
 .hero::after {
