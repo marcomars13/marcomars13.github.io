@@ -2,7 +2,9 @@
    FRACTUS — Styles officiels
    Version : 1.3 (Safari + Chrome + Firefox fix)
    Auteur : Marc Cedrych
-
+/* =========================================
+   FRACTUS — Banner Stable Cross-Browser (Final v2)
+   ========================================= */
 
 :root {
   --bg: #000;
@@ -28,37 +30,42 @@ html, body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ------------ Calque fractal global ------------ */
+/* ------------ Calque fractal ------------ */
 .fractal-bg {
   position: fixed;
-  top: 58px;            /* sous la barre nav */
+  top: 58px;
   left: 0;
   width: 100%;
   height: 420px;
-  pointer-events: none; /* empêche toute interaction */
   z-index: 0;
   overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.fractal-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("fractus-banner.png") center top / cover no-repeat;
+  filter: brightness(1.45) contrast(1.3) saturate(1.2);
+  transform: scale(1.02);
+  will-change: transform;
+  opacity: 1;
+  animation: bannerFloat 20s ease-in-out infinite alternate;
+}
+
+@keyframes bannerFloat {
+  0%   { transform: scale(1.02) translateY(0);   opacity: 1; }
+  50%  { transform: scale(1.025) translateY(-2px); opacity: 0.98; }
+  100% { transform: scale(1.02) translateY(0);   opacity: 1; }
 }
 
 .fractal-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 70%, rgba(0,0,0,1) 100%);
-}
-
-.fractal-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(1.45) contrast(1.25) saturate(1.1);
-  transform: translateZ(0);
-  animation: fadeInBanner 1.2s ease-out both;
-}
-
-@keyframes fadeInBanner {
-  from { opacity: 0; transform: scale(1.03); }
-  to   { opacity: 1; transform: scale(1); }
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,1) 100%);
 }
 
 /* ------------ Navigation ------------ */
@@ -71,6 +78,7 @@ nav {
   background: rgba(0, 0, 0, 0.85);
   border-bottom: 1px solid rgba(255,255,255,0.05);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 10;
 }
 
@@ -93,28 +101,28 @@ nav .links a { margin-left: 16px; opacity: .95; }
   align-items: center;
   text-align: center;
   border-bottom: 1px solid rgba(127,255,212,0.25);
-  z-index: 1;
   background: transparent;
+  z-index: 1;
 }
 
 .hero-inner {
   position: relative;
   z-index: 2;
-  padding-bottom: 30px;
+  padding-bottom: 40px;
 }
 
 .hero-inner h1 {
   font-size: 54px;
   margin: 0;
   color: var(--accent);
-  text-shadow: 0 0 10px rgba(127,255,212,0.4);
+  text-shadow: 0 0 14px rgba(127,255,212,0.4);
 }
 
 .hero-inner .sub {
   color: var(--accent);
   font-weight: 600;
   font-size: 22px;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-top: 8px;
 }
 
@@ -175,5 +183,6 @@ footer {
   .hero-inner h1 { font-size: 34px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
+
 
 
