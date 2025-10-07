@@ -60,7 +60,8 @@ nav .links a:hover {
   text-shadow: 0 0 6px var(--accent);
 }
 
-/* ------------ BANNIÈRE FRACTALE ------------ */
+
+/* ------------ BANNIÈRE FRACTALE (version halo) ------------ */
 .fractal-bg {
   position: fixed;
   top: 58px;
@@ -74,16 +75,18 @@ nav .links a:hover {
 
 .fractal-bg img {
   position: absolute;
-  top: 0; left: 50%;
+  top: 0;
+  left: 50%;
   transform: translateX(-50%);
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.9;
-  filter: brightness(1.4) contrast(1.2) saturate(1.1);
+  opacity: 0.95;
+  filter: brightness(1.8) contrast(1.4) saturate(1.25) blur(0.3px);
   will-change: transform;
   animation: fractusFloat 30s ease-in-out infinite alternate;
-  mix-blend-mode: normal;
+  mix-blend-mode: lighten;
+  box-shadow: 0 0 80px rgba(127, 255, 212, 0.25);
   background-color: #000;
 }
 
@@ -96,9 +99,10 @@ nav .links a:hover {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.95) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
   z-index: 6;
 }
+
 
 /* ------------ HERO ------------ */
 .hero {
