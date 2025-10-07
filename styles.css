@@ -1,7 +1,7 @@
 :root {
   --bg: #000000;
   --fg: #e6fff7;
-  --muted: #a7bbb6;
+  --muted: #7abbc6;
   --accent: #7fffd4;
   --card: #0f1016;
 }
@@ -23,6 +23,7 @@ a {
   color: var(--accent);
   text-decoration: none;
 }
+
 a:hover {
   text-decoration: underline;
 }
@@ -44,23 +45,20 @@ nav {
   padding: 14px 22px;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: saturate(140%) blur(8px);
-  z-index: 20;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 100;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.brand img {
-  height: 28px;
-  width: 28px;
-  border-radius: 6px;
-}
 .brand span {
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+nav img {
+  height: 28px;
+  width: auto;
+  margin-right: 8px;
+  border-radius: 6px;
 }
 
 nav .links a {
@@ -71,177 +69,106 @@ nav .links a {
 .hero {
   position: relative;
   height: 420px;
-  background: #000;
+  background: transparent;
   overflow: hidden;
-  border-bottom: 1px solid rgba(127, 255, 212, 0.35); /* liseré turquoise éthéré */
+  border-bottom: 1px solid rgba(127, 255, 212, 0.35);
 }
 
-/* fractale fixe et lumineuse */
+/* === Bannière fractale fixe et stable === */
 .hero::before {
   content: "";
-  position: fixed; /* <-- changement clé : passe de absolute à fixed */
+  position: fixed; /* bannière ancrée */
   top: 0;
   left: 0;
   width: 100%;
-  height: 420px; /* hauteur de la bannière */
+  height: 420px;
   background: url('fractus-banner.png') center/cover no-repeat;
   opacity: 1;
-  filter: brightness(1.55) contrast(1.4) saturate(1.25)
-          drop-shadow(0 0 12px rgba(127,255,212,0.4));
-  z-index: -1; /* reste derrière le contenu */
+  filter: brightness(1.45) contrast(1.3) saturate(1.2)
+          drop-shadow(0 0 14px rgba(127,255,212,0.4));
+  z-index: 0; /* au-dessus du fond, sous le contenu */
+  animation: fadeInBanner 1.8s ease-out forwards;
 }
 
+/* Apparition douce de la fractale */
+@keyframes fadeInBanner {
+  0% {
+    opacity: 0;
+    transform: scale(1.05);
+    filter: brightness(0.8) contrast(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1.45) contrast(1.3) saturate(1.2)
+            drop-shadow(0 0 14px rgba(127,255,212,0.4));
+  }
+}
 
-/* voile d'équilibre visuel */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center,
-    rgba(0, 0, 0, 0.0) 0%,
-    rgba(0, 0, 0, 0.1) 55%,
-    rgba(0, 0, 0, 0.25) 100%);
+/* Garantit que tout le contenu reste au-dessus */
+body, nav, .container, .section, .card, footer {
+  position: relative;
   z-index: 1;
 }
 
-
-
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  color: #fff;
-}
-
-
-.hero h1 {
-  font-size: 42px;
-  margin: 8px 0 6px;
-  color: var(--fg);
-}
-
-.hero p {
-  margin: 6px 0;
-  line-height: 1.5;
-  color: var(--fg);
-}
-
-.sub {
-  color: var(--accent);
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  margin-bottom: 6px;
-}
-
-.sig {
-  color: var(--muted);
-  font-size: 14px;
-  margin-top: 6px;
-}
-
-.section {
+section {
   padding: 26px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  align-items: stretch;
 }
 
 .card {
   background: var(--card);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
-  padding: 18px;
-  margin: 12px 0;
+  padding: 18px 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
-  align-items: stretch;
+.card h3 {
+  color: var(--accent);
+  letter-spacing: 0.6px;
+  margin-top: 0;
 }
 
-.kv {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 6px;
-  margin-top: 10px;
-}
-.kv div {
-  padding: 6px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+.card p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg);
 }
 
 .btn {
   display: inline-block;
-  padding: 10px 14px;
-  border: 1px solid var(--accent);
-  border-radius: 12px;
+  padding: 10px 16px;
+  margin-top: 10px;
   color: var(--accent);
-  text-align: center;
-  align-self: flex-start;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  font-size: 14px;
   transition: all 0.3s ease;
 }
+
 .btn:hover {
-  background: rgba(127, 255, 212, 0.08);
-  transform: scale(1.03);
-}
-
-footer {
-  margin: 36px 0 20px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.lang {
-  font-size: 14px;
-  color: var(--muted);
+  background: rgba(127, 255, 212, 0.1);
+  transform: scale(1.05);
 }
 
 .hr {
   height: 1px;
+  margin: 40px auto;
   background: rgba(255, 255, 255, 0.08);
-  margin: 22px 0;
+  width: 80%;
 }
 
-p {
-  margin-bottom: 0.6em;
-  word-wrap: break-word;
-}
-/* Section intro sous la bannière */
-.intro {
+footer {
   text-align: center;
-  margin-top: -60px; /* léger chevauchement avec la bannière */
-  padding: 80px 16px 40px;
-  background: radial-gradient(ellipse at center,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 1) 100%);
-}
-
-.intro-inner {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.intro .sub {
-  color: var(--accent);
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  margin-bottom: 6px;
-}
-
-.intro h1 {
-  font-size: 42px;
-  margin: 8px 0 6px;
-  color: var(--fg);
-}
-
-.intro p {
+  font-size: 13px;
   color: var(--muted);
-  font-size: 16px;
-  line-height: 1.5;
-  margin-top: 8px;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
