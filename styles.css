@@ -78,26 +78,25 @@ nav .links a {
   overflow: hidden;
 }
 
-/* ✅ Bannière fractale à la racine */
+/* ✅ Bannière fractale subtile et lisible */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background: url('fractus-banner.png') center/cover no-repeat;
-  opacity: 0.9;
+  opacity: 0.4; /* réduit pour laisser le texte ressortir */
+  filter: brightness(0.6) contrast(1.15);
   transition: opacity 1.5s ease-in-out;
-}
-
-/* ✅ Fondu léger au scroll */
-body:has(.hero:hover) .hero::before {
-  opacity: 0.8;
 }
 
 .hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.65) 100%);
+  background: radial-gradient(ellipse at center,
+    rgba(0, 0, 0, 0.0) 0%,
+    rgba(0, 0, 0, 0.35) 60%,
+    rgba(0, 0, 0, 0.65) 100%);
 }
 
 .hero-inner {
@@ -112,6 +111,7 @@ body:has(.hero:hover) .hero::before {
 .hero h1 {
   font-size: 42px;
   margin: 8px 0 6px;
+  color: var(--fg);
 }
 
 .hero p {
