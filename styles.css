@@ -173,6 +173,30 @@ footer {
   background: linear-gradient(to bottom, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.95) 100%) !important;
   mix-blend-mode: normal !important;
 }
+/* ------------ Safari/Chrome Color Lock & Link Fix ------------ */
+@supports (color: color(display-p3 1 1 1)) {
+  :root {
+    color-scheme: dark;
+    color: color(display-p3 0.9 1 0.97);
+  }
+}
+
+a, a:visited, a:active {
+  color: var(--accent) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+
+/* Force identical color rendering on all GPUs */
+body, .card, .fractal-bg, nav {
+  image-rendering: -webkit-optimize-contrast;
+  -webkit-font-smoothing: antialiased;
+  background-color: #000 !important;
+}
 
 
 
