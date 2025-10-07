@@ -31,3 +31,24 @@ nav .links a{margin-left:16px;opacity:.95}
 footer{margin:36px 0 20px;text-align:center;color:var(--muted);font-size:14px}
 .lang{font-size:14px;color:var(--muted)}
 .hr{height:1px;background:rgba(255,255,255,.08);margin:22px 0}
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+}
+
+.grid {
+  align-items: stretch;
+}
+
+.hero-inner {
+  margin: 0 auto;
+  max-width: 800px;
+  text-align: center;
+}
+
+p {
+  margin-bottom: 0.6em;
+  word-wrap: break-word;
+}
