@@ -1,10 +1,11 @@
 /* =========================================
    FRACTUS — Styles officiels
-   Version : 1.2 (Safari + Chrome + Firefox fix)
+   Version : 1.3 (Safari + Chrome + Firefox fix)
    Auteur : Marc Cedrych
+/* =========================================
+   FRACTUS — Styles universels (Chrome + Safari fix)
    ========================================= */
 
-/* -------- Variables globales -------- */
 :root {
   --bg: #000000;
   --fg: #e6fff7;
@@ -13,37 +14,31 @@
   --card: #0f1016;
 }
 
-/* -------- Réglages de base -------- */
-* {
-  box-sizing: border-box;
-}
+/* -------- Base -------- */
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--fg);
   font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   scroll-behavior: smooth;
+  color: var(--fg);
+  background-color: var(--bg);
+  background-image: url("fractus-banner.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* ✅ fix Chrome/Safari/Firefox */
+  background-size: cover;
+  filter: brightness(1.35) contrast(1.2) saturate(1.1);
 }
 
 a {
   color: var(--accent);
   text-decoration: none;
 }
+a:hover { text-decoration: underline; }
 
-a:hover {
-  text-decoration: underline;
-}
-
-/* -------- Container global -------- */
-.container {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-/* -------- Navigation -------- */
+/* -------- NAV -------- */
 nav {
   position: fixed;
   top: 0;
@@ -54,87 +49,65 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 0 22px;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   z-index: 100;
   backdrop-filter: blur(8px);
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.brand { display: flex; align-items: center; gap: 8px; }
 .brand img {
   height: 24px;
   width: 24px;
   border-radius: 50%;
   border: 1px solid var(--accent);
-  background: var(--accent);
 }
+.brand span { font-weight: 600; letter-spacing: 0.3px; }
 
-.brand span {
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
+nav .links a { margin-left: 16px; opacity: 0.95; }
 
-nav .links a {
-  margin-left: 16px;
-  opacity: 0.95;
-}
-
-/* -------- Section HERO -------- */
+/* -------- HERO -------- */
 .hero {
-  position: relative;
   height: 420px;
-  background: url("fractus-banner.png") center center / cover no-repeat fixed;
-  filter: brightness(1.4) contrast(1.25) saturate(1.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 60px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.4); /* légère surcouche transparente */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 20px rgba(127, 255, 212, 0.3);
+  box-shadow: 0 2px 25px rgba(127, 255, 212, 0.25);
 }
 
-/* Halo turquoise subtil (fixe) */
 .hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0, 255, 255, 0.08), transparent 70%);
+  background: radial-gradient(circle at center, rgba(0,255,255,0.1), transparent 80%);
   pointer-events: none;
-  z-index: 1;
 }
 
-/* Contenu du hero (texte) */
 .hero-inner {
-  position: relative;
   z-index: 2;
-  text-align: center;
   color: var(--fg);
-  margin-top: 180px;
 }
-
 .hero-inner h1 {
   font-size: 42px;
   margin: 0 0 8px;
 }
-
 .hero-inner .sub {
   color: var(--accent);
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-/* -------- Sections principales -------- */
-section {
-  padding: 26px 0;
-}
-
-.hr {
+/* -------- GRID + CONTENT -------- */
+.container {
+  max-width: 1040px;
   margin: 0 auto;
-  height: 1px;
-  width: 60%;
-  background: rgba(255, 255, 255, 0.05);
-  margin-bottom: 20px;
+  padding: 24px;
 }
 
 .grid {
@@ -157,7 +130,6 @@ section {
   font-weight: 600;
   margin-bottom: 8px;
 }
-
 .card p {
   font-size: 15px;
   line-height: 1.5;
@@ -183,14 +155,13 @@ section {
   margin-top: 10px;
   transition: all 0.25s ease;
 }
-
 .btn:hover {
   background: var(--accent);
   color: var(--bg);
   box-shadow: 0 0 10px rgba(127, 255, 212, 0.5);
 }
 
-/* -------- Pied de page -------- */
+/* -------- Footer -------- */
 footer {
   text-align: center;
   font-size: 13px;
