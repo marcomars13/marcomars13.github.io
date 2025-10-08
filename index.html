@@ -189,9 +189,32 @@
     const s = Math.floor((distance % (1000 * 60)) / 1000);
     el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
   }, 1000);
-
+    
 <script>
-// ======= PRIX FTS EN TEMPS RÉEL (CORRIGÉ) =======
+// =====================
+// 🕒 COMPTE À REBOURS
+// =====================
+const launchDate = new Date("October 22, 2025 18:00:00").getTime();
+const countdownTimer = setInterval(() => {
+  const now = new Date().getTime();
+  const distance = launchDate - now;
+  const el = document.getElementById("countdown");
+  if (!el) return;
+  if (distance < 0) {
+    clearInterval(countdownTimer);
+    el.parentElement.innerHTML = "🚀 Airdrop is now LIVE!";
+    return;
+  }
+  const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((distance % (1000 * 60)) / 1000);
+  el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+// =====================
+// 💰 PRIX FTS EN TEMPS RÉEL
+// =====================
 async function updateFTSPrice() {
   const priceEl = document.getElementById("fts-price");
   const changeEl = document.getElementById("fts-change");
@@ -199,7 +222,7 @@ async function updateFTSPrice() {
   try {
     const res = await fetch(
       "https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5",
-      { headers: { "x-chain": "solana" } } // ✅ en-tête obligatoire
+      { headers: { "x-chain": "solana" } } // ✅ requis
     );
 
     const data = await res.json();
@@ -214,13 +237,13 @@ async function updateFTSPrice() {
       priceEl.textContent = "N/A";
       changeEl.textContent = "--";
     }
-  } catch (err) {
+  } catch {
     priceEl.textContent = "Error";
     changeEl.textContent = "--";
   }
 }
 
-// ✅ Chargement immédiat + refresh toutes les 30s
+// lancement auto + refresh 30s
 updateFTSPrice();
 setInterval(updateFTSPrice, 30000);
 </script>
