@@ -195,74 +195,87 @@
 
 
 // ===============================
-// 💰 FTS LIVE PRICE — DASHBOARD AUTO
+// 💰 FTS LIVE PRICE — DexScreener -> Gecko -> BirdEye
 // ===============================
+const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69";
+const MINT    = "BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy";
+const BIRDEYE_API_KEY = ""; // optionnel: mets ta clé si tu en crées une
+
 async function updateFTSPrice() {
   const priceEl = document.getElementById("fts-price");
   const changeEl = document.getElementById("fts-change");
-  const liqEl = document.getElementById("fts-liquidity");
-  const capEl = document.getElementById("fts-marketcap");
+  const liqEl   = document.getElementById("fts-liquidity");
+  const capEl   = document.getElementById("fts-marketcap");
 
-  const geckoURL = "https://api.geckoterminal.com/api/v2/networks/solana/pools/726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69";
-  const birdURL = "https://public-api.birdeye.so/public/price?address=BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy";
+  function setVals(price, change, liq, mcap, sourceLabel="") {
+    priceEl.textContent = price
+      ? `${parseFloat(price).toFixed(5)} $${sourceLabel ? " ("+sourceLabel+")" : ""}`
+      : "N/A";
 
-  try {
-    // ======== ESSAI GECKO TERMINAL ========
-    const res = await fetch(geckoURL);
-    if (res.ok) {
-      const data = await res.json();
-      const pool = data?.data?.attributes ?? {};
-      const price = pool?.base_token_price_usd || pool?.quote_token_price_usd || null;
-      const change = pool?.price_change_percentage_24h || null;
-      const liq = pool?.reserve_in_usd || pool?.reserve_usd || null;
-      const mcap = pool?.fdv_usd || pool?.market_cap_usd || null;
-
-      if (price) {
-        priceEl.textContent = `${parseFloat(price).toFixed(5)} $`;
-        if (changeEl) {
-          const pct = parseFloat(change ?? 0).toFixed(2);
-          changeEl.textContent = `${pct > 0 ? "▲" : "▼"} ${pct}%`;
-          changeEl.style.color = pct >= 0 ? "#00ff9d" : "#ff7070";
-        }
-        if (liqEl && liq) liqEl.textContent = `$${parseFloat(liq).toFixed(2)}`;
-        if (capEl && mcap) capEl.textContent = `$${parseFloat(mcap).toFixed(2)}`;
-        return; // ✅ Gecko ok
+    if (changeEl) {
+      if (change === null || change === undefined || isNaN(change)) {
+        changeEl.textContent = "--";
+        changeEl.style.color = "#aaa";
+      } else {
+        const pct = parseFloat(change).toFixed(2);
+        changeEl.textContent = `${pct >= 0 ? "▲" : "▼"} ${pct}%`;
+        changeEl.style.color = pct >= 0 ? "#00ff9d" : "#ff7070";
       }
     }
+    if (liqEl) liqEl.textContent = liq ? `$${Number(liq).toLocaleString()}` : "—";
+    if (capEl) capEl.textContent = mcap ? `$${Number(mcap).toLocaleString()}` : "—";
+  }
 
-    // ======== FALLBACK → BIRDEYE ========
-    const res2 = await fetch(birdURL, { headers: { "x-chain": "solana" } });
-    if (res2.ok) {
-      const data2 = await res2.json();
-      const price2 = data2?.data?.value;
-      if (price2) {
-        priceEl.textContent = `${price2.toFixed(5)} $ (BirdEye)`;
-        if (changeEl) {
-          changeEl.textContent = "--";
-          changeEl.style.color = "#aaa";
-        }
-        if (liqEl) liqEl.textContent = "—";
-        if (capEl) capEl.textContent = "—";
+  function setFail() {
+    setVals(null, null, null, null);
+  }
+
+  try {
+    // 1) DexScreener (PUBLIC)
+    let res = await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${POOL_ID}`);
+    if (res.ok) {
+      const j = await res.json();
+      const p = j?.pairs?.[0];
+      if (p?.priceUsd) {
+        setVals(p.priceUsd, p.priceChange?.h24, p.liquidity?.usd, p.fdv || p.marketCap, "DexScreener");
         return;
       }
     }
 
-    // Si aucune des deux API n’a répondu
-    priceEl.textContent = "N/A";
-    changeEl.textContent = "--";
-    liqEl.textContent = "--";
-    capEl.textContent = "--";
+    // 2) GeckoTerminal (s'active quand la pool est indexée)
+    res = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${POOL_ID}`);
+    if (res.ok) {
+      const d = await res.json();
+      const a = d?.data?.attributes || {};
+      const price = a.base_token_price_usd || a.quote_token_price_usd;
+      const liq   = a.reserve_usd || a.reserve_in_usd;
+      const mcap  = a.fdv_usd || a.market_cap_usd;
+      if (price) {
+        setVals(price, a.price_change_percentage_24h, liq, mcap, "Gecko");
+        return;
+      }
+    }
 
-  } catch (err) {
-    console.warn("Erreur API FTS:", err);
-    priceEl.textContent = "Error";
-    changeEl.textContent = "--";
-    liqEl.textContent = "--";
-    capEl.textContent = "--";
+    // 3) BirdEye (optionnel: met ta clé si tu veux l'activer)
+    const headers = { "x-chain": "solana", "accept": "application/json" };
+    if (BIRDEYE_API_KEY) headers["X-API-KEY"] = BIRDEYE_API_KEY;
+    res = await fetch(`https://public-api.birdeye.so/defi/price?address=${MINT}&ui_amount_mode=raw`, { headers });
+    if (res.ok) {
+      const b = await res.json();
+      const val = b?.data?.value;
+      if (val) {
+        setVals(val, b?.data?.priceChange24h ?? null, null, null, "BirdEye");
+        return;
+      }
+    }
+
+    setFail();
+  } catch (e) {
+    console.warn("FTS price fetch error:", e);
+    setFail();
   }
 }
 
-// 🕓 Refresh toutes les 45s
 updateFTSPrice();
 setInterval(updateFTSPrice, 45000);
 </script>
