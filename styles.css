@@ -421,6 +421,36 @@ body {
     filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)) brightness(1);
   }
 }
+/* 💰 Carte Live Price animée */
+.live-price-card {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid rgba(127,255,212,0.15);
+  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  transition: all 0.25s ease;
+}
+
+.live-price-card:hover {
+  box-shadow: 0 0 35px rgba(127,255,212,0.25);
+}
+
+.price-value {
+  font-size: 1.8em;
+  color: var(--accent);
+  margin: 10px 0 4px;
+  animation: pricePulse 4s ease-in-out infinite;
+}
+
+.price-change {
+  font-size: 1em;
+  margin: 0;
+  opacity: 0.85;
+}
+
+@keyframes pricePulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(127,255,212,0.3); }
+  50% { text-shadow: 0 0 16px rgba(127,255,212,0.7); }
+}
 
 
 
