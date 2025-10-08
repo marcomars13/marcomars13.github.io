@@ -387,6 +387,21 @@ body {
   .container { padding-top: 320px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
+/* 💠 Pulse fractal sur le bouton Airdrop */
+.airdrop-btn {
+  animation: fractysBtnPulse 6s ease-in-out infinite;
+}
+
+@keyframes fractysBtnPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(127,255,212,0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(127,255,212,0.7);
+    transform: scale(1.05);
+  }
+}
 
 
 
