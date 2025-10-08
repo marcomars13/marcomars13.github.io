@@ -190,16 +190,18 @@
     el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
   }, 1000);
 
- <script>
-// ======= PRIX FTS EN TEMPS RÉEL =======
+<script>
+// ======= PRIX FTS EN TEMPS RÉEL (CORRIGÉ) =======
 async function updateFTSPrice() {
   const priceEl = document.getElementById("fts-price");
   const changeEl = document.getElementById("fts-change");
 
   try {
-    const res = await fetch("https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5", {
-      headers: { "x-chain": "solana" }
-    });
+    const res = await fetch(
+      "https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5",
+      { headers: { "x-chain": "solana" } } // ✅ en-tête obligatoire
+    );
+
     const data = await res.json();
     const price = data?.data?.value;
     const change24h = data?.data?.priceChange24hPercent;
@@ -218,7 +220,7 @@ async function updateFTSPrice() {
   }
 }
 
-// initial load + refresh toutes les 30s
+// ✅ Chargement immédiat + refresh toutes les 30s
 updateFTSPrice();
 setInterval(updateFTSPrice, 30000);
 </script>
