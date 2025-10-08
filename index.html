@@ -167,11 +167,13 @@
 
   <!-- Footer -->
   <footer>
-    © 2025 Fractys — Created by Marc Cedrych — Built on Solana
+  © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
 
   <script>
-  // ======= COMPTE À REBOURS =======
+  // =====================
+  // 🕒 COMPTE À REBOURS
+  // =====================
   const launchDate = new Date("October 22, 2025 18:00:00").getTime();
   const countdownTimer = setInterval(() => {
     const now = new Date().getTime();
@@ -189,66 +191,45 @@
     const s = Math.floor((distance % (1000 * 60)) / 1000);
     el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
   }, 1000);
-    
-<script>
-// =====================
-// 🕒 COMPTE À REBOURS
-// =====================
-const launchDate = new Date("October 22, 2025 18:00:00").getTime();
-const countdownTimer = setInterval(() => {
-  const now = new Date().getTime();
-  const distance = launchDate - now;
-  const el = document.getElementById("countdown");
-  if (!el) return;
-  if (distance < 0) {
-    clearInterval(countdownTimer);
-    el.parentElement.innerHTML = "🚀 Airdrop is now LIVE!";
-    return;
-  }
-  const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const s = Math.floor((distance % (1000 * 60)) / 1000);
-  el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
-}, 1000);
 
-// =====================
-// 💰 PRIX FTS EN TEMPS RÉEL
-// =====================
-async function updateFTSPrice() {
-  const priceEl = document.getElementById("fts-price");
-  const changeEl = document.getElementById("fts-change");
+  // =====================
+  // 💰 PRIX FTS EN TEMPS RÉEL
+  // =====================
+  async function updateFTSPrice() {
+    const priceEl = document.getElementById("fts-price");
+    const changeEl = document.getElementById("fts-change");
 
-  try {
-    const res = await fetch(
-      "https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5",
-      { headers: { "x-chain": "solana" } } // ✅ requis
-    );
+    try {
+      const res = await fetch(
+        "https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5",
+        { headers: { "x-chain": "solana" } } // ✅ requis
+      );
 
-    const data = await res.json();
-    const price = data?.data?.value;
-    const change24h = data?.data?.priceChange24hPercent;
+      const data = await res.json();
+      const price = data?.data?.value;
+      const change24h = data?.data?.priceChange24hPercent;
 
-    if (price) {
-      priceEl.textContent = `${price.toFixed(5)} $`;
-      changeEl.textContent = `${change24h.toFixed(2)}%`;
-      changeEl.style.color = change24h >= 0 ? "#00ff9d" : "#ff7070";
-    } else {
-      priceEl.textContent = "N/A";
+      if (price) {
+        priceEl.textContent = `${price.toFixed(5)} $`;
+        changeEl.textContent = `${change24h.toFixed(2)}%`;
+        changeEl.style.color = change24h >= 0 ? "#00ff9d" : "#ff7070";
+      } else {
+        priceEl.textContent = "N/A";
+        changeEl.textContent = "--";
+      }
+    } catch {
+      priceEl.textContent = "Error";
       changeEl.textContent = "--";
     }
-  } catch {
-    priceEl.textContent = "Error";
-    changeEl.textContent = "--";
   }
-}
 
-// lancement auto + refresh 30s
-updateFTSPrice();
-setInterval(updateFTSPrice, 30000);
-</script>
+  // lancement auto + refresh 30s
+  updateFTSPrice();
+  setInterval(updateFTSPrice, 30000);
+  </script>
 </body>
 </html>
+
 
 
 
