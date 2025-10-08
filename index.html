@@ -166,119 +166,111 @@
     </section>
   </main>
 
-  <!-- Footer -->
+   <!-- Footer -->
   <footer>
-  © 2025 Fractys — Created by Marc Cedrych — Built on Solana
+    © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
 
+  <!-- =====================
+       🕒 COMPTE À REBOURS
+  ====================== -->
   <script>
-  // =====================
-  // 🕒 COMPTE À REBOURS
-  // =====================
-  const launchDate = new Date("October 22, 2025 18:00:00").getTime();
-  const countdownTimer = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = launchDate - now;
-    const el = document.getElementById("countdown");
-    if (!el) return;
-    if (distance < 0) {
-      clearInterval(countdownTimer);
-      el.parentElement.innerHTML = "🚀 Airdrop is now LIVE!";
-      return;
-    }
-    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((distance % (1000 * 60)) / 1000);
-    el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
-  }, 1000);
+    const launchDate = new Date("October 22, 2025 18:00:00").getTime();
+    const countdownTimer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = launchDate - now;
+      const el = document.getElementById("countdown");
+      if (!el) return;
 
-
-// ===============================
-// 💰 FTS LIVE PRICE — DexScreener -> Gecko -> BirdEye
-// ===============================
-const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69";
-const MINT    = "BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy";
-const BIRDEYE_API_KEY = ""; // optionnel: mets ta clé si tu en crées une
-
-async function updateFTSPrice() {
-  const priceEl = document.getElementById("fts-price");
-  const changeEl = document.getElementById("fts-change");
-  const liqEl   = document.getElementById("fts-liquidity");
-  const capEl   = document.getElementById("fts-marketcap");
-
-  function setVals(price, change, liq, mcap, sourceLabel="") {
-    priceEl.textContent = price
-      ? `${parseFloat(price).toFixed(5)} $${sourceLabel ? " ("+sourceLabel+")" : ""}`
-      : "N/A";
-
-    if (changeEl) {
-      if (change === null || change === undefined || isNaN(change)) {
-        changeEl.textContent = "--";
-        changeEl.style.color = "#aaa";
-      } else {
-        const pct = parseFloat(change).toFixed(2);
-        changeEl.textContent = `${pct >= 0 ? "▲" : "▼"} ${pct}%`;
-        changeEl.style.color = pct >= 0 ? "#00ff9d" : "#ff7070";
-      }
-    }
-    if (liqEl) liqEl.textContent = liq ? `$${Number(liq).toLocaleString()}` : "—";
-    if (capEl) capEl.textContent = mcap ? `$${Number(mcap).toLocaleString()}` : "—";
-  }
-
-  function setFail() {
-    setVals(null, null, null, null);
-  }
-
-  try {
-    // 1) DexScreener (PUBLIC)
-    let res = await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${POOL_ID}`);
-    if (res.ok) {
-      const j = await res.json();
-      const p = j?.pairs?.[0];
-      if (p?.priceUsd) {
-        setVals(p.priceUsd, p.priceChange?.h24, p.liquidity?.usd, p.fdv || p.marketCap, "DexScreener");
+      if (distance < 0) {
+        clearInterval(countdownTimer);
+        el.parentElement.innerHTML = "🚀 Airdrop is now LIVE!";
         return;
       }
-    }
 
-    // 2) GeckoTerminal (s'active quand la pool est indexée)
-    res = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${POOL_ID}`);
-    if (res.ok) {
-      const d = await res.json();
-      const a = d?.data?.attributes || {};
-      const price = a.base_token_price_usd || a.quote_token_price_usd;
-      const liq   = a.reserve_usd || a.reserve_in_usd;
-      const mcap  = a.fdv_usd || a.market_cap_usd;
-      if (price) {
-        setVals(price, a.price_change_percentage_24h, liq, mcap, "Gecko");
-        return;
+      const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+      el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  </script>
+
+  <!-- ===============================
+       💰 FTS LIVE PRICE — DexScreener
+  ================================ -->
+  <script>
+    const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69";
+    const MINT = "BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy";
+
+    async function updateFTSPrice() {
+      const priceEl = document.getElementById("fts-price");
+      const changeEl = document.getElementById("fts-change");
+      const liqEl = document.getElementById("fts-liquidity");
+      const capEl = document.getElementById("fts-marketcap");
+
+      function setVals(price, change, liq, mcap, src = "DexScreener") {
+        priceEl.textContent = price
+          ? `${parseFloat(price).toFixed(5)} $ (${src})`
+          : "N/A";
+
+        if (changeEl) {
+          if (change == null || isNaN(change)) {
+            changeEl.textContent = "--";
+            changeEl.style.color = "#aaa";
+          } else {
+            const pct = parseFloat(change).toFixed(2);
+            changeEl.textContent = `${pct >= 0 ? "▲" : "▼"} ${pct}%`;
+            changeEl.style.color = pct >= 0 ? "#00ff9d" : "#ff7070";
+          }
+        }
+
+        if (liqEl) liqEl.textContent = liq ? `$${parseFloat(liq).toFixed(2)}` : "—";
+        if (capEl) capEl.textContent = mcap ? `$${parseFloat(mcap).toFixed(2)}` : "—";
+
+        // 🌿 Effet pulse fractal léger sur mise à jour
+        priceEl.style.transition = "0.6s";
+        priceEl.style.textShadow = "0 0 18px rgba(127,255,212,0.7)";
+        setTimeout(() => (priceEl.style.textShadow = "none"), 1000);
+      }
+
+      try {
+        // ✅ DexScreener (public, sans clé)
+        const res = await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${POOL_ID}`);
+        if (res.ok) {
+          const data = await res.json();
+          const p = data?.pairs?.[0];
+          if (p?.priceUsd) {
+            setVals(p.priceUsd, p.priceChange?.h24, p.liquidity?.usd, p.fdv || p.marketCap, "DexScreener");
+            return;
+          }
+        }
+
+        // ❌ Fallback GeckoTerminal (sera OK quand indexée)
+        const res2 = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${POOL_ID}`);
+        if (res2.ok) {
+          const d = await res2.json();
+          const a = d?.data?.attributes || {};
+          const price = a.base_token_price_usd || a.quote_token_price_usd;
+          if (price) {
+            setVals(price, a.price_change_percentage_24h, a.reserve_usd, a.fdv_usd, "Gecko");
+            return;
+          }
+        }
+
+        // ❌ Fallback BirdEye (désactivé sans clé)
+        setVals(null, null, null, null, "N/A");
+      } catch (e) {
+        console.warn("FTS price fetch error:", e);
+        setVals(null, null, null, null, "Error");
       }
     }
 
-    // 3) BirdEye (optionnel: met ta clé si tu veux l'activer)
-    const headers = { "x-chain": "solana", "accept": "application/json" };
-    if (BIRDEYE_API_KEY) headers["X-API-KEY"] = BIRDEYE_API_KEY;
-    res = await fetch(`https://public-api.birdeye.so/defi/price?address=${MINT}&ui_amount_mode=raw`, { headers });
-    if (res.ok) {
-      const b = await res.json();
-      const val = b?.data?.value;
-      if (val) {
-        setVals(val, b?.data?.priceChange24h ?? null, null, null, "BirdEye");
-        return;
-      }
-    }
+    // 🔁 Actualisation toutes les 45s
+    updateFTSPrice();
+    setInterval(updateFTSPrice, 45000);
+  </script>
 
-    setFail();
-  } catch (e) {
-    console.warn("FTS price fetch error:", e);
-    setFail();
-  }
-}
-
-updateFTSPrice();
-setInterval(updateFTSPrice, 45000);
-</script>
 </body>
 </html>
 
