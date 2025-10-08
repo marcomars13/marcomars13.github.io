@@ -115,12 +115,14 @@
           </p>
         </div>
 
-        <!-- 💰 Live Price Card -->
-        <div class="card" style="text-align:center;">
-          <h3>FTS Live Price</h3>
-          <p id="fts-price" style="font-size:1.4em; color:#8fffcf;">Loading...</p>
-        </div>
-      </div>
+        <!-- 💰 FTS Live Price Card -->
+<div class="card live-price-card">
+  <h3>FTS Live Price</h3>
+  <div id="price-wrapper">
+    <p id="fts-price" class="price-value">Loading...</p>
+    <p id="fts-change" class="price-change">--</p>
+  </div>
+</div>
     </section>
 
     <!-- 🎁 SECTION AIRDROP -->
@@ -188,20 +190,38 @@
     el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
   }, 1000);
 
-  // ======= PRIX EN TEMPS RÉEL =======
-  async function updatePrice() {
-    try {
-      const res = await fetch("https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5");
-      const data = await res.json();
-      const price = data?.data?.value?.toFixed(5) || "N/A";
-      document.getElementById("fts-price").textContent = `${price} $`;
-    } catch {
-      document.getElementById("fts-price").textContent = "Error";
+ <script>
+// ======= PRIX FTS EN TEMPS RÉEL =======
+async function updateFTSPrice() {
+  const priceEl = document.getElementById("fts-price");
+  const changeEl = document.getElementById("fts-change");
+
+  try {
+    const res = await fetch("https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5", {
+      headers: { "x-chain": "solana" }
+    });
+    const data = await res.json();
+    const price = data?.data?.value;
+    const change24h = data?.data?.priceChange24hPercent;
+
+    if (price) {
+      priceEl.textContent = `${price.toFixed(5)} $`;
+      changeEl.textContent = `${change24h.toFixed(2)}%`;
+      changeEl.style.color = change24h >= 0 ? "#00ff9d" : "#ff7070";
+    } else {
+      priceEl.textContent = "N/A";
+      changeEl.textContent = "--";
     }
+  } catch (err) {
+    priceEl.textContent = "Error";
+    changeEl.textContent = "--";
   }
-  updatePrice();
-  setInterval(updatePrice, 30000);
-  </script>
+}
+
+// initial load + refresh toutes les 30s
+updateFTSPrice();
+setInterval(updateFTSPrice, 30000);
+</script>
 </body>
 </html>
 
