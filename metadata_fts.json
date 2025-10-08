@@ -1,0 +1,20 @@
+{
+  "name": "Fractys",
+  "symbol": "FTS",
+  "description": "Fractys est un projet fusionnant mathématiques fractales, intelligence artificielle et blockchain autour de la Loi Fractale. Le token FTS relie science, art et décentralisation.",
+  "seller_fee_basis_points": 0,
+  "image": "https://raw.githubusercontent.com/marcomars13/marcomars13.github.io/main/logo.png",
+  "attributes": [
+    { "trait_type": "Network", "value": "Solana" },
+    { "trait_type": "Type", "value": "Research / Experimental" }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/marcomars13/marcomars13.github.io/main/logo.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image"
+  }
+}
