@@ -130,6 +130,71 @@
   <footer>
     © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
+    <!-- 🌀 FRACTYS COUNTDOWN + LIVE PRICE + SOCIAL ICONS -->
+<div style="text-align:center; margin-top:40px; color:#8fffcf; font-family:'Inter', sans-serif;">
+
+  <!-- Countdown -->
+  <div id="airdrop-countdown" style="font-size:1.2em; margin-bottom:15px;">
+    ⏳ Airdrop starts in <span id="countdown"></span>
+  </div>
+
+  <!-- Live Price -->
+  <div id="fts-price" style="font-size:1.2em; margin-bottom:25px;">
+    💰 FTS Price: <span id="price">Loading...</span> $
+  </div>
+
+  <!-- Socials -->
+  <div style="display:flex; justify-content:center; gap:25px; font-size:1.8em;">
+    <a href="https://t.me/Fractys" target="_blank" style="color:#0088cc;" title="Telegram">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M9.993 15.574l-.395 4.453c.564 0 .806-.243 1.097-.534l2.628-2.497 5.443 3.99c.997.549 1.704.26 1.96-.918l3.55-16.662c.316-1.422-.513-1.977-1.488-1.632L1.723 9.683c-1.378.54-1.357 1.313-.235 1.66l4.37 1.364 10.145-6.4c.477-.289.911-.13.553.184"/>
+      </svg>
+    </a>
+    <a href="https://x.com/Fractys" target="_blank" style="color:#ffffff;" title="X (Twitter)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M18.244 2H21l-6.475 7.396L22 22h-5.654l-4.377-6.44L6.018 22H3.25l6.89-7.872L2 2h5.75l4.006 5.93L18.244 2zm-2.037 18h1.17L8.338 4h-1.26l9.129 16z"/>
+      </svg>
+    </a>
+    <a href="https://github.com/marcomars13" target="_blank" style="color:#8fffcf;" title="GitHub">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.084 3.292 9.388 7.861 10.912.575.106.788-.25.788-.555v-1.936c-3.202.694-3.878-1.376-3.878-1.376-.523-1.327-1.278-1.682-1.278-1.682-1.045-.715.08-.7.08-.7 1.155.082 1.764 1.187 1.764 1.187 1.027 1.758 2.696 1.25 3.352.956.103-.743.402-1.25.73-1.54-2.554-.29-5.238-1.277-5.238-5.681 0-1.255.448-2.282 1.184-3.087-.119-.29-.512-1.458.112-3.04 0 0 .965-.308 3.164 1.176A10.978 10.978 0 0 1 12 6.844a10.94 10.94 0 0 1 2.88.387c2.197-1.484 3.16-1.176 3.16-1.176.626 1.582.233 2.75.115 3.04.738.805 1.182 1.832 1.182 3.087 0 4.418-2.69 5.387-5.252 5.673.414.358.782 1.068.782 2.152v3.189c0 .309.21.666.794.552C20.714 21.38 24 17.08 24 12 24 5.648 18.852.5 12 .5z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<script>
+// ======= COMPTE À REBOURS =======
+const launchDate = new Date("October 22, 2025 18:00:00").getTime();
+const countdownTimer = setInterval(() => {
+  const now = new Date().getTime();
+  const distance = launchDate - now;
+  if (distance < 0) {
+    clearInterval(countdownTimer);
+    document.getElementById("airdrop-countdown").innerHTML = "🚀 Airdrop is now LIVE!";
+    return;
+  }
+  const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((distance % (1000 * 60)) / 1000);
+  document.getElementById("countdown").innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+// ======= PRIX EN TEMPS RÉEL =======
+async function updatePrice() {
+  try {
+    const res = await fetch("https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5");
+    const data = await res.json();
+    const price = data?.data?.value?.toFixed(5) || "N/A";
+    document.getElementById("price").textContent = price;
+  } catch {
+    document.getElementById("price").textContent = "Error";
+  }
+}
+updatePrice();
+setInterval(updatePrice, 30000);
+</script>
 </body>
 </html>
 
