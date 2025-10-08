@@ -193,41 +193,46 @@
   }, 1000);
 
 // =====================
-// 💰 PRIX FTS EN TEMPS RÉEL (VERSION BIRDEYE 2.1)
+// 💰 PRIX FTS EN TEMPS RÉEL — GECKO TERMINAL PUBLIC API
 // =====================
 async function updateFTSPrice() {
   const priceEl = document.getElementById("fts-price");
   const changeEl = document.getElementById("fts-change");
 
   try {
-    const res = await fetch(
-      "https://public-api.birdeye.so/defi/price?address=BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy",
-      { headers: { "x-chain": "solana" } }
-    );
+    // ⚡ Remplace par ton vrai pool Raydium ID :
+    const poolAddress = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69";
+    const res = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${poolAddress}`);
+
+    if (!res.ok) throw new Error(`Erreur API (${res.status})`);
     const data = await res.json();
-    const price = data?.data?.value;
-    const change24h = data?.data?.priceChange24hPercent;
+    const pool = data?.data?.attributes ?? {};
+
+    const price = pool?.base_token_price_usd || pool?.quote_token_price_usd || null;
+    const change = pool?.price_change_percentage_24h || null;
 
     if (price) {
-      priceEl.textContent = `${price.toFixed(5)} $`;
+      priceEl.textContent = `${parseFloat(price).toFixed(5)} $`;
       if (changeEl) {
-        changeEl.textContent = `${change24h?.toFixed(2) ?? 0}%`;
-        changeEl.style.color = change24h >= 0 ? "#00ff9d" : "#ff7070";
+        const pct = parseFloat(change ?? 0).toFixed(2);
+        changeEl.textContent = `${pct > 0 ? "▲" : "▼"} ${pct}%`;
+        changeEl.style.color = pct >= 0 ? "#00ff9d" : "#ff7070";
       }
     } else {
       priceEl.textContent = "N/A";
       if (changeEl) changeEl.textContent = "--";
     }
   } catch (err) {
-    console.error("Erreur API BirdEye:", err);
+    console.error("Erreur API GeckoTerminal:", err);
     priceEl.textContent = "Error";
     if (changeEl) changeEl.textContent = "--";
   }
 }
 
-// lancement auto + refresh 30s
+// lancement auto + refresh 45s
 updateFTSPrice();
-setInterval(updateFTSPrice, 30000);
+setInterval(updateFTSPrice, 45000);
+
   </script>
 </body>
 </html>
