@@ -192,40 +192,42 @@
     el.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
   }, 1000);
 
-  // =====================
-  // 💰 PRIX FTS EN TEMPS RÉEL
-  // =====================
-  async function updateFTSPrice() {
-    const priceEl = document.getElementById("fts-price");
-    const changeEl = document.getElementById("fts-change");
+// =====================
+// 💰 PRIX FTS EN TEMPS RÉEL (VERSION BIRDEYE 2.1)
+// =====================
+async function updateFTSPrice() {
+  const priceEl = document.getElementById("fts-price");
+  const changeEl = document.getElementById("fts-change");
 
-    try {
-      const res = await fetch(
-        "https://public-api.birdeye.so/public/price?address=E35g5qATSSZ3MKjifbREAkbQBWFwNfDLYYpSsi9xoiY5",
-        { headers: { "x-chain": "solana" } } // ✅ requis
-      );
+  try {
+    const res = await fetch(
+      "https://public-api.birdeye.so/defi/price?address=BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy",
+      { headers: { "x-chain": "solana" } }
+    );
+    const data = await res.json();
+    const price = data?.data?.value;
+    const change24h = data?.data?.priceChange24hPercent;
 
-      const data = await res.json();
-      const price = data?.data?.value;
-      const change24h = data?.data?.priceChange24hPercent;
-
-      if (price) {
-        priceEl.textContent = `${price.toFixed(5)} $`;
-        changeEl.textContent = `${change24h.toFixed(2)}%`;
+    if (price) {
+      priceEl.textContent = `${price.toFixed(5)} $`;
+      if (changeEl) {
+        changeEl.textContent = `${change24h?.toFixed(2) ?? 0}%`;
         changeEl.style.color = change24h >= 0 ? "#00ff9d" : "#ff7070";
-      } else {
-        priceEl.textContent = "N/A";
-        changeEl.textContent = "--";
       }
-    } catch {
-      priceEl.textContent = "Error";
-      changeEl.textContent = "--";
+    } else {
+      priceEl.textContent = "N/A";
+      if (changeEl) changeEl.textContent = "--";
     }
+  } catch (err) {
+    console.error("Erreur API BirdEye:", err);
+    priceEl.textContent = "Error";
+    if (changeEl) changeEl.textContent = "--";
   }
+}
 
-  // lancement auto + refresh 30s
-  updateFTSPrice();
-  setInterval(updateFTSPrice, 30000);
+// lancement auto + refresh 30s
+updateFTSPrice();
+setInterval(updateFTSPrice, 30000);
   </script>
 </body>
 </html>
