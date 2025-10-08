@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.8 (Fractal Flow Edition)
+   Version : 1.7 (Centrage + Stable)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -10,7 +10,6 @@
   --fg: #e6fff7;
   --muted: #7abbc6;
   --accent: #7fffd4;
-  --accent2: #9a7bff; /* violet quantique doux */
   --card: #0f1016;
 }
 
@@ -42,20 +41,12 @@ nav {
   z-index: 20;
 }
 
-.brand { display: flex; align-items: center; gap: 8px; position: relative; }
+.brand { display: flex; align-items: center; gap: 8px; }
 .brand img {
-  height: 26px; width: 26px; border-radius: 50%;
+  height: 24px; width: 24px; border-radius: 50%;
   border: 1px solid var(--accent);
-  animation: fractalReflect 20s linear infinite;
 }
-
-/* 🌈 Reflet “miroir fractal” sur le logo */
-@keyframes fractalReflect {
-  0%, 100% { filter: brightness(1) drop-shadow(0 0 5px rgba(127,255,212,0.3)); }
-  50% { filter: brightness(1.5) drop-shadow(0 0 20px rgba(154,123,255,0.6)); }
-}
-
-.brand span { font-weight: 600; letter-spacing: .3px; color: var(--accent); }
+.brand span { font-weight: 600; letter-spacing: .3px; }
 
 nav .links a {
   margin-left: 16px;
@@ -69,20 +60,83 @@ nav .links a:hover {
   text-shadow: 0 0 6px var(--accent);
 }
 
-/* ------------ FOND FRACTAL ANIMÉ ------------ */
-body::before {
-  content: "";
+/* ------------ BANNIÈRE FRACTALE ------------ */
+.fractal-bg {
   position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(0,255,200,0.08), transparent 70%),
-              radial-gradient(circle at 80% 20%, rgba(154,123,255,0.08), transparent 70%);
-  animation: fractalFlow 20s ease-in-out infinite alternate;
-  z-index: 0;
+  top: 58px;
+  left: 0;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  background: #000;
+  z-index: 5;
 }
 
-@keyframes fractalFlow {
-  0% { transform: scale(1) rotate(0deg); opacity: 0.6; }
-  100% { transform: scale(1.2) rotate(360deg); opacity: 0.9; }
+.fractal-bg img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.98;
+  filter: brightness(2.1) contrast(1.4) saturate(1.3);
+  animation: fractusFloat 30s ease-in-out infinite alternate,
+             fractusPulse 12s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 120px rgba(127, 255, 212, 0.35);
+}
+
+@keyframes fractusFloat {
+  0% { transform: translateX(-50%) translateY(0) scale(1); }
+  100% { transform: translateX(-50%) translateY(-8px) scale(1.03); }
+}
+@keyframes fractusPulse {
+  0% { filter: brightness(1.8) contrast(1.35) saturate(1.2); opacity: 0.9; }
+  100% { filter: brightness(2.4) contrast(1.55) saturate(1.4); opacity: 1; }
+}
+
+.fractal-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
+  z-index: 6;
+}
+
+/* ------------ HERO ------------ */
+.hero {
+  position: relative;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  z-index: 10;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 10;
+  padding-bottom: 40px;
+}
+
+.hero-inner h1 {
+  font-size: 54px;
+  margin: 0;
+  color: var(--accent);
+  text-shadow: 0 0 14px rgba(127,255,212,0.4);
+  text-align: center;
+}
+
+.hero-inner .sub {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 22px;
+  opacity: 0.9;
+  margin-top: 8px;
 }
 
 /* ------------ CONTENU ------------ */
@@ -110,57 +164,38 @@ body::before {
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 16px;
   padding: 20px;
-  text-align: center;
   box-shadow: 0 10px 30px rgba(0,255,255,0.08);
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  text-align: center; /* ✅ Centrage global */
 }
 .card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 0 25px rgba(127,255,212,0.35);
-  border-color: rgba(154,123,255,0.3);
-  background: radial-gradient(circle at 50% 0%, rgba(127,255,212,0.05), rgba(0,0,0,0.8));
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px rgba(127,255,212,0.25);
 }
-
 .card h3 {
   color: var(--accent);
   font-weight: 600;
   margin: 0 0 8px;
+  text-align: center; /* ✅ */
 }
 .card p {
   font-size: 15px;
   line-height: 1.5;
   color: var(--fg);
+  text-align: center; /* ✅ */
 }
-
-/* ------------ SEPARATEUR FRACTAL ------------ */
-.section::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 2px;
-  margin: 60px 0;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(127,255,212,0.4),
-    rgba(154,123,255,0.4),
-    transparent);
-  animation: fractalWave 6s ease-in-out infinite;
-  border-radius: 100px;
-}
-
-@keyframes fractalWave {
-  0%, 100% { opacity: 0.5; filter: blur(1px); }
-  50% { opacity: 1; filter: blur(2px); }
-}
-
-/* ------------ ICONES FRACTALES (SVG inline ready) ------------ */
-.icon-fractal {
-  width: 22px;
-  height: 22px;
+.card a {
+  text-align: center;
   display: inline-block;
-  vertical-align: middle;
-  margin-right: 6px;
-  filter: drop-shadow(0 0 6px rgba(127,255,212,0.5));
+  margin-left: auto;
+  margin-right: auto;
+}
+.card .kv,
+.card .social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 /* ------------ BOUTONS ------------ */
@@ -169,34 +204,32 @@ body::before {
   padding: 10px 16px;
   border: 1px solid var(--accent);
   color: var(--accent);
-  background: rgba(127,255,212,0.08);
+  background: rgba(127, 255, 212, 0.08);
   border-radius: 8px;
   font-size: 14px;
   letter-spacing: 0.3px;
   transition: all 0.25s ease;
 }
 .btn:hover {
-  background: linear-gradient(90deg,var(--accent),var(--accent2));
+  background: var(--accent);
   color: #000;
   box-shadow: 0 0 20px rgba(127,255,212,0.55);
   filter: brightness(1.2);
 }
 
-/* ------------ AIRDROP LOGO & BOUTON (pulse fractal) ------------ */
-.airdrop-logo {
-  animation: fractysPulse 6s ease-in-out infinite;
+/* ------------ VISION + DISCLAIMER ------------ */
+.vision-disclaimer-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  margin: 60px auto;
 }
-@keyframes fractysPulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)); }
-  50% { transform: scale(1.07); filter: drop-shadow(0 0 22px rgba(154,123,255,0.7)); }
-}
-
-.airdrop-btn {
-  animation: fractysBtnPulse 6s ease-in-out infinite;
-}
-@keyframes fractysBtnPulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(127,255,212,0.3); transform: scale(1); }
-  50% { box-shadow: 0 0 22px rgba(154,123,255,0.6); transform: scale(1.05); }
+.vision-disclaimer-wrapper .card {
+  flex: 1 1 420px;
+  min-width: 340px;
+  max-width: 560px;
 }
 
 /* ------------ FOOTER ------------ */
@@ -207,16 +240,221 @@ footer {
   opacity: 0.85;
   margin-top: 60px;
   padding-top: 15px;
-  border-top: 1px solid rgba(0,255,180,0.25);
+  border-top: 1px solid rgba(0, 255, 180, 0.25);
   width: 100%;
+}
+
+/* === FIX INTER-NAVIGATEUR === */
+a:link, a:visited, a:hover, a:active {
+  color: var(--accent) !important;
+  text-decoration: none;
+}
+a:hover {
+  color: #9fffe0 !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-shadow: 0 0 8px rgba(127,255,212,0.45);
+  filter: drop-shadow(0 0 4px rgba(127,255,212,0.4));
+}
+nav .links a:visited {
+  color: var(--accent) !important;
+}
+.kv a:visited, .card a:visited {
+  color: var(--accent) !important;
+}
+
+@supports (color: color(display-p3 0.7 1 0.9)) {
+  a, a:link, a:visited {
+    color: color(display-p3 0.7 1 0.9);
+  }
+  a:hover {
+    text-shadow: 0 0 12px color(display-p3 0.65 1 0.85);
+  }
+}
+
+/* ------------ SECTION AIRDROP ------------ */
+.airdrop-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 9;
+}
+
+.airdrop-card {
+  background: rgba(15, 18, 22, 0.85);
+  border: 1px solid rgba(127, 255, 212, 0.15);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 0 35px rgba(127, 255, 212, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.airdrop-card:hover {
+  box-shadow: 0 0 45px rgba(127, 255, 212, 0.25);
+  transform: translateY(-2px);
+}
+
+.airdrop-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid rgba(127, 255, 212, 0.4);
+  margin-bottom: 12px;
+  box-shadow: 0 0 15px rgba(127,255,212,0.25);
+}
+
+.airdrop-card h2 {
+  color: var(--accent);
+  font-size: 28px;
+  margin-bottom: 8px;
+  text-shadow: 0 0 14px rgba(127,255,212,0.35);
+}
+
+.airdrop-sub {
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+
+.airdrop-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.airdrop-input {
+  padding: 10px 12px;
+  width: 300px;
+  border-radius: 8px;
+  border: 1px solid rgba(127,255,212,0.3);
+  background: rgba(0,0,0,0.25);
+  color: var(--fg);
+  font-size: 14px;
+  text-align: center;
+}
+
+.airdrop-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: rgba(127,255,212,0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.airdrop-btn:hover {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 25px rgba(127,255,212,0.55);
+}
+
+/* ------------ FIX CHROME / SAFARI FOND ------------ */
+body {
+  background: #000 !important;
+}
+.fractal-bg {
+  position: fixed;
+  top: 58px;
+  left: 0;
+  width: 100%;
+  height: 420px;
+  z-index: 1 !important;
+}
+.container, .airdrop-section {
+  position: relative;
+  z-index: 8;
 }
 
 /* ------------ RESPONSIVE ------------ */
 @media (max-width: 700px) {
+  .fractal-bg, .hero { height: 300px; }
+  .hero-inner h1 { font-size: 36px; }
   .container { padding-top: 320px; }
-  .card { padding: 16px; }
-  .brand span { display: none; }
+  nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
+
+/* 💠 Pulse fractal sur le bouton Airdrop */
+.airdrop-btn {
+  animation: fractysBtnPulse 6s ease-in-out infinite;
+}
+
+@keyframes fractysBtnPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(127,255,212,0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(127,255,212,0.7);
+    transform: scale(1.05);
+  }
+}
+
+/* 🌌 Pulse fractal lent sur le logo du Airdrop */
+.airdrop-logo {
+  animation: fractysPulse 6s ease-in-out infinite;
+}
+
+@keyframes fractysPulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)) brightness(1);
+  }
+  50% {
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 22px rgba(127,255,212,0.7)) brightness(1.3);
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)) brightness(1);
+  }
+}
+
+/* 💰 Carte Live Price animée */
+.live-price-card {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid rgba(127,255,212,0.15);
+  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  transition: all 0.25s ease;
+}
+
+.live-price-card:hover {
+  box-shadow: 0 0 35px rgba(127,255,212,0.25);
+}
+
+.price-value {
+  font-size: 1.8em;
+  color: var(--accent);
+  margin: 10px 0 4px;
+  animation: pricePulse 4s ease-in-out infinite;
+}
+
+.price-change {
+  font-size: 1em;
+  margin: 0;
+  opacity: 0.85;
+}
+
+@keyframes pricePulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(127,255,212,0.3); }
+  50% { text-shadow: 0 0 16px rgba(127,255,212,0.7); }
+}
+
 
 
 
