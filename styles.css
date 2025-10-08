@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.6 (Universal Stable — Safari, Chrome, Firefox)
+   Version : 1.7 (Centrage + Stable)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -158,6 +158,7 @@ nav .links a:hover {
   width: 100%;
 }
 
+/* ------------ CARTES ------------ */
 .card {
   background: var(--card);
   border: 1px solid rgba(255,255,255,0.07);
@@ -165,21 +166,36 @@ nav .links a:hover {
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,255,255,0.08);
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  text-align: center; /* ✅ Centrage global */
 }
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 0 25px rgba(127,255,212,0.25);
 }
-
 .card h3 {
   color: var(--accent);
   font-weight: 600;
   margin: 0 0 8px;
+  text-align: center; /* ✅ */
 }
 .card p {
   font-size: 15px;
   line-height: 1.5;
   color: var(--fg);
+  text-align: center; /* ✅ */
+}
+.card a {
+  text-align: center;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card .kv,
+.card .social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 /* ------------ BOUTONS ------------ */
@@ -210,7 +226,6 @@ nav .links a:hover {
   width: 100%;
   margin: 60px auto;
 }
-
 .vision-disclaimer-wrapper .card {
   flex: 1 1 420px;
   min-width: 340px;
