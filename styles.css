@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.12 (Compact Hero + Fluid Vertical Harmony)
+   Version : 1.13 (Header Fix + Compact Hero)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -41,7 +41,7 @@ nav {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 20;
+  z-index: 50;
 }
 
 .brand { display: flex; align-items: center; gap: 8px; }
@@ -71,15 +71,15 @@ nav .links a:hover {
 /* ------------ HERO ------------ */
 .hero {
   position: relative;
-  height: 280px; /* réduit la hauteur */
+  height: 280px;
   display: grid;
   gap: 6px;
   justify-content: center;
   align-items: flex-end;
   text-align: center;
   overflow: hidden;
-  z-index: 2;
-  margin-bottom: 0;
+  z-index: 1;
+  margin-top: var(--nav-h); /* corrige le chevauchement du header */
 }
 
 .fractal-bg {
@@ -89,14 +89,14 @@ nav .links a:hover {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 1;
+  z-index: 0;
 }
 .fractal-bg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0.9;
-  filter: brightness(1.9) contrast(1.4) saturate(1.2);
+  filter: brightness(1.8) contrast(1.4) saturate(1.2);
   animation: fractusFloat 30s ease-in-out infinite alternate;
 }
 .fractal-bg::after {
@@ -104,14 +104,14 @@ nav .links a:hover {
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.98) 100%);
-  z-index: 2;
+  z-index: 1;
 }
 
 .hero-inner {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   pointer-events: none;
-  padding-bottom: 20px; /* réduit l’espace sous le titre */
+  padding-bottom: 20px;
 }
 
 .hero-inner h1 {
@@ -146,7 +146,7 @@ nav .links a:hover {
 .container {
   max-width: 1080px;
   margin: 0 auto;
-  padding: calc(var(--nav-h) + 40px) 24px 48px; /* supprime la hauteur du hero du calcul */
+  padding: 24px 24px 48px;
   position: relative;
   z-index: 5;
   display: flex;
@@ -315,9 +315,9 @@ footer {
 
 /* ------------ RESPONSIVE ------------ */
 @media (max-width: 700px) {
-  .hero { height: 200px; }
+  .hero { height: 200px; margin-top: var(--nav-h); }
   .hero-inner h1 { font-size: 34px; }
-  .container { padding-top: calc(var(--nav-h) + 20px); }
+  .container { padding-top: 24px; }
   nav {
     flex-direction: column;
     height: auto;
