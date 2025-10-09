@@ -7,11 +7,34 @@
   <meta name="description" content="Access the Fractus Algorithm using Fractys (FTS).">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-  <!-- ==== STYLES PRINCIPAUX ==== -->
+  <!-- STYLES PRINCIPAUX -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- ==== STYLES DE NEUTRALISATION SPÉCIFIQUES À CETTE PAGE ==== -->
+  <!-- STYLES SPÉCIFIQUES -->
   <link rel="stylesheet" href="access.css">
+
+  <style>
+    /* ICONES HARMONISÉES AU STYLE GLOW FRACTAL */
+    .icon-fractal {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px rgba(127,255,212,0.6))
+              drop-shadow(0 0 16px rgba(127,255,212,0.4))
+              drop-shadow(0 0 30px rgba(127,255,212,0.25));
+      animation: iconPulse 5s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 8px rgba(127,255,212,0.5))
+                drop-shadow(0 0 16px rgba(127,255,212,0.3));
+      }
+      50% {
+        filter: drop-shadow(0 0 14px rgba(127,255,212,1))
+                drop-shadow(0 0 28px rgba(127,255,212,0.6))
+                drop-shadow(0 0 40px rgba(127,255,212,0.3));
+      }
+    }
+  </style>
 </head>
 
 <body class="fractus-access">
@@ -28,10 +51,10 @@
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
+  <!-- CONTENU PRINCIPAL -->
   <main class="container">
     <div class="access-header">
-      <h1><span style="color:#7fffd4;">🌀</span> Fractus Access</h1>
+      <h1><span class="icon-fractal">🌀</span> Fractus Access</h1>
       <p>
         Access the <strong>Fractus Algorithm</strong> — a fractal engine merging AI, mathematics, and blockchain validation — using your
         <strong>Fractys (FTS)</strong> tokens.<br>
@@ -39,9 +62,9 @@
       </p>
     </div>
 
-    <!-- LICENSE CARDS GRID -->
+    <!-- LICENCES -->
     <div class="license-grid">
-      <!-- Trial -->
+      <!-- TRIAL -->
       <div class="card license-card">
         <h2>Trial Access</h2>
         <p>
@@ -53,7 +76,7 @@
         <a href="#" class="btn glow">🔗 Pay & Activate</a>
       </div>
 
-      <!-- Research -->
+      <!-- RESEARCH -->
       <div class="card license-card">
         <h2>Research License</h2>
         <p>
@@ -65,7 +88,7 @@
         <a href="#" class="btn glow">🔗 Pay & Activate</a>
       </div>
 
-      <!-- Professional -->
+      <!-- PRO -->
       <div class="card license-card">
         <h2>Professional License</h2>
         <p>
@@ -78,9 +101,9 @@
       </div>
     </div>
 
-    <!-- FOOTER SECTION -->
+    <!-- FOOTER D’INFORMATION -->
     <div class="license-footer">
-      <span style="color:#7fffd4;">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
+      <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
       <small>Payments will be verified on-chain (Solana) and recorded transparently.</small>
     </div>
