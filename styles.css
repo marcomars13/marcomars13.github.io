@@ -120,28 +120,44 @@ nav, main, footer, .card, .airdrop-section {
   justify-content: flex-end;
   align-items: center;
   text-align: center;
+  z-index: 5;
 }
 
 .hero-inner {
   position: relative;
-  z-index: 12;
+  z-index: 10;
   padding-bottom: 40px;
+  pointer-events: none; /* ✅ ne bloque pas les clics sur les éléments derrière */
 }
 
 .hero-inner h1 {
   font-size: 54px;
   margin: 0;
-  color: var(--accent);
-  text-shadow: 0 0 14px rgba(127,255,212,0.4);
+  color: #7fffd4;
+  opacity: 0.15; /* 🌫️ effet translucide pour fond symbolique */
+  text-shadow:
+    0 0 40px rgba(127,255,212,0.6),
+    0 0 90px rgba(127,255,212,0.4),
+    0 0 160px rgba(127,255,212,0.25);
+  filter: drop-shadow(0 0 30px rgba(0,255,180,0.35));
+  transition: opacity 0.8s ease;
+}
+
+.hero-inner h1:hover {
+  opacity: 0.25; /* petit effet vivant au survol */
 }
 
 .hero-inner .sub {
-  color: var(--accent);
+  color: #9fffe0;
   font-weight: 600;
   font-size: 22px;
-  opacity: 0.9;
+  opacity: 0.25; /* légère transparence pour cohérence visuelle */
   margin-top: 8px;
+  text-shadow:
+    0 0 30px rgba(127,255,212,0.45),
+    0 0 80px rgba(127,255,212,0.35);
 }
+
 
 /* ------------ CONTENU ------------ */
 .container {
