@@ -337,6 +337,39 @@ footer {
   padding: 0 !important;
 }
 
+/* ------------ AIRDROP BANNER ------------ */
+.airdrop-banner {
+  text-align: center;
+  padding: 80px 20px;
+  margin-top: 40px;
+  background: radial-gradient(circle at center, rgba(0, 255, 180, 0.08), rgba(0, 0, 0, 1) 90%);
+  border-top: 1px solid rgba(127, 255, 212, 0.15);
+  border-bottom: 1px solid rgba(127, 255, 212, 0.1);
+  box-shadow: 0 0 40px rgba(127, 255, 212, 0.15) inset;
+}
+.banner-content h2 {
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  text-shadow: 0 0 20px rgba(127,255,212,0.4);
+}
+.banner-content p {
+  color: var(--fg);
+  opacity: 0.85;
+  margin-bottom: 24px;
+  font-size: 1rem;
+}
+.banner-icon {
+  font-size: 2.5rem;
+  color: var(--accent);
+  animation: spinSlow 12s linear infinite;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
 
 
