@@ -1,0 +1,35 @@
+/* ======= Fractus Access Override Total ======= */
+body.fractus-access {
+  background: #000 !important;
+  color: #e6fff7;
+  overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+  z-index: 99999;
+}
+
+/* Supprime tous les éléments persistants de l'autre page */
+.fractal-bg,
+.hero,
+.hero-inner,
+.hero::before,
+.hero::after {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Réinitialise les z-index du contenu */
+main, nav, footer {
+  position: relative !important;
+  z-index: 100000 !important;
+}
+
+/* Forçage du plan de rendu */
+html, body, main {
+  transform: translateZ(0);
+}
