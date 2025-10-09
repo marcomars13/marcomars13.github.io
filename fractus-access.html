@@ -7,32 +7,37 @@
   <meta name="description" content="Access the Fractus Algorithm using Fractys (FTS).">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- ==== STYLES SPÉCIFIQUES À LA PAGE (isolés par préfixe .fractus-access) ==== -->
   <style>
-    .access-container {
+    .fractus-access main {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 60px 20px;
+      padding: 120px 20px 80px;
       color: #e6fff7;
       text-align: center;
+      position: relative;
+      z-index: 5;
+      background: #000;
     }
 
-    .access-header h1 {
-      font-size: 2em;
+    .fractus-access .access-header h1 {
+      font-size: 2.4em;
       color: #7affd1;
       margin-bottom: 10px;
-      text-shadow: 0 0 12px #00ffc8;
+      text-shadow: 0 0 16px rgba(0,255,200,0.7);
     }
 
-    .access-header p {
-      max-width: 700px;
+    .fractus-access .access-header p {
+      max-width: 720px;
       opacity: 0.85;
       line-height: 1.6;
-      margin-bottom: 40px;
+      margin: 0 auto 40px;
     }
 
-    .license-grid {
+    .fractus-access .license-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
@@ -40,7 +45,7 @@
       max-width: 1000px;
     }
 
-    .license-card {
+    .fractus-access .license-card {
       background: rgba(255,255,255,0.03);
       border-radius: 20px;
       border: 1px solid rgba(127,255,212,0.18);
@@ -48,13 +53,12 @@
       padding: 25px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .license-card:hover {
+    .fractus-access .license-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 0 40px rgba(0,255,180,0.25);
     }
 
-    .license-card h2 {
+    .fractus-access .license-card h2 {
       color: #7affd1;
       margin-bottom: 10px;
       text-transform: uppercase;
@@ -62,21 +66,21 @@
       letter-spacing: 1px;
     }
 
-    .license-card p {
+    .fractus-access .license-card p {
       font-size: 0.95rem;
       opacity: 0.85;
       line-height: 1.5;
       margin-bottom: 18px;
     }
 
-    .price {
+    .fractus-access .price {
       font-size: 1.5rem;
       font-weight: bold;
       color: #9fffe0;
       text-shadow: 0 0 6px #00ffc8;
     }
 
-    .btn-license {
+    .fractus-access .btn-license {
       display: inline-block;
       margin-top: 15px;
       padding: 10px 20px;
@@ -89,28 +93,42 @@
       text-decoration: none;
       transition: all 0.25s ease;
     }
-
-    .btn-license:hover {
+    .fractus-access .btn-license:hover {
       transform: scale(1.05);
       box-shadow: 0 0 20px #00ffc8;
     }
 
-    .license-footer {
+    .fractus-access .license-footer {
       margin-top: 60px;
       font-size: 0.9rem;
       opacity: 0.8;
       max-width: 600px;
+      text-align: center;
     }
 
-    footer {
+    .fractus-access footer {
       margin-top: 60px;
       font-size: 0.8rem;
       opacity: 0.7;
+      background: #000;
+      text-align: center;
+      border-top: 1px solid rgba(0,255,180,0.25);
+      padding: 20px 0;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ✅ RESPONSIVE */
+    @media (max-width: 700px) {
+      .fractus-access .access-header h1 { font-size: 1.8em; }
+      .fractus-access main { padding-top: 100px; }
     }
   </style>
 </head>
 
-<body>
+<body class="fractus-access">
+  <!-- Fond fractal localisé uniquement ici -->
   <div class="fractal-bg">
     <img class="fractal-img" src="fractys-banner.png" alt="Fractys banner">
   </div>
@@ -127,10 +145,10 @@
     </div>
   </nav>
 
-  <main class="access-container">
+  <main>
     <div class="access-header">
       <h1>🌀 Fractus Access</h1>
-      <p>Access the <strong>Fractus Algorithm</strong> — a fractal engine uniting AI, data science, and art — using your <strong>Fractys (FTS)</strong> tokens.  
+      <p>Access the <strong>Fractus Algorithm</strong> — a fractal engine uniting AI, data science, and art — using your <strong>Fractys (FTS)</strong> tokens.<br>
       Choose your license tier below to unlock your level of exploration.</p>
     </div>
 
@@ -162,8 +180,7 @@
 
     <div class="license-footer">
       💎 Only <strong>15,000 FTS</strong> exist.<br>
-      Each transaction fuels open research and strengthens the network.<br>
-      <br>
+      Each transaction fuels open research and strengthens the network.<br><br>
       <small>Payments will be verified on-chain (Solana) and recorded transparently.</small>
     </div>
   </main>
