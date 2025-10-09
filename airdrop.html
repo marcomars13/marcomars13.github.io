@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fractys Airdrop Event</title>
+  <style>
+    body {
+      background: radial-gradient(circle at top, #001b16 0%, #000 100%);
+      color: #bfffe9;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px 16px;
+    }
+    h1 {
+      color: #7affd1;
+      font-size: 2em;
+      margin-bottom: 0.4em;
+    }
+    p {
+      color: #9fe;
+      max-width: 600px;
+      margin: 10px auto 30px;
+      line-height: 1.6;
+    }
+    .airdrop-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(127,255,212,0.25);
+      border-radius: 18px;
+      box-shadow: 0 0 30px rgba(0,255,200,0.1), inset 0 0 20px rgba(0,255,200,0.05);
+      padding: 32px;
+      display: inline-block;
+      width: 90%;
+      max-width: 700px;
+    }
+    button {
+      background: linear-gradient(135deg, #00ffc8, #00887a);
+      border: none;
+      color: #000;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 14px 26px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 18px #00ffc8;
+    }
+    #timer {
+      font-size: 1.8em;
+      color: #00ffbf;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="airdrop-card">
+    <h1>🚀 Fractys Airdrop Event</h1>
+    <p>The first official Fractys airdrop begins soon!  
+      Join the Telegram community to be eligible, and follow the live countdown below.
+    </p>
+
+    <div id="timer">Loading...</div>
+
+    <button onclick="window.open('https://t.me/FractysToken','_blank')">
+      Join the Airdrop on Telegram →
+    </button>
+  </div>
+
+  <script>
+    const dropDate = new Date("October 22, 2025 18:00:00").getTime();
+    setInterval(() => {
+      const t = document.getElementById("timer");
+      if (!t) return;
+      const diff = dropDate - new Date().getTime();
+      if (diff <= 0) {
+        t.textContent = "🚀 LIVE NOW!";
+        return;
+      }
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff%(1000*60*60*24)) / (1000*60*60));
+      const m = Math.floor((diff%(1000*60*60)) / (1000*60));
+      const s = Math.floor((diff%(1000*60)) / 1000);
+      t.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  </script>
+</body>
+</html>
