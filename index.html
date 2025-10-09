@@ -270,6 +270,23 @@
     updateFTSPrice();
     setInterval(updateFTSPrice, 45000);
   </script>
+<!-- ===== REAL-TIME CHART SECTION ===== -->
+<section id="fts-chart" style="text-align:center; margin-top: 40px;">
+  <h2 style="color: #7affd1; font-size: 1.4rem; margin-bottom: 10px;">
+    📈 FTS / SOL Chart (Live)
+  </h2>
+  <div style="max-width: 900px; margin: auto; border-radius: 12px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,180,0.15);">
+    <iframe
+      src="https://birdeye.so/tv-widget/BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy?chain=solana&viewMode=pair&chartInterval=15&chartType=Candle&chartTimezone=Europe%2FParis&chartLeftToolbar=show&theme=dark"
+      width="100%"
+      height="600"
+      style="border: none;"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+</section>
+<!-- ===== END CHART SECTION ===== -->
 
 </body>
 </html>
