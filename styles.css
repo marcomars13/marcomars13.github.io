@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.8 (z-index fix + harmonisation)
+   Version : 1.8 (Halo isolé + Stable)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -11,6 +11,8 @@
   --muted: #7abbc6;
   --accent: #7fffd4;
   --card: #0f1016;
+  --nav-h: 58px;
+  --hero-h: 420px;
 }
 
 /* ------------ GLOBAL RESET ------------ */
@@ -31,14 +33,14 @@ html, body {
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 58px;
+  height: var(--nav-h);
   display: flex; justify-content: space-between; align-items: center;
   padding: 0 22px;
   background: rgba(0,0,0,0.85);
   border-bottom: 1px solid rgba(255,255,255,0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 50;
+  z-index: 20;
 }
 
 .brand { display: flex; align-items: center; gap: 8px; }
@@ -60,116 +62,89 @@ nav .links a:hover {
   text-shadow: 0 0 6px var(--accent);
 }
 
-/* ------------ BANNIÈRE FRACTALE ------------ */
-.fractal-bg {
-  position: fixed;
-  top: 58px;
-  left: 0;
-  width: 100%;
-  height: 420px;
-  overflow: hidden;
-  background: #000;
-  z-index: 0; /* ✅ passe en arrière-plan */
-}
-
-.fractal-bg img {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.95;
-  filter: brightness(2.1) contrast(1.4) saturate(1.3);
-  animation: fractusFloat 30s ease-in-out infinite alternate,
-             fractusPulse 12s ease-in-out infinite alternate;
-  mix-blend-mode: screen;
-  box-shadow: 0 0 120px rgba(127, 255, 212, 0.35);
-}
-
-@keyframes fractusFloat {
-  0% { transform: translateX(-50%) translateY(0) scale(1); }
-  100% { transform: translateX(-50%) translateY(-8px) scale(1.03); }
-}
-@keyframes fractusPulse {
-  0% { filter: brightness(1.8) contrast(1.35) saturate(1.2); opacity: 0.9; }
-  100% { filter: brightness(2.4) contrast(1.55) saturate(1.4); opacity: 1; }
-}
-
-.fractal-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
-  z-index: 1;
-}
-
-/* ------------ LAYERS — pour repasser le contenu devant ------------ */
-nav, main, footer, .card, .airdrop-section {
-  position: relative;
-  z-index: 10;
-}
-
-/* ------------ HERO ------------ */
+/* ------------ HERO (Halo fractal isolé) ------------ */
 .hero {
   position: relative;
-  height: 420px;
+  height: var(--hero-h);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   text-align: center;
-  z-index: 5;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.fractal-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+.fractal-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  filter: brightness(1.9) contrast(1.4) saturate(1.2);
+  animation: fractusFloat 30s ease-in-out infinite alternate;
+}
+.fractal-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.98) 100%);
+  z-index: 2;
 }
 
 .hero-inner {
   position: relative;
-  z-index: 10;
+  z-index: 3;
+  pointer-events: none;
   padding-bottom: 40px;
-  pointer-events: none; /* ✅ ne bloque pas les clics sur les éléments derrière */
 }
 
 .hero-inner h1 {
   font-size: 54px;
   margin: 0;
   color: #7fffd4;
-  opacity: 0.15; /* 🌫️ effet translucide pour fond symbolique */
+  opacity: 0.15;
   text-shadow:
-    0 0 40px rgba(127,255,212,0.6),
-    0 0 90px rgba(127,255,212,0.4),
-    0 0 160px rgba(127,255,212,0.25);
-  filter: drop-shadow(0 0 30px rgba(0,255,180,0.35));
+    0 0 30px rgba(127,255,212,0.6),
+    0 0 90px rgba(127,255,212,0.35),
+    0 0 160px rgba(127,255,212,0.2);
   transition: opacity 0.8s ease;
 }
-
-.hero-inner h1:hover {
-  opacity: 0.25; /* petit effet vivant au survol */
-}
+.hero-inner h1:hover { opacity: 0.25; }
 
 .hero-inner .sub {
-  color: #9fffe0;
-  font-weight: 600;
   font-size: 22px;
-  opacity: 0.25; /* légère transparence pour cohérence visuelle */
-  margin-top: 8px;
+  opacity: 0.25;
+  color: #9fffe0;
   text-shadow:
     0 0 30px rgba(127,255,212,0.45),
     0 0 80px rgba(127,255,212,0.35);
 }
 
+/* ------------ ANIMATIONS ------------ */
+@keyframes fractusFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-8px) scale(1.03); }
+}
 
 /* ------------ CONTENU ------------ */
 .container {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 460px 24px 40px;
+  padding: calc(var(--nav-h) + var(--hero-h) + 40px) 24px 40px;
+  position: relative;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #000;
 }
 
-/* ------------ CARTES ------------ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -177,6 +152,7 @@ nav, main, footer, .card, .airdrop-section {
   width: 100%;
 }
 
+/* ------------ CARTES ------------ */
 .card {
   background: var(--card);
   border: 1px solid rgba(255,255,255,0.07);
@@ -200,6 +176,12 @@ nav, main, footer, .card, .airdrop-section {
   line-height: 1.5;
   color: var(--fg);
 }
+.card a {
+  text-align: center;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* ------------ BOUTONS ------------ */
 .btn {
@@ -220,14 +202,22 @@ nav, main, footer, .card, .airdrop-section {
   filter: brightness(1.2);
 }
 
-/* ------------ SECTION AIRDROP ------------ */
+/* ------------ AIRDROP ------------ */
 .airdrop-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 60px;
-  margin-bottom: 80px;
+  position: relative;
+  z-index: 10;
+  background: radial-gradient(circle at center, rgba(0, 20, 20, 0.4), rgba(0, 0, 0, 1) 80%);
+  padding: 80px 0 100px;
+}
+
+.airdrop-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('img/fractal-green.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: blur(4px);
+  z-index: 0;
 }
 
 .airdrop-card {
@@ -240,14 +230,41 @@ nav, main, footer, .card, .airdrop-section {
   width: 100%;
   box-shadow: 0 0 35px rgba(127, 255, 212, 0.15);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   transition: all 0.25s ease;
-  z-index: 11;
+  position: relative;
+  z-index: 2;
 }
 
 .airdrop-card:hover {
   box-shadow: 0 0 45px rgba(127, 255, 212, 0.25);
   transform: translateY(-2px);
+}
+
+/* ------------ LIVE PRICE ------------ */
+.live-price-card {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid rgba(127,255,212,0.15);
+  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  transition: all 0.25s ease;
+}
+.live-price-card:hover {
+  box-shadow: 0 0 35px rgba(127,255,212,0.25);
+}
+.price-value {
+  font-size: 1.8em;
+  color: var(--accent);
+  margin: 10px 0 4px;
+  animation: pricePulse 4s ease-in-out infinite;
+}
+.price-change {
+  font-size: 1em;
+  margin: 0;
+  opacity: 0.85;
+}
+@keyframes pricePulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(127,255,212,0.3); }
+  50% { text-shadow: 0 0 16px rgba(127,255,212,0.7); }
 }
 
 /* ------------ FOOTER ------------ */
@@ -262,6 +279,7 @@ footer {
   width: 100%;
   position: relative;
   z-index: 10;
+  background: #000;
 }
 
 /* ------------ RESPONSIVE ------------ */
@@ -271,7 +289,6 @@ footer {
   .container { padding-top: 320px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
 }
-
 
 
 
