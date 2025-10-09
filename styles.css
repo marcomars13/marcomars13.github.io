@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.7 (Centrage + Stable)
+   Version : 1.8 (z-index fix + harmonisation)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -38,7 +38,7 @@ nav {
   border-bottom: 1px solid rgba(255,255,255,0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 20;
+  z-index: 50;
 }
 
 .brand { display: flex; align-items: center; gap: 8px; }
@@ -69,7 +69,7 @@ nav .links a:hover {
   height: 420px;
   overflow: hidden;
   background: #000;
-  z-index: 5;
+  z-index: 0; /* ✅ passe en arrière-plan */
 }
 
 .fractal-bg img {
@@ -80,7 +80,7 @@ nav .links a:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.98;
+  opacity: 0.95;
   filter: brightness(2.1) contrast(1.4) saturate(1.3);
   animation: fractusFloat 30s ease-in-out infinite alternate,
              fractusPulse 12s ease-in-out infinite alternate;
@@ -102,7 +102,13 @@ nav .links a:hover {
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.95) 100%);
-  z-index: 6;
+  z-index: 1;
+}
+
+/* ------------ LAYERS — pour repasser le contenu devant ------------ */
+nav, main, footer, .card, .airdrop-section {
+  position: relative;
+  z-index: 10;
 }
 
 /* ------------ HERO ------------ */
@@ -114,12 +120,11 @@ nav .links a:hover {
   justify-content: flex-end;
   align-items: center;
   text-align: center;
-  z-index: 10;
 }
 
 .hero-inner {
   position: relative;
-  z-index: 10;
+  z-index: 12;
   padding-bottom: 40px;
 }
 
@@ -128,7 +133,6 @@ nav .links a:hover {
   margin: 0;
   color: var(--accent);
   text-shadow: 0 0 14px rgba(127,255,212,0.4);
-  text-align: center;
 }
 
 .hero-inner .sub {
@@ -144,13 +148,12 @@ nav .links a:hover {
   max-width: 1080px;
   margin: 0 auto;
   padding: 460px 24px 40px;
-  position: relative;
-  z-index: 8;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* ------------ CARTES ------------ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -158,7 +161,6 @@ nav .links a:hover {
   width: 100%;
 }
 
-/* ------------ CARTES ------------ */
 .card {
   background: var(--card);
   border: 1px solid rgba(255,255,255,0.07);
@@ -166,7 +168,7 @@ nav .links a:hover {
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,255,255,0.08);
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-  text-align: center; /* ✅ Centrage global */
+  text-align: center;
 }
 .card:hover {
   transform: translateY(-4px);
@@ -176,26 +178,11 @@ nav .links a:hover {
   color: var(--accent);
   font-weight: 600;
   margin: 0 0 8px;
-  text-align: center; /* ✅ */
 }
 .card p {
   font-size: 15px;
   line-height: 1.5;
   color: var(--fg);
-  text-align: center; /* ✅ */
-}
-.card a {
-  text-align: center;
-  display: inline-block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.card .kv,
-.card .social-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
 }
 
 /* ------------ BOUTONS ------------ */
@@ -217,61 +204,6 @@ nav .links a:hover {
   filter: brightness(1.2);
 }
 
-/* ------------ VISION + DISCLAIMER ------------ */
-.vision-disclaimer-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 22px;
-  width: 100%;
-  margin: 60px auto;
-}
-.vision-disclaimer-wrapper .card {
-  flex: 1 1 420px;
-  min-width: 340px;
-  max-width: 560px;
-}
-
-/* ------------ FOOTER ------------ */
-footer {
-  text-align: center;
-  color: #9ff;
-  font-size: 0.9rem;
-  opacity: 0.85;
-  margin-top: 60px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(0, 255, 180, 0.25);
-  width: 100%;
-}
-
-/* === FIX INTER-NAVIGATEUR === */
-a:link, a:visited, a:hover, a:active {
-  color: var(--accent) !important;
-  text-decoration: none;
-}
-a:hover {
-  color: #9fffe0 !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-shadow: 0 0 8px rgba(127,255,212,0.45);
-  filter: drop-shadow(0 0 4px rgba(127,255,212,0.4));
-}
-nav .links a:visited {
-  color: var(--accent) !important;
-}
-.kv a:visited, .card a:visited {
-  color: var(--accent) !important;
-}
-
-@supports (color: color(display-p3 0.7 1 0.9)) {
-  a, a:link, a:visited {
-    color: color(display-p3 0.7 1 0.9);
-  }
-  a:hover {
-    text-shadow: 0 0 12px color(display-p3 0.65 1 0.85);
-  }
-}
-
 /* ------------ SECTION AIRDROP ------------ */
 .airdrop-section {
   width: 100%;
@@ -280,8 +212,6 @@ nav .links a:visited {
   align-items: center;
   margin-top: 60px;
   margin-bottom: 80px;
-  position: relative;
-  z-index: 9;
 }
 
 .airdrop-card {
@@ -296,6 +226,7 @@ nav .links a:visited {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: all 0.25s ease;
+  z-index: 11;
 }
 
 .airdrop-card:hover {
@@ -303,81 +234,18 @@ nav .links a:visited {
   transform: translateY(-2px);
 }
 
-.airdrop-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 1px solid rgba(127, 255, 212, 0.4);
-  margin-bottom: 12px;
-  box-shadow: 0 0 15px rgba(127,255,212,0.25);
-}
-
-.airdrop-card h2 {
-  color: var(--accent);
-  font-size: 28px;
-  margin-bottom: 8px;
-  text-shadow: 0 0 14px rgba(127,255,212,0.35);
-}
-
-.airdrop-sub {
-  color: var(--muted);
-  font-size: 15px;
-  margin-bottom: 24px;
-  opacity: 0.9;
-}
-
-.airdrop-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-}
-
-.airdrop-input {
-  padding: 10px 12px;
-  width: 300px;
-  border-radius: 8px;
-  border: 1px solid rgba(127,255,212,0.3);
-  background: rgba(0,0,0,0.25);
-  color: var(--fg);
-  font-size: 14px;
+/* ------------ FOOTER ------------ */
+footer {
   text-align: center;
-}
-
-.airdrop-btn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  background: rgba(127,255,212,0.15);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.airdrop-btn:hover {
-  background: var(--accent);
-  color: #000;
-  box-shadow: 0 0 25px rgba(127,255,212,0.55);
-}
-
-/* ------------ FIX CHROME / SAFARI FOND ------------ */
-body {
-  background: #000 !important;
-}
-.fractal-bg {
-  position: fixed;
-  top: 58px;
-  left: 0;
+  color: #9ff;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-top: 60px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 255, 180, 0.25);
   width: 100%;
-  height: 420px;
-  z-index: 1 !important;
-}
-.container, .airdrop-section {
   position: relative;
-  z-index: 8;
+  z-index: 10;
 }
 
 /* ------------ RESPONSIVE ------------ */
@@ -386,73 +254,6 @@ body {
   .hero-inner h1 { font-size: 36px; }
   .container { padding-top: 320px; }
   nav { flex-direction: column; height: auto; padding: 10px 0; }
-}
-
-/* 💠 Pulse fractal sur le bouton Airdrop */
-.airdrop-btn {
-  animation: fractysBtnPulse 6s ease-in-out infinite;
-}
-
-@keyframes fractysBtnPulse {
-  0%, 100% {
-    box-shadow: 0 0 8px rgba(127,255,212,0.3);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 22px rgba(127,255,212,0.7);
-    transform: scale(1.05);
-  }
-}
-
-/* 🌌 Pulse fractal lent sur le logo du Airdrop */
-.airdrop-logo {
-  animation: fractysPulse 6s ease-in-out infinite;
-}
-
-@keyframes fractysPulse {
-  0% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)) brightness(1);
-  }
-  50% {
-    transform: scale(1.07);
-    filter: drop-shadow(0 0 22px rgba(127,255,212,0.7)) brightness(1.3);
-  }
-  100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)) brightness(1);
-  }
-}
-
-/* 💰 Carte Live Price animée */
-.live-price-card {
-  text-align: center;
-  background: var(--card);
-  border: 1px solid rgba(127,255,212,0.15);
-  box-shadow: 0 0 25px rgba(127,255,212,0.12);
-  transition: all 0.25s ease;
-}
-
-.live-price-card:hover {
-  box-shadow: 0 0 35px rgba(127,255,212,0.25);
-}
-
-.price-value {
-  font-size: 1.8em;
-  color: var(--accent);
-  margin: 10px 0 4px;
-  animation: pricePulse 4s ease-in-out infinite;
-}
-
-.price-change {
-  font-size: 1em;
-  margin: 0;
-  opacity: 0.85;
-}
-
-@keyframes pricePulse {
-  0%, 100% { text-shadow: 0 0 6px rgba(127,255,212,0.3); }
-  50% { text-shadow: 0 0 16px rgba(127,255,212,0.7); }
 }
 
 
