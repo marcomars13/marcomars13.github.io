@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.8 (Halo isolé + Stable)
+   Version : 1.9 (Halo Stable)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -15,7 +15,7 @@
   --hero-h: 420px;
 }
 
-/* ------------ GLOBAL RESET ------------ */
+/* ------------ RESET GLOBAL ------------ */
 * { box-sizing: border-box; }
 
 html, body {
@@ -34,10 +34,12 @@ nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--nav-h);
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 22px;
-  background: rgba(0,0,0,0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 20;
@@ -45,10 +47,15 @@ nav {
 
 .brand { display: flex; align-items: center; gap: 8px; }
 .brand img {
-  height: 24px; width: 24px; border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
   border: 1px solid var(--accent);
 }
-.brand span { font-weight: 600; letter-spacing: .3px; }
+.brand span {
+  font-weight: 600;
+  letter-spacing: .3px;
+}
 
 nav .links a {
   margin-left: 16px;
@@ -62,7 +69,7 @@ nav .links a:hover {
   text-shadow: 0 0 6px var(--accent);
 }
 
-/* ------------ HERO (Halo fractal isolé) ------------ */
+/* ------------ HERO ------------ */
 .hero {
   position: relative;
   height: var(--hero-h);
@@ -77,13 +84,16 @@ nav .links a:hover {
 
 .fractal-bg {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   z-index: 1;
 }
 .fractal-bg img {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   opacity: 0.9;
   filter: brightness(1.9) contrast(1.4) saturate(1.2);
@@ -132,7 +142,7 @@ nav .links a:hover {
   100% { transform: translateY(-8px) scale(1.03); }
 }
 
-/* ------------ CONTENU ------------ */
+/* ------------ CONTAINER ------------ */
 .container {
   max-width: 1080px;
   margin: 0 auto;
@@ -155,16 +165,16 @@ nav .links a:hover {
 /* ------------ CARTES ------------ */
 .card {
   background: var(--card);
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,255,255,0.08);
+  box-shadow: 0 10px 30px rgba(0, 255, 255, 0.08);
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   text-align: center;
 }
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 0 25px rgba(127,255,212,0.25);
+  box-shadow: 0 0 25px rgba(127, 255, 212, 0.25);
 }
 .card h3 {
   color: var(--accent);
@@ -183,6 +193,23 @@ nav .links a:hover {
   margin-right: auto;
 }
 
+/* ------------ SOCIAL ICONS ------------ */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  font-size: 1.7em;
+  margin-top: 15px;
+}
+.social-icons a {
+  color: #9fffe0;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.social-icons a:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 10px #00ffc8);
+}
+
 /* ------------ BOUTONS ------------ */
 .btn {
   display: inline-block;
@@ -198,7 +225,7 @@ nav .links a:hover {
 .btn:hover {
   background: var(--accent);
   color: #000;
-  box-shadow: 0 0 20px rgba(127,255,212,0.55);
+  box-shadow: 0 0 20px rgba(127, 255, 212, 0.55);
   filter: brightness(1.2);
 }
 
@@ -209,7 +236,6 @@ nav .links a:hover {
   background: radial-gradient(circle at center, rgba(0, 20, 20, 0.4), rgba(0, 0, 0, 1) 80%);
   padding: 80px 0 100px;
 }
-
 .airdrop-section::before {
   content: "";
   position: absolute;
@@ -219,7 +245,6 @@ nav .links a:hover {
   filter: blur(4px);
   z-index: 0;
 }
-
 .airdrop-card {
   background: rgba(15, 18, 22, 0.85);
   border: 1px solid rgba(127, 255, 212, 0.15);
@@ -234,22 +259,27 @@ nav .links a:hover {
   position: relative;
   z-index: 2;
 }
-
 .airdrop-card:hover {
   box-shadow: 0 0 45px rgba(127, 255, 212, 0.25);
   transform: translateY(-2px);
+}
+.airdrop-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(127, 255, 212, 0.4));
 }
 
 /* ------------ LIVE PRICE ------------ */
 .live-price-card {
   text-align: center;
   background: var(--card);
-  border: 1px solid rgba(127,255,212,0.15);
-  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  border: 1px solid rgba(127, 255, 212, 0.15);
+  box-shadow: 0 0 25px rgba(127, 255, 212, 0.12);
   transition: all 0.25s ease;
 }
 .live-price-card:hover {
-  box-shadow: 0 0 35px rgba(127,255,212,0.25);
+  box-shadow: 0 0 35px rgba(127, 255, 212, 0.25);
 }
 .price-value {
   font-size: 1.8em;
@@ -263,8 +293,8 @@ nav .links a:hover {
   opacity: 0.85;
 }
 @keyframes pricePulse {
-  0%, 100% { text-shadow: 0 0 6px rgba(127,255,212,0.3); }
-  50% { text-shadow: 0 0 16px rgba(127,255,212,0.7); }
+  0%, 100% { text-shadow: 0 0 6px rgba(127, 255, 212, 0.3); }
+  50% { text-shadow: 0 0 16px rgba(127, 255, 212, 0.7); }
 }
 
 /* ------------ FOOTER ------------ */
@@ -287,124 +317,12 @@ footer {
   .fractal-bg, .hero { height: 300px; }
   .hero-inner h1 { font-size: 36px; }
   .container { padding-top: 320px; }
-  nav { flex-direction: column; height: auto; padding: 10px 0; }
+  nav {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 0;
+  }
 }
-/* ===== FRACTYS FIX : séparation des calques fractals ===== */
-
-/* 1️⃣ HERO — fractal en haut uniquement */
-.hero {
-  position: relative;
-  height: 420px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  text-align: center;
-  overflow: hidden;
-  z-index: 2; /* ✅ juste au-dessus du fond global */
-}
-
-.fractal-bg {
-  position: absolute; /* ⬅️ plus "fixed" : reste dans la section hero */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.fractal-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.9;
-  filter: brightness(1.9) contrast(1.4) saturate(1.2);
-  animation: fractusFloat 30s ease-in-out infinite alternate;
-}
-
-.fractal-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.98) 100%);
-  z-index: 2;
-}
-
-/* 2️⃣ HERO TEXTE — transparent, mais halo conservé */
-.hero-inner {
-  position: relative;
-  z-index: 3;
-  pointer-events: none;
-  padding-bottom: 40px;
-}
-
-.hero-inner h1 {
-  font-size: 54px;
-  color: #7fffd4;
-  opacity: 0.15;
-  text-shadow:
-    0 0 30px rgba(127,255,212,0.6),
-    0 0 90px rgba(127,255,212,0.35),
-    0 0 160px rgba(127,255,212,0.2);
-  transition: opacity 0.8s ease;
-}
-
-.hero-inner h1:hover {
-  opacity: 0.25;
-}
-
-.hero-inner .sub {
-  font-size: 22px;
-  opacity: 0.25;
-  color: #9fffe0;
-  text-shadow:
-    0 0 30px rgba(127,255,212,0.45),
-    0 0 80px rgba(127,255,212,0.35);
-}
-
-/* 3️⃣ CONTAINER — redevient sur fond noir, au-dessus du hero */
-.container {
-  position: relative;
-  z-index: 5;
-  background: #000;
-  padding-top: 440px;
-}
-
-/* 4️⃣ AIRDROP — propre, fond isolé */
-.airdrop-section {
-  position: relative;
-  z-index: 10;
-  background: radial-gradient(circle at center, rgba(0, 20, 20, 0.4), rgba(0, 0, 0, 1) 80%);
-  padding-top: 80px;
-  padding-bottom: 100px;
-}
-
-.airdrop-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url('img/fractal-green.png') center/cover no-repeat;
-  opacity: 0.12;
-  filter: blur(4px);
-  z-index: 0;
-}
-
-.airdrop-card {
-  position: relative;
-  z-index: 2;
-}
-
-/* 5️⃣ Petits ajustements pour éviter les fuites visuelles */
-.vision-disclaimer-wrapper,
-.live-price-card,
-footer {
-  position: relative;
-  z-index: 10;
-  background: #000;
-}
-
-
 
 
 
