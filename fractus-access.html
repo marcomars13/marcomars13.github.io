@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fractus Access — Powered by Fractys</title>
+  <meta name="description" content="Access the Fractus Algorithm using Fractys (FTS).">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .access-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      color: #e6fff7;
+      text-align: center;
+    }
+
+    .access-header h1 {
+      font-size: 2em;
+      color: #7affd1;
+      margin-bottom: 10px;
+      text-shadow: 0 0 12px #00ffc8;
+    }
+
+    .access-header p {
+      max-width: 700px;
+      opacity: 0.85;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .license-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .license-card {
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(127,255,212,0.18);
+      box-shadow: 0 0 25px rgba(0,255,180,0.1), inset 0 0 10px rgba(0,255,180,0.08);
+      padding: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .license-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 40px rgba(0,255,180,0.25);
+    }
+
+    .license-card h2 {
+      color: #7affd1;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    .license-card p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #9fffe0;
+      text-shadow: 0 0 6px #00ffc8;
+    }
+
+    .btn-license {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #00ffc8, #00a5a5);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .btn-license:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00ffc8;
+    }
+
+    .license-footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      max-width: 600px;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fractal-bg">
+    <img class="fractal-img" src="fractys-banner.png" alt="Fractys banner">
+  </div>
+
+  <nav>
+    <div class="brand">
+      <img src="logo.png" alt="Fractys logo"/>
+      <span>Fractys (FTS)</span>
+    </div>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="airdrop.html">Airdrop</a>
+      <a href="fractus-access.html" class="active">Fractus Access</a>
+    </div>
+  </nav>
+
+  <main class="access-container">
+    <div class="access-header">
+      <h1>🌀 Fractus Access</h1>
+      <p>Access the <strong>Fractus Algorithm</strong> — a fractal engine uniting AI, data science, and art — using your <strong>Fractys (FTS)</strong> tokens.  
+      Choose your license tier below to unlock your level of exploration.</p>
+    </div>
+
+    <div class="license-grid">
+      <!-- Trial -->
+      <div class="license-card">
+        <h2>Trial Access</h2>
+        <p>24 hours of full access to Fractus Engine.<br>Run one dataset or image sequence.<br>Proof of contribution on-chain.</p>
+        <div class="price">25 FTS</div>
+        <a href="#" class="btn-license">🔗 Pay & Activate</a>
+      </div>
+
+      <!-- Research -->
+      <div class="license-card">
+        <h2>Research License</h2>
+        <p>30 days of advanced access.<br>Up to 10 analyses per month.<br>For personal or academic use.</p>
+        <div class="price">100 FTS</div>
+        <a href="#" class="btn-license">🔗 Pay & Activate</a>
+      </div>
+
+      <!-- Professional -->
+      <div class="license-card">
+        <h2>Professional License</h2>
+        <p>Lifetime access to Fractus Pro API.<br>For commercial, data, or AI integrations.<br>Includes premium support & updates.</p>
+        <div class="price">500 FTS</div>
+        <a href="#" class="btn-license">🔗 Pay & Activate</a>
+      </div>
+    </div>
+
+    <div class="license-footer">
+      💎 Only <strong>15,000 FTS</strong> exist.<br>
+      Each transaction fuels open research and strengthens the network.<br>
+      <br>
+      <small>Payments will be verified on-chain (Solana) and recorded transparently.</small>
+    </div>
+  </main>
+
+  <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
+</body>
+</html>
