@@ -1,6 +1,6 @@
 /* =========================================
    FRACTYS — Styles officiels
-   Version : 1.9 (Halo Stable)
+   Version : 1.10 (Halo Stable + Unified Logos)
    Auteur : Marc Cedrych
    ========================================= */
 
@@ -193,21 +193,40 @@ nav .links a:hover {
   margin-right: auto;
 }
 
-/* ------------ SOCIAL ICONS ------------ */
+/* ------------ SOCIAL ICONS (UNIFIED FRACTAL GREEN) ------------ */
 .social-icons {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 26px;
-  font-size: 1.7em;
-  margin-top: 15px;
+  margin-top: 18px;
 }
 .social-icons a {
-  color: #9fffe0;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 255, 200, 0.05);
+  color: #7fffd4;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(127, 255, 212, 0.15) inset;
+}
+.social-icons a svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
 }
 .social-icons a:hover {
-  transform: scale(1.15);
-  filter: drop-shadow(0 0 10px #00ffc8);
+  transform: scale(1.1);
+  background: rgba(127, 255, 212, 0.15);
+  box-shadow:
+    0 0 18px rgba(127, 255, 212, 0.45),
+    inset 0 0 12px rgba(127, 255, 212, 0.25);
+  color: #aaffee;
+  text-shadow: 0 0 8px rgba(127,255,212,0.4);
 }
 
 /* ------------ BOUTONS ------------ */
@@ -264,10 +283,19 @@ nav .links a:hover {
   transform: translateY(-2px);
 }
 .airdrop-logo {
-  width: 120px;
-  height: auto;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
   margin-bottom: 20px;
-  filter: drop-shadow(0 0 15px rgba(127, 255, 212, 0.4));
+  border-radius: 50%;
+  border: 1px solid rgba(127,255,212,0.3);
+  box-shadow: 0 0 20px rgba(127,255,212,0.4);
+  animation: fractysPulse 6s ease-in-out infinite;
+}
+@keyframes fractysPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)); }
+  50% { transform: scale(1.07); filter: drop-shadow(0 0 22px rgba(127,255,212,0.7)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(127,255,212,0.4)); }
 }
 
 /* ------------ LIVE PRICE ------------ */
@@ -323,6 +351,7 @@ footer {
     padding: 10px 0;
   }
 }
+
 
 
 
