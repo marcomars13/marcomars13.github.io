@@ -8,19 +8,47 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- ==== STYLES SPÉCIFIQUES À LA PAGE (isolés par préfixe .fractus-access) ==== -->
+  <!-- ==== STYLES SPÉCIFIQUES À LA PAGE (isolés par .fractus-access) ==== -->
   <style>
+    /* Le namespace global empêche tout conflit avec les autres pages */
+    body.fractus-access {
+      background: #000;
+      color: #e6fff7;
+      overflow-x: hidden;
+    }
+
     .fractus-access main {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 120px 20px 80px;
-      color: #e6fff7;
       text-align: center;
       position: relative;
       z-index: 5;
       background: #000;
+    }
+
+    .fractus-access .fractal-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 420px;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .fractus-access .fractal-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+      filter: brightness(1.6) contrast(1.3);
+    }
+
+    .fractus-access .access-header {
+      margin-top: 80px;
+      position: relative;
+      z-index: 2;
     }
 
     .fractus-access .access-header h1 {
@@ -43,6 +71,8 @@
       gap: 24px;
       width: 100%;
       max-width: 1000px;
+      position: relative;
+      z-index: 3;
     }
 
     .fractus-access .license-card {
@@ -119,7 +149,6 @@
       z-index: 10;
     }
 
-    /* ✅ RESPONSIVE */
     @media (max-width: 700px) {
       .fractus-access .access-header h1 { font-size: 1.8em; }
       .fractus-access main { padding-top: 100px; }
@@ -128,7 +157,7 @@
 </head>
 
 <body class="fractus-access">
-  <!-- Fond fractal localisé uniquement ici -->
+  <!-- Fond fractal propre à cette page -->
   <div class="fractal-bg">
     <img class="fractal-img" src="fractys-banner.png" alt="Fractys banner">
   </div>
