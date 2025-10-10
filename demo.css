@@ -119,3 +119,90 @@
   .demo-grid { padding: 20px; gap: 18px; }
   .demo-card img { height: 180px; }
 }
+/* =========================================
+   LAB STYLES — Benchmarks & Fractus Engine
+   Version corrigée (canvas logs visible)
+   ========================================= */
+
+.lab-section { padding: 40px 0 0; }
+
+.lab-title {
+  color: #7fffd4;
+  font-size: 1.25rem;
+  margin: 4px 0 18px;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.lab-card {
+  background: rgba(10, 15, 15, 0.9);
+  border: 1px solid rgba(127,255,212,0.14);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 0 14px rgba(127,255,212,0.08);
+}
+
+.lab-card h4 {
+  margin: 0 0 8px;
+  color: #bfffea;
+  font-weight: 600;
+}
+
+.lab-meta {
+  font-size: 0.86rem;
+  color: #9adfce;
+  opacity: 0.95;
+  margin-bottom: 10px;
+}
+
+/* ✅ Correction du bug d’affichage (canvas height 0) */
+.lab-canvas {
+  width: 100%;
+  height: 160px !important;  /* Hauteur forcée */
+  display: block;
+  border-radius: 8px;
+  background: #0b0f10;
+  border: 1px solid rgba(127,255,212,0.12);
+}
+
+.lab-legend {
+  margin-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  color: #9fffe0;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lab-legend .val {
+  color: #7fffd4;
+  font-weight: 600;
+}
+@media (max-width: 700px) {
+  .lab-legend { flex-direction: column; align-items: flex-start; }
+}
+
+/* ---- FRACTUS ENGINE VISUAL ---- */
+.fractus-visual {
+  text-align: center;
+  padding: 60px 0 20px;
+  color: #bfffea;
+}
+.fractus-visual canvas {
+  display: block;
+  margin: 0 auto;
+  background: radial-gradient(circle at center, rgba(0,255,180,0.05), rgba(0,0,0,1) 80%);
+  border: 1px solid rgba(127,255,212,0.2);
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(127,255,212,0.1);
+  width: 100%;
+  max-width: 720px;
+  height: 400px;
+}
