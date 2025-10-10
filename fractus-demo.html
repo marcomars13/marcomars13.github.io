@@ -120,17 +120,61 @@
         </div>
       </div>
 
-      <!-- === FRACTUS ENGINE === -->
-      <div class="fractus-visual">
-        <h2>⚡ Fractus Engine — Real-Time Stability Monitor</h2>
-        <canvas id="fractusCanvas"></canvas>
-        <div class="live-monitor">
-          <div>🌀 Entropy: <span id="m_entropy">—</span></div>
-          <div>🔗 Coherence: <span id="m_coherence">—</span></div>
-          <div>⚡ Efficiency: <span id="m_efficiency">—</span></div>
-          <div>📈 Stability: <span id="m_stability">—</span></div>
-        </div>
+    <!-- === FRACTUS ENGINE — CENTERED GRID LAYOUT === -->
+<section class="fractus-lab-center">
+  <h2 class="lab-title">⚡ Fractus Engine — Real-Time Stability Monitor</h2>
+  <div class="fractus-grid">
+    
+    <!-- 🟩 Haut gauche -->
+    <div class="side-card">
+      <canvas id="side_a" class="side-canvas"></canvas>
+      <div class="side-legend">
+        <div>Metric A</div>
+        <div class="val">Live</div>
       </div>
+    </div>
+
+    <!-- 🌀 Centre — Roue fractale -->
+    <div class="engine-core">
+      <canvas id="fractusCanvas"></canvas>
+      <div class="live-monitor">
+        <div>🌀 Entropy: <span id="m_entropy">—</span></div>
+        <div>🔗 Coherence: <span id="m_coherence">—</span></div>
+        <div>⚡ Efficiency: <span id="m_efficiency">—</span></div>
+        <div>📈 Stability: <span id="m_stability">—</span></div>
+      </div>
+    </div>
+
+    <!-- 🟩 Haut droite -->
+    <div class="side-card">
+      <canvas id="side_b" class="side-canvas"></canvas>
+      <div class="side-legend">
+        <div>Metric B</div>
+        <div class="val">Live</div>
+      </div>
+    </div>
+
+    <!-- 🟩 Bas gauche -->
+    <div class="side-card">
+      <canvas id="side_c" class="side-canvas"></canvas>
+      <div class="side-legend">
+        <div>Metric C</div>
+        <div class="val">Live</div>
+      </div>
+    </div>
+
+    <!-- 🟩 Bas droite -->
+    <div class="side-card">
+      <canvas id="side_d" class="side-canvas"></canvas>
+      <div class="side-legend">
+        <div>Metric D</div>
+        <div class="val">Live</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
     </section>
 
     <!-- Logs placeholders -->
