@@ -10,8 +10,12 @@
   <link rel="stylesheet" href="/demo.css">
 
   <style>
-    /* ---- LAB STYLE ---- */
+    /* =========================================
+       LAB STYLES — Benchmarks & Fractus Engine
+       Version corrigée (canvas logs visible)
+       ========================================= */
     .lab-section { padding: 40px 0 0; }
+
     .lab-title {
       color: #7fffd4;
       font-size: 1.25rem;
@@ -19,11 +23,13 @@
       text-align: center;
       letter-spacing: 0.3px;
     }
+
     .lab-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 18px;
     }
+
     .lab-card {
       background: rgba(10, 15, 15, 0.9);
       border: 1px solid rgba(127,255,212,0.14);
@@ -31,36 +37,64 @@
       padding: 14px 14px 12px;
       box-shadow: 0 0 14px rgba(127,255,212,0.08);
     }
-    .lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
-    .lab-meta { font-size: 0.86rem; color: #9adfce; opacity: 0.95; margin-bottom: 10px; }
+
+    .lab-card h4 {
+      margin: 0 0 8px;
+      color: #bfffea;
+      font-weight: 600;
+    }
+
+    .lab-meta {
+      font-size: 0.86rem;
+      color: #9adfce;
+      opacity: 0.95;
+      margin-bottom: 10px;
+    }
+
+    /* ✅ Correction du bug d’affichage (canvas height 0) */
     .lab-canvas {
-      width: 100%; height: 150px;
+      width: 100%;
+      height: 160px !important;  /* Hauteur forcée */
+      display: block;
       border-radius: 8px;
       background: #0b0f10;
       border: 1px solid rgba(127,255,212,0.12);
     }
+
     .lab-legend {
       margin-top: 8px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.85rem; color: #9fffe0;
-      display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: #9fffe0;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .lab-legend .val { color: #7fffd4; font-weight: 600; }
+    .lab-legend .val {
+      color: #7fffd4;
+      font-weight: 600;
+    }
     @media (max-width: 700px) {
       .lab-legend { flex-direction: column; align-items: flex-start; }
     }
 
-    /* ---- FRACTUS VISUAL ---- */
+    /* ---- FRACTUS ENGINE VISUAL ---- */
     .fractus-visual {
-      text-align: center; padding: 60px 0 20px; color: #bfffea;
+      text-align: center;
+      padding: 60px 0 20px;
+      color: #bfffea;
     }
     .fractus-visual canvas {
-      display: block; margin: 0 auto;
+      display: block;
+      margin: 0 auto;
       background: radial-gradient(circle at center, rgba(0,255,180,0.05), rgba(0,0,0,1) 80%);
       border: 1px solid rgba(127,255,212,0.2);
       border-radius: 16px;
       box-shadow: 0 0 40px rgba(127,255,212,0.1);
-      width: 100%; max-width: 720px; height: 400px;
+      width: 100%;
+      max-width: 720px;
+      height: 400px;
     }
   </style>
 </head>
@@ -98,7 +132,7 @@
         <div class="lab-card">
           <h4>Average Error (km)</h4>
           <div class="lab-meta">Plonk vs Fractus (5 000 photos)</div>
-          <canvas id="c_bench"></canvas>
+          <canvas id="c_bench" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Plonk: <span class="val">1252 km</span></div>
             <div>Fractus: <span class="val">870 km</span></div>
@@ -108,7 +142,7 @@
         <div class="lab-card">
           <h4>Entropy & Coherence</h4>
           <div class="lab-meta">Mean values with minor live variation</div>
-          <canvas id="c_entropy"></canvas>
+          <canvas id="c_entropy" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Entropy: <span id="entropyVal" class="val">0.028</span></div>
             <div>Coherence: <span id="cohVal" class="val">98.7 %</span></div>
@@ -117,7 +151,7 @@
         <div class="lab-card">
           <h4>Fractal Stability — Std Dev (km)</h4>
           <div class="lab-meta">Lower is better</div>
-          <canvas id="c_stability"></canvas>
+          <canvas id="c_stability" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Plonk σ: <span id="plonkStd" class="val">92.7 km</span></div>
             <div>Fractus σ: <span id="fracStd" class="val">90.4 km</span></div>
@@ -126,7 +160,7 @@
         <div class="lab-card">
           <h4>Processing Efficiency</h4>
           <div class="lab-meta">Relative accuracy ratio</div>
-          <canvas id="c_eff"></canvas>
+          <canvas id="c_eff" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Efficiency: <span class="val">× 1.30</span></div>
             <div>Status: <span class="val">Stable</span></div>
@@ -142,7 +176,7 @@
         <div class="lab-card">
           <h4>Detection Rate (%)</h4>
           <div class="lab-meta">True positives / anomalies injected</div>
-          <canvas id="c_log_rate"></canvas>
+          <canvas id="c_log_rate" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Fractus: <span class="val" id="logRateFrac">97.2 %</span></div>
             <div>Baseline: <span class="val" id="logRateBase">95.4 %</span></div>
@@ -151,7 +185,7 @@
         <div class="lab-card">
           <h4>False Positive Rate (%)</h4>
           <div class="lab-meta">Incorrect alerts / total alerts</div>
-          <canvas id="c_log_fp"></canvas>
+          <canvas id="c_log_fp" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Fractus: <span class="val" id="logFPFrac">1.8 %</span></div>
             <div>Baseline: <span class="val" id="logFPBase">3.2 %</span></div>
@@ -160,7 +194,7 @@
         <div class="lab-card">
           <h4>Mean Detection Latency (ms)</h4>
           <div class="lab-meta">Time to alert</div>
-          <canvas id="c_log_latency"></canvas>
+          <canvas id="c_log_latency" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Fractus: <span class="val" id="logLatFrac">45.3 ms</span></div>
             <div>Baseline: <span class="val" id="logLatBase">62.7 ms</span></div>
@@ -169,7 +203,7 @@
         <div class="lab-card">
           <h4>Accuracy / Throughput</h4>
           <div class="lab-meta">Correct detections per second</div>
-          <canvas id="c_log_acc"></canvas>
+          <canvas id="c_log_acc" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Fractus: <span class="val" id="logAccFrac">98.1 %</span></div>
             <div>Baseline: <span class="val" id="logAccBase">96.5 %</span></div>
@@ -183,8 +217,8 @@
       <h2>⚡ Fractus Engine in Action</h2>
       <canvas id="fractusCanvas"></canvas>
       <p class="caption">
-        Fractal pattern coherence — continuous self-similar layer analysis.  
-        Entropy < 0.05 = high stability zone.
+        Fractal pattern coherence — continuous self-similar layer analysis.<br>
+        Entropy &lt; 0.05 = high stability zone.
       </p>
     </section>
   </main>
@@ -194,7 +228,7 @@
   </footer>
 
   <script>
-    /* ========== LOGS BENCHMARK ANIMATIONS ========== */
+    /* ========== LOGS BENCHMARK ANIMATIONS (corrigé) ========== */
     const LOGBENCH = {
       rateFrac:97.2, rateBase:95.4,
       fpFrac:1.8, fpBase:3.2,
@@ -202,48 +236,88 @@
       accFrac:98.1, accBase:96.5
     };
 
+    // ✅ Fonction corrigée : attend que le canvas soit visible avant de dessiner
     function simpleBar(canvasId, valA, valB, labelA, labelB, unit, colorA, colorB) {
-      const c=document.getElementById(canvasId),ctx=c.getContext("2d"),DPR=window.devicePixelRatio||1;
-      c.width=c.clientWidth*DPR; c.height=c.clientHeight*DPR; ctx.scale(DPR,DPR);
-      const pad=12, maxVal=Math.max(valA,valB)*1.15; let anim=0;
-      function draw(){
-        ctx.clearRect(0,0,c.clientWidth,c.clientHeight);
-        ctx.fillStyle="#0b0f10";ctx.fillRect(0,0,c.clientWidth,c.clientHeight);
-        const wA=(valA/maxVal)*(c.clientWidth-pad*2)*anim;
-        const wB=(valB/maxVal)*(c.clientWidth-pad*2)*anim;
-        ctx.fillStyle=colorB;ctx.fillRect(pad,c.clientHeight*0.6,wB,20);
-        ctx.fillStyle=colorA;ctx.fillRect(pad,c.clientHeight*0.6-30,wA,20);
-        ctx.fillStyle="#9adfce";ctx.font="12px ui-sans-serif";
-        ctx.fillText(`${labelA}: ${valA}${unit}`,pad,c.clientHeight*0.6-12);
-        ctx.fillText(`${labelB}: ${valB}${unit}`,pad,c.clientHeight*0.6+35);
-        anim+=0.02;if(anim>1)anim=1;requestAnimationFrame(draw);
-      } draw();
+      const c = document.getElementById(canvasId);
+      const ctx = c.getContext("2d");
+      const DPR = window.devicePixelRatio || 1;
+
+      function init() {
+        const width = c.clientWidth || 300;
+        const height = c.clientHeight || 150;
+        if (width === 0 || height === 0) return requestAnimationFrame(init);
+
+        c.width = width * DPR;
+        c.height = height * DPR;
+        ctx.scale(DPR, DPR);
+        animate();
+      }
+
+      let anim = 0;
+      const pad = 12;
+      const maxVal = Math.max(valA, valB) * 1.15;
+
+      function animate() {
+        ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+        ctx.fillStyle = "#0b0f10";
+        ctx.fillRect(0, 0, c.clientWidth, c.clientHeight);
+
+        const wA = (valA / maxVal) * (c.clientWidth - pad * 2) * anim;
+        const wB = (valB / maxVal) * (c.clientWidth - pad * 2) * anim;
+
+        ctx.fillStyle = colorB;
+        ctx.fillRect(pad, c.clientHeight * 0.6, wB, 20);
+
+        ctx.fillStyle = colorA;
+        ctx.fillRect(pad, c.clientHeight * 0.6 - 30, wA, 20);
+
+        ctx.fillStyle = "#9adfce";
+        ctx.font = "12px ui-sans-serif";
+        ctx.fillText(`${labelA}: ${valA}${unit}`, pad, c.clientHeight * 0.6 - 12);
+        ctx.fillText(`${labelB}: ${valB}${unit}`, pad, c.clientHeight * 0.6 + 35);
+
+        anim += 0.02;
+        if (anim < 1) requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(init);
     }
 
+    // === Appels ===
     simpleBar('c_log_rate', LOGBENCH.rateFrac, LOGBENCH.rateBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
     simpleBar('c_log_fp', LOGBENCH.fpFrac, LOGBENCH.fpBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
     simpleBar('c_log_latency', LOGBENCH.latFrac, LOGBENCH.latBase, 'Fractus','Baseline',' ms', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
     simpleBar('c_log_acc', LOGBENCH.accFrac, LOGBENCH.accBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
 
-    /* ========== FRACTUS ENGINE VISUAL ========== */
-    (function(){
-      const canvas=document.getElementById("fractusCanvas"),ctx=canvas.getContext("2d");
-      function resize(){canvas.width=Math.min(window.innerWidth*0.9,720);canvas.height=400;}
-      resize();window.addEventListener("resize",resize);
-      let t=0;
-      function draw(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        const cx=canvas.width/2,cy=canvas.height/2;
-        for(let i=0;i<9;i++){
-          const r=40+i*35+Math.sin(t/20+i)*5;
+    /* ========== FRACTUS ENGINE VISUAL ANIMATION ========== */
+    (function() {
+      const canvas = document.getElementById("fractusCanvas");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = Math.min(window.innerWidth * 0.9, 720);
+        canvas.height = 400;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      let t = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        for (let i = 0; i < 9; i++) {
+          const r = 40 + i * 35 + Math.sin(t / 20 + i) * 5;
           ctx.beginPath();
-          ctx.strokeStyle=`hsl(${(t*3+i*40)%360},80%,70%)`;
-          ctx.lineWidth=1.3;
-          ctx.arc(cx,cy,r,0,Math.PI*2);
+          ctx.strokeStyle = `hsl(${(t * 3 + i * 40) % 360}, 80%, 70%)`;
+          ctx.lineWidth = 1.3;
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
           ctx.stroke();
         }
-        t+=0.8;requestAnimationFrame(draw);
-      } draw();
+        t += 0.8;
+        requestAnimationFrame(draw);
+      }
+      draw();
     })();
   </script>
 </body>
