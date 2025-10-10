@@ -423,6 +423,32 @@ footer {
 @media (max-width: 700px) {
   .links-card .x-timeline { max-width: 100%; }
 }
+/* ===== LINKS CARD + X TIMELINE ===== */
+.links-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.links-card .x-timeline {
+  width: 100%;
+  max-width: 380px;
+  min-height: 420px;
+  margin-top: 12px;
+  border: 1px solid rgba(127,255,212,0.1);
+  border-radius: 12px;
+  box-shadow: 0 0 22px rgba(127,255,212,0.12);
+  overflow: hidden;
+}
+
+.links-card .x-timeline iframe {
+  width: 100% !important;
+  border-radius: 12px;
+}
+
+@media (max-width: 700px) {
+  .links-card .x-timeline { max-width: 100%; }
+}
 
 
 
