@@ -1,5 +1,5 @@
 /* =========================================
-   FRACTUS DEMO — VERSION MATRIX 4.0
+   FRACTUS DEMO — VERSION MATRIX 4.1 (Refined)
    Auteur : Marc Cedrych (Fractys)
    ========================================= */
 
@@ -175,7 +175,7 @@
 }
 
 /* =========================================
-   FRACTUS ENGINE — MATRIX LAYOUT
+   FRACTUS ENGINE — MATRIX REFINED LAYOUT
    ========================================= */
 
 .fractus-lab-center {
@@ -183,20 +183,22 @@
   text-align: center;
 }
 
-/* Grille 3x2 équilibrée */
+/* Nouvelle grille ajustée */
 .fractus-grid-core {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, auto);
+  grid-template-rows: repeat(3, auto);
   grid-template-areas:
     "error entropy eff"
-    "stability center meta";
-  gap: 28px 36px;
-  align-items: stretch;
+    ". center ."
+    "stability . meta";
+  gap: 22px 36px;
+  align-items: center;
   justify-items: center;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 0;
+  padding: 20px 0 40px;
+  position: relative;
 }
 
 /* Zones */
@@ -206,20 +208,21 @@
 #card-eff       { grid-area: eff; }
 #card-meta      { grid-area: meta; }
 
-/* Cœur fractal */
+/* Cœur fractal ajusté */
 .engine-core {
   grid-area: center;
   background: radial-gradient(circle at center, rgba(0,255,200,0.06), rgba(0,0,0,1) 85%);
   border-radius: 20px;
   box-shadow: 0 0 30px rgba(127,255,212,0.12);
-  padding: 22px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 520px;
+  max-width: 460px;
   position: relative;
+  margin-top: -10px; /* remonte le centre */
 }
 
 .engine-core::before {
@@ -239,8 +242,8 @@
 
 .engine-core canvas {
   width: 100%;
-  max-width: 480px;
-  height: 320px;
+  max-width: 440px;
+  height: 300px;
   border-radius: 14px;
   border: 1px solid rgba(127,255,212,0.18);
   position: relative;
@@ -257,6 +260,13 @@
   border-radius: 14px;
   box-shadow: 0 0 15px rgba(127,255,212,0.05);
   padding: 12px 14px;
+  margin-top: 0;
+}
+
+#card-stability,
+#card-eff,
+#card-meta {
+  margin-top: -10px; /* remonte légèrement le bas */
 }
 
 /* Légendes sous la roue */
@@ -301,3 +311,4 @@ footer {
   text-align: center;
   padding-bottom: 20px;
 }
+
