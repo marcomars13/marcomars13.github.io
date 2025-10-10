@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/demo.css">
 
   <style>
+    /* ---- GENERAL STYLE ---- */
     .lab-section { padding: 40px 0 0; }
 
     .lab-title {
@@ -132,8 +133,8 @@
           <div class="lab-meta">Mean values with minor live variation</div>
           <canvas id="c_entropy" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Entropy: <span id="entropyVal" class="val">0.028</span></div>
-            <div>Coherence: <span id="cohVal" class="val">98.7 %</span></div>
+            <div>Entropy: <span class="val">0.028</span></div>
+            <div>Coherence: <span class="val">98.7 %</span></div>
           </div>
         </div>
         <div class="lab-card">
@@ -165,37 +166,21 @@
           <h4>Detection Rate (%)</h4>
           <div class="lab-meta">True positives / anomalies injected</div>
           <canvas id="c_log_rate" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Fractus: <span class="val">97.2 %</span></div>
-            <div>Baseline: <span class="val">95.4 %</span></div>
-          </div>
         </div>
         <div class="lab-card">
           <h4>False Positive Rate (%)</h4>
           <div class="lab-meta">Incorrect alerts / total alerts</div>
           <canvas id="c_log_fp" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Fractus: <span class="val">1.8 %</span></div>
-            <div>Baseline: <span class="val">3.2 %</span></div>
-          </div>
         </div>
         <div class="lab-card">
           <h4>Mean Detection Latency (ms)</h4>
           <div class="lab-meta">Time to alert</div>
           <canvas id="c_log_latency" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Fractus: <span class="val">45.3 ms</span></div>
-            <div>Baseline: <span class="val">62.7 ms</span></div>
-          </div>
         </div>
         <div class="lab-card">
           <h4>Accuracy / Throughput</h4>
           <div class="lab-meta">Correct detections per second</div>
           <canvas id="c_log_acc" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Fractus: <span class="val">98.1 %</span></div>
-            <div>Baseline: <span class="val">96.5 %</span></div>
-          </div>
         </div>
       </div>
     </section>
@@ -214,50 +199,66 @@
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-    function simpleBar(canvasId, valA, valB, labelA, labelB, unit, colorA, colorB) {
+    // --- Animated benchmark function ---
+    function animatedBar(canvasId, valA, valB, labelA, labelB, unit, colorA, colorB) {
       const c = document.getElementById(canvasId);
+      if (!c) return;
       const ctx = c.getContext("2d");
       const DPR = window.devicePixelRatio || 1;
-      function init() {
+
+      function resize() {
         const width = c.clientWidth || 300;
         const height = c.clientHeight || 150;
-        if (width === 0 || height === 0) return requestAnimationFrame(init);
         c.width = width * DPR;
         c.height = height * DPR;
         ctx.scale(DPR, DPR);
-        animate();
       }
-      let anim = 0;
+
+      resize();
+
       const pad = 12;
       const maxVal = Math.max(valA, valB) * 1.15;
+      let anim = 0;
+
       function animate() {
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
         ctx.fillStyle = "#0b0f10";
         ctx.fillRect(0, 0, c.clientWidth, c.clientHeight);
-        const wA = (valA / maxVal) * (c.clientWidth - pad * 2) * anim;
-        const wB = (valB / maxVal) * (c.clientWidth - pad * 2) * anim;
-        ctx.fillStyle = colorB; ctx.fillRect(pad, c.clientHeight * 0.6, wB, 20);
-        ctx.fillStyle = colorA; ctx.fillRect(pad, c.clientHeight * 0.6 - 30, wA, 20);
-        ctx.fillStyle = "#9adfce"; ctx.font = "12px ui-sans-serif";
+
+        const progress = Math.min(anim, 1);
+        const wA = (valA / maxVal) * (c.clientWidth - pad * 2) * progress;
+        const wB = (valB / maxVal) * (c.clientWidth - pad * 2) * progress;
+
+        ctx.fillStyle = colorB;
+        ctx.fillRect(pad, c.clientHeight * 0.6, wB, 20);
+
+        ctx.fillStyle = colorA;
+        ctx.fillRect(pad, c.clientHeight * 0.6 - 30, wA, 20);
+
+        ctx.fillStyle = "#9adfce";
+        ctx.font = "12px ui-sans-serif";
         ctx.fillText(`${labelA}: ${valA}${unit}`, pad, c.clientHeight * 0.6 - 12);
         ctx.fillText(`${labelB}: ${valB}${unit}`, pad, c.clientHeight * 0.6 + 35);
-        anim += 0.02; if (anim < 1) requestAnimationFrame(animate);
+
+        anim += 0.02;
+        if (anim < 1) requestAnimationFrame(animate);
       }
-      requestAnimationFrame(init);
+
+      animate();
     }
 
-    // === MAPILLARY SECTION ===
-    simpleBar('c_bench', 870, 1252, 'Fractus','Plonk',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_entropy', 0.028, 0.040, 'Entropy','Baseline','', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_stability', 90.4, 92.7, 'Fractus σ','Plonk σ',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_eff', 1.3, 1.0, 'Fractus','Baseline','×', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    // === MAPILLARY BENCHMARK ===
+    animatedBar('c_bench', 870, 1252, 'Fractus','Plonk',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_entropy', 0.028, 0.04, 'Entropy','Baseline','', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_stability', 90.4, 92.7, 'Fractus σ','Plonk σ',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_eff', 1.3, 1.0, 'Fractus','Baseline','×', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
 
-    // === LOGS SECTION ===
+    // === LOG BENCHMARK ===
     const LOGBENCH = { rateFrac:97.2, rateBase:95.4, fpFrac:1.8, fpBase:3.2, latFrac:45.3, latBase:62.7, accFrac:98.1, accBase:96.5 };
-    simpleBar('c_log_rate', LOGBENCH.rateFrac, LOGBENCH.rateBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_log_fp', LOGBENCH.fpFrac, LOGBENCH.fpBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_log_latency', LOGBENCH.latFrac, LOGBENCH.latBase, 'Fractus','Baseline',' ms', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    simpleBar('c_log_acc', LOGBENCH.accFrac, LOGBENCH.accBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_log_rate', LOGBENCH.rateFrac, LOGBENCH.rateBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_log_fp', LOGBENCH.fpFrac, LOGBENCH.fpBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_log_latency', LOGBENCH.latFrac, LOGBENCH.latBase, 'Fractus','Baseline',' ms', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBar('c_log_acc', LOGBENCH.accFrac, LOGBENCH.accBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
 
     // === FRACTUS ENGINE VISUAL ===
     (function() {
