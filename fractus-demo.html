@@ -280,50 +280,75 @@
       draw();
     }
 
-    /* -------------------------
-       5) Fractal engine (wheel)
-       ------------------------- */
-    const canvas = document.getElementById("fractusCanvas");
-    let ctxF, wF, hF;
-    function initFractal(){ ({ ctxF, wF, hF } = prepCanvas(canvas, Math.min(window.innerWidth*0.9,720), 400)); }
-    window.addEventListener("resize", initFractal);
-    initFractal();
+ /* -------------------------
+   5) Fractal engine (wheel)
+   ------------------------- */
+const canvas = document.getElementById("fractusCanvas");
+let ctxF = null, wF = 0, hF = 0;
 
-    function drawFractal(){
-      ctxF.clearRect(0,0,wF,hF);
-      // halo -> entropy
-      const eNorm = clamp((METRICS.entropy-0.028)/(0.045-0.028), 0, 1);
-      const radius = 50 + Math.sin(performance.now()*0.003)*(8*eNorm+2);
-      const grad = ctxF.createRadialGradient(wF/2,hF/2,0,wF/2,hF/2,radius+80);
-      grad.addColorStop(0, `rgba(127,255,212,${0.10 + 0.15*eNorm})`);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctxF.fillStyle = grad;
-      ctxF.beginPath(); ctxF.arc(wF/2,hF/2,radius+80,0,Math.PI*2); ctxF.fill();
+function initFractal() {
+  if (!canvas) return;
+  const res = prepCanvas(canvas, Math.min(window.innerWidth * 0.9, 720), 400);
+  ctxF = res.ctx;
+  wF = res.cssW;
+  hF = res.cssH;
+}
 
-      // anneaux
-      const rings=9, baseR=40, stepR=35, N=12;
-      for(let i=0;i<rings;i++){
-        const r = baseR + i*stepR + Math.sin(performance.now()*0.002+i)*2;
-        ctxF.beginPath();
-        ctxF.strokeStyle = `hsl(${(i*28 + performance.now()*0.02)%360},80%,70%)`;
-        ctxF.lineWidth = 1.1;
-        ctxF.arc(wF/2, hF/2, r, 0, Math.PI*2);
-        ctxF.stroke();
-      }
-      // points orbitaux (vitesse ↗ si entropy ↗)
-      const speed = lerp(0.6, 1.4, eNorm);
-      for(let i=0;i<N;i++){
-        const a = performance.now()*0.001*speed + i*0.52;
-        const r = baseR + (i%(rings-2))*stepR;
-        const x = wF/2 + Math.cos(a)*r;
-        const y = hF/2 + Math.sin(a)*r;
-        ctxF.beginPath();
-        ctxF.fillStyle = i%3===0 ? '#7fffd4' : (i%3===1 ? '#80c0ff' : '#ffe680');
-        ctxF.arc(x,y,3,0,Math.PI*2); ctxF.fill();
-      }
-      requestAnimationFrame(drawFractal);
-    }
-    drawFractal();
+window.addEventListener("resize", initFractal);
+initFractal();
+
+function drawFractal() {
+  if (!ctxF) {
+    requestAnimationFrame(drawFractal);
+    return;
+  }
+
+  ctxF.clearRect(0, 0, wF, hF);
+
+  // halo -> entropy
+  const eNorm = clamp((METRICS.entropy - 0.028) / (0.045 - 0.028), 0, 1);
+  const radius = 50 + Math.sin(performance.now() * 0.003) * (8 * eNorm + 2);
+  const grad = ctxF.createRadialGradient(wF / 2, hF / 2, 0, wF / 2, hF / 2, radius + 80);
+  grad.addColorStop(0, `rgba(127,255,212,${0.10 + 0.15 * eNorm})`);
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctxF.fillStyle = grad;
+  ctxF.beginPath();
+  ctxF.arc(wF / 2, hF / 2, radius + 80, 0, Math.PI * 2);
+  ctxF.fill();
+
+  // anneaux
+  const rings = 9, baseR = 40, stepR = 35, N = 12;
+  for (let i = 0; i < rings; i++) {
+    const r = baseR + i * stepR + Math.sin(performance.now() * 0.002 + i) * 2;
+    ctxF.beginPath();
+    ctxF.strokeStyle = `hsl(${(i * 28 + performance.now() * 0.02) % 360},80%,70%)`;
+    ctxF.lineWidth = 1.1;
+    ctxF.arc(wF / 2, hF / 2, r, 0, Math.PI * 2);
+    ctxF.stroke();
+  }
+
+  // points orbitaux (vitesse ↗ si entropy ↗)
+  const speed = lerp(0.6, 1.4, eNorm);
+  for (let i = 0; i < N; i++) {
+    const a = performance.now() * 0.001 * speed + i * 0.52;
+    const r = baseR + (i % (rings - 2)) * stepR;
+    const x = wF / 2 + Math.cos(a) * r;
+    const y = hF / 2 + Math.sin(a) * r;
+    ctxF.beginPath();
+    ctxF.fillStyle = i % 3 === 0 ? "#7fffd4" : (i % 3 === 1 ? "#80c0ff" : "#ffe680");
+    ctxF.arc(x, y, 3, 0, Math.PI * 2);
+    ctxF.fill();
+  }
+
+  requestAnimationFrame(drawFractal);
+}
+
+// ✅ Lance l’animation seulement après l’initialisation complète
+setTimeout(() => {
+  initFractal();
+  requestAnimationFrame(drawFractal);
+}, 200);
+
 
     /* -------------------------
        6) Hook bench & monitor to data
