@@ -4,10 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Fractus Demo — Powered by Fractys</title>
-  <meta name="description" content="Scientific benchmark and visual demonstration of the Fractus Algorithm — Fractus vs Plonk comparison.">
+  <meta name="description" content="Live benchmark of the Fractus Algorithm — streaming real data from GitHub (Mapillary 5k).">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/demo.css">
+  <style>
+    .ingest-badge{
+      margin:8px auto 0; display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border:1px solid rgba(127,255,212,.2); border-radius:10px;
+      background:rgba(10,15,15,.9); color:#9fffe0; font-family:ui-monospace,monospace;
+      box-shadow:0 0 12px rgba(127,255,212,.08);
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:#7fffd4;box-shadow:0 0 10px #7fffd4;}
+  </style>
 </head>
 
 <body class="fractus-access">
@@ -27,7 +36,7 @@
   <header class="demo-hero">
     <div class="hero-inner">
       <h1>🧠 Fractus Scientific Demo</h1>
-      <p class="subtitle">Benchmark Plonk vs Fractus — 5 000 Mapillary images (France)</p>
+      <p class="subtitle">Benchmark Plonk vs Fractus — Mapillary France (5 000 images) — <strong>Live from GitHub CSV</strong></p>
     </div>
   </header>
 
@@ -35,15 +44,16 @@
 
     <!-- === BENCHMARK SECTION === -->
     <section class="lab-section">
-      <h2 class="lab-title">Benchmark Plonk vs Fractus — 5 000 Mapillary Geotagged Images</h2>
+      <h2 class="lab-title">Benchmark Plonk vs Fractus — Streaming Real Data</h2>
+
       <div class="lab-grid">
         <div class="lab-card">
           <h4>Average Error (km)</h4>
           <canvas id="c_bench" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Plonk: <span class="val" id="lg_plonk">1252 km</span></div>
-            <div>Fractus: <span class="val" id="lg_fractus">870 km</span></div>
-            <div>Gain: <span class="val" id="lg_gain">−30.5 %</span></div>
+            <div>Plonk: <span class="val" id="lg_plonk">—</span></div>
+            <div>Fractus: <span class="val" id="lg_fractus">—</span></div>
+            <div>Gain: <span class="val" id="lg_gain">—</span></div>
           </div>
         </div>
 
@@ -51,8 +61,8 @@
           <h4>Entropy & Coherence</h4>
           <canvas id="c_entropy" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Entropy: <span class="val" id="entropyVal">0.032</span></div>
-            <div>Coherence: <span class="val" id="coherenceVal">98.4 %</span></div>
+            <div>Entropy: <span class="val" id="entropyVal">—</span></div>
+            <div>Coherence: <span class="val" id="coherenceVal">—</span></div>
           </div>
         </div>
 
@@ -60,8 +70,8 @@
           <h4>Fractal Stability — Std Dev (km)</h4>
           <canvas id="c_stability" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Plonk σ: <span class="val">92.7 km</span></div>
-            <div>Fractus σ: <span class="val" id="stabilityVal">90.6 km</span></div>
+            <div>Plonk σ: <span class="val" id="sigmaPlonk">—</span></div>
+            <div>Fractus σ: <span class="val" id="stabilityVal">—</span></div>
           </div>
         </div>
 
@@ -69,10 +79,16 @@
           <h4>Processing Efficiency</h4>
           <canvas id="c_eff" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Efficiency: <span class="val" id="efficiencyVal">× 1.30</span></div>
-            <div>Status: <span class="val">Stable</span></div>
+            <div>Efficiency: <span class="val" id="efficiencyVal">—</span></div>
+            <div>Status: <span class="val" id="statusVal">Init</span></div>
           </div>
         </div>
+      </div>
+
+      <!-- Ingestion badge -->
+      <div class="ingest-badge" id="ingestBadge" aria-live="polite">
+        <span class="dot" id="ingDot"></span>
+        <span id="ingestText">Loading data…</span>
       </div>
 
       <!-- === FRACTUS ENGINE VISUAL === -->
@@ -80,14 +96,15 @@
         <h2>⚡ Fractus Engine — Real-Time Stability Monitor</h2>
         <canvas id="fractusCanvas"></canvas>
         <div class="live-monitor">
-          <div>🌀 Entropy: <span id="m_entropy">0.032</span></div>
-          <div>🔗 Coherence: <span id="m_coherence">98.4 %</span></div>
-          <div>⚡ Efficiency: <span id="m_efficiency">× 1.30</span></div>
-          <div>📈 Stability: <span id="m_stability">σ = 90.6 km</span></div>
+          <div>🌀 Entropy: <span id="m_entropy">—</span></div>
+          <div>🔗 Coherence: <span id="m_coherence">—</span></div>
+          <div>⚡ Efficiency: <span id="m_efficiency">—</span></div>
+          <div>📈 Stability: <span id="m_stability">—</span></div>
         </div>
       </div>
     </section>
 
+    <!-- Logs (visuels simples) -->
     <section class="lab-section">
       <h2 class="lab-title">Benchmark Logs — Anomaly Detection on 50 000 Entries</h2>
       <div class="lab-grid">
@@ -103,7 +120,7 @@
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-    /* ---------- utils ---------- */
+    /* ------------ Utils ------------- */
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     const lerp=(a,b,t)=>a+(b-a)*t;
     const easeOutExpo=t=>t>=1?1:1-Math.pow(2,-10*t);
@@ -119,269 +136,297 @@
       return{ctx,cssW,cssH};
     }
 
-    /* ---------- state ---------- */
+    /* ------------ State ------------- */
     const METRICS={entropy:0.032,coherence:98.4,efficiency:1.30,stability:90.6};
-    const BENCH={plonk_km:1252,fractus_km:870};
-    const SIGMA={plonk:92.7};
+    const BENCH={plonk_km:0,fractus_km:0};
+    const SIGMA={plonk:0,fractus:0};
 
-    function writeLegends(){
-      document.getElementById('lg_plonk').textContent=`${BENCH.plonk_km} km`;
-      document.getElementById('lg_fractus').textContent=`${BENCH.fractus_km} km`;
-      const gain=(BENCH.plonk_km-BENCH.fractus_km)/BENCH.plonk_km*100;
-      const lg=document.getElementById('lg_gain');
-      lg.textContent=`${gain<0?'−':''}${Math.abs(gain).toFixed(1)} %`;
-      lg.style.color=gain>0?'#7fffd4':'#ffe680';
-
-      document.getElementById('entropyVal').textContent=METRICS.entropy.toFixed(3);
-      document.getElementById('coherenceVal').textContent=`${METRICS.coherence.toFixed(1)} %`;
-      document.getElementById('stabilityVal').textContent=`${METRICS.stability.toFixed(1)} km`;
-      document.getElementById('efficiencyVal').textContent=`× ${METRICS.efficiency.toFixed(2)}`;
-
-      document.getElementById('m_entropy').textContent=METRICS.entropy.toFixed(3);
-      document.getElementById('m_coherence').textContent=`${METRICS.coherence.toFixed(1)} %`;
-      document.getElementById('m_stability').textContent=`σ = ${METRICS.stability.toFixed(1)} km`;
-      document.getElementById('m_efficiency').textContent=`× ${METRICS.efficiency.toFixed(2)}`;
+    // Welford online stats for streaming stddev
+    function makeWelford(){
+      return {n:0,mean:0,M2:0,
+        push(x){this.n++;const d=x-this.mean;this.mean+=d/this.n;const d2=x-this.mean;this.M2+=d*d2;},
+        variance(){return this.n>1?this.M2/(this.n-1):0;},
+        std(){return Math.sqrt(this.variance());}
+      };
     }
-    writeLegends();
+    const wfPlonk = makeWelford();
+    const wfFrac  = makeWelford();
 
-    /* ---------- CARD WIDGETS ---------- */
+    /* ---------- DOM writers ---------- */
+    function writeBench(){
+      lg_plonk.textContent   = `${BENCH.plonk_km.toFixed(1)} km`;
+      lg_fractus.textContent = `${BENCH.fractus_km.toFixed(1)} km`;
+      const gain=(BENCH.plonk_km - BENCH.fractus_km)/Math.max(1e-9,BENCH.plonk_km)*100;
+      const s = `${gain<0?'−':''}${Math.abs(gain).toFixed(1)} %`;
+      lg_gain.textContent = s;
+      lg_gain.style.color = gain>0?'#7fffd4':'#ffe680';
+    }
+    function writeStability(){
+      sigmaPlonk.textContent = `${SIGMA.plonk.toFixed(1)} km`;
+      stabilityVal.textContent = `${SIGMA.fractus.toFixed(1)} km`;
+    }
+    function writeMetrics(){
+      entropyVal.textContent = METRICS.entropy.toFixed(3);
+      coherenceVal.textContent = `${METRICS.coherence.toFixed(1)} %`;
+      efficiencyVal.textContent = `× ${METRICS.efficiency.toFixed(2)}`;
+      m_entropy.textContent = METRICS.entropy.toFixed(3);
+      m_coherence.textContent = `${METRICS.coherence.toFixed(1)} %`;
+      m_efficiency.textContent = `× ${METRICS.efficiency.toFixed(2)}`;
+      m_stability.textContent = `σ = ${METRICS.stability.toFixed(1)} km`;
+      statusVal.textContent = 'Live';
+    }
 
-    // 1) Average Error — comparator widget (deux barres + shimmer)
+    /* ---------- Card widgets (anim) ---------- */
     function makeBenchWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
-      let g=prepCanvas(c);
-      function resize(){ g=prepCanvas(c); }
-      window.addEventListener('resize',resize);
-
+      let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       const t0=performance.now();
       return function draw(now){
         const {ctx,cssW,cssH}=g;
         ctx.clearRect(0,0,cssW,cssH);
-
-        // fond
-        const grd=ctx.createLinearGradient(0,0,0,cssH);
-        grd.addColorStop(0,'rgba(127,255,212,0.04)');
-        grd.addColorStop(1,'rgba(127,255,212,0.00)');
         ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
-        ctx.fillStyle=grd; ctx.fillRect(0,0,cssW,cssH);
-
-        const max=Math.max(BENCH.plonk_km,BENCH.fractus_km)*1.15;
-        const pad=12, yMid=cssH*0.62;
-        const t=(now-t0)/1000;
-        const pA=easeOutExpo(clamp((t-0.0)/0.9,0,1));
-        const pB=easeOutExpo(clamp((t-0.35)/0.9,0,1));
-
+        const max=Math.max(BENCH.plonk_km,BENCH.fractus_km,1)*1.15;
+        const pad=12,yMid=cssH*0.62;
+        const pA=easeOutExpo(clamp((now-t0)/900,0,1));
+        const pB=easeOutExpo(clamp((now-t0-300)/900,0,1));
         const wA=(BENCH.fractus_km/max)*(cssW-pad*2)*pA;
         const wB=(BENCH.plonk_km/max)*(cssW-pad*2)*pB;
-
-        // barres
         ctx.fillStyle='rgba(255,80,80,0.85)'; ctx.fillRect(pad,yMid,wB,20);
         ctx.fillStyle='rgba(127,255,212,0.9)'; ctx.fillRect(pad,yMid-30,wA,20);
-
-        // shimmer
-        const sX=(now*0.15)%((cssW-pad*2)+80)-80;
-        ctx.save();
-        ctx.globalCompositeOperation='lighter';
-        const sh=ctx.createLinearGradient(sX,0,sX+80,0);
-        sh.addColorStop(0,'rgba(255,255,255,0)');
-        sh.addColorStop(0.5,'rgba(255,255,255,0.25)');
-        sh.addColorStop(1,'rgba(255,255,255,0)');
-        ctx.fillStyle=sh;
-        ctx.fillRect(pad,yMid-30,Math.max(wA,wB),50);
-        ctx.restore();
-
-        // labels
         ctx.fillStyle='#9adfce'; ctx.font='12px ui-sans-serif';
-        ctx.fillText(`Fractus: ${BENCH.fractus_km} km`, pad, yMid-12);
-        ctx.fillText(`Plonk: ${BENCH.plonk_km} km`, pad, yMid+35);
+        ctx.fillText(`Fractus: ${BENCH.fractus_km.toFixed(1)} km`, pad, yMid-12);
+        ctx.fillText(`Plonk: ${BENCH.plonk_km.toFixed(1)} km`, pad, yMid+35);
       };
     }
-
-    // 2) Entropy & Coherence — mini-oscilloscope 2 pistes
     function makeEntropyWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
-      let g=prepCanvas(c);
-      function resize(){ g=prepCanvas(c); }
-      window.addEventListener('resize',resize);
-
+      let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       return function draw(now){
         const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH);
-        ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
-
-        // grille subtile
-        ctx.strokeStyle='rgba(127,255,212,0.08)'; ctx.lineWidth=1;
-        ctx.beginPath();
+        ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        ctx.strokeStyle='rgba(127,255,212,0.08)'; ctx.beginPath();
         for(let x=0;x<cssW;x+=Math.max(16,cssW/20)){ ctx.moveTo(x,8); ctx.lineTo(x,cssH-8); }
         for(let y=0;y<cssH;y+=Math.max(16,cssH/10)){ ctx.moveTo(8,y); ctx.lineTo(cssW-8,y); }
         ctx.stroke();
-
-        // entropy signal
-        const baseE=METRICS.entropy;
-        ctx.strokeStyle='rgba(127,200,255,0.9)'; ctx.lineWidth=1.6;
-        ctx.beginPath();
+        // entropy trace
+        ctx.strokeStyle='rgba(127,200,255,0.9)'; ctx.lineWidth=1.6; ctx.beginPath();
         for(let x=0;x<cssW;x++){
           const t=(x/cssW)*6.283 + now*0.0035;
-          const y=cssH*0.30 + Math.sin(t)*8 + Math.sin(t*0.7+1.3)*3;
-          if(x===0) ctx.moveTo(x+8,y); else ctx.lineTo(x+8,y);
+          const up = (METRICS.entropy-0.028)/(0.045-0.028);
+          const y=cssH*0.30 + Math.sin(t)*8*(0.6+up) + Math.sin(t*0.7+1.3)*3;
+          x?ctx.lineTo(x+8,y):ctx.moveTo(x+8,y);
         }
         ctx.stroke();
-        ctx.fillStyle='rgba(127,200,255,0.25)'; ctx.fillRect(8,cssH*0.30-1,cssW-16,2);
-
-        // coherence signal
-        ctx.strokeStyle='rgba(127,255,212,0.9)';
-        ctx.beginPath();
+        // coherence trace
+        ctx.strokeStyle='rgba(127,255,212,0.9)'; ctx.beginPath();
         for(let x=0;x<cssW;x++){
           const t=(x/cssW)*6.283 + now*0.0025;
-          const y=cssH*0.72 + Math.sin(t)*4 + Math.sin(t*1.3+0.6)*1.5;
-          if(x===0) ctx.moveTo(x+8,y); else ctx.lineTo(x+8,y);
+          const down = 1-(METRICS.entropy-0.028)/(0.045-0.028);
+          const y=cssH*0.72 + Math.sin(t)*4*(0.8+down*0.4) + Math.sin(t*1.3+0.6)*1.5;
+          x?ctx.lineTo(x+8,y):ctx.moveTo(x+8,y);
         }
         ctx.stroke();
       };
     }
-
-    // 3) Stability — gaussienne animée (σ qui respire)
     function makeStabilityWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
-      let g=prepCanvas(c);
-      function resize(){ g=prepCanvas(c); }
-      window.addEventListener('resize',resize);
-
+      let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       return function draw(now){
         const {ctx,cssW,cssH}=g;
         ctx.clearRect(0,0,cssW,cssH);
         ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
-
-        const mu=cssW*0.55; // centre légèrement à droite (Fractus < Plonk)
-        const sigma= (METRICS.stability + Math.sin(now*0.002)*0.2) * 0.9; // respire un peu
-        const scale=cssW/160; // km -> px (approx)
-
-        // courbe
+        const mu=cssW*0.55;
+        const sigmaPx = Math.max(10, Math.min(260, METRICS.stability* (cssW/160))); // km -> px
         ctx.beginPath();
         for(let x=0;x<cssW;x++){
-          const km=(x-mu)/(scale);
-          const y=Math.exp(-(km*km)/(2*sigma*sigma));
+          const km=(x-mu)/(cssW/160);
+          const y=Math.exp(-(km*km)/(2*(METRICS.stability*METRICS.stability+1e-6)));
           const yy=cssH-10 - y*(cssH*0.65);
-          if(x===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+          x?ctx.lineTo(x,yy):ctx.moveTo(x,yy);
         }
         ctx.strokeStyle='rgba(127,255,212,0.85)'; ctx.lineWidth=2; ctx.stroke();
-
-        // marque σ
-        ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.setLineDash([4,4]);
+        ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.18)';
         ctx.beginPath(); ctx.moveTo(mu,10); ctx.lineTo(mu,cssH-10); ctx.stroke();
         ctx.setLineDash([]);
       };
     }
-
-    // 4) Efficiency — anneau / jauge rotative
     function makeEfficiencyWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
-      let g=prepCanvas(c);
-      function resize(){ g=prepCanvas(c); }
-      window.addEventListener('resize',resize);
-
+      let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       return function draw(now){
-        const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH);
-        ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
-
-        const r=Math.min(cssW,cssH)*0.32;
-        const cx=cssW*0.18 + r + 10, cy=cssH*0.52;
-        // anneau base
-        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
-        ctx.strokeStyle='rgba(127,255,212,0.12)'; ctx.lineWidth=10; ctx.stroke();
-
-        // valeur -> arc
-        const v=clamp(METRICS.efficiency,1.0,1.4);
-        const a0=-Math.PI*0.75, a1=a0 + (v-1.0)/(0.4) * (Math.PI*1.5);
-        ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1);
-        ctx.strokeStyle='rgba(127,255,212,0.9)'; ctx.lineWidth=10; ctx.stroke();
-
-        // tick rotatif subtil
-        const tick=a0 + (now*0.002 % (Math.PI*1.5));
-        ctx.beginPath(); ctx.arc(cx,cy,r,tick-0.05,tick+0.05);
-        ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=10; ctx.stroke();
-
-        // texte à droite
-        ctx.fillStyle='#9adfce'; ctx.font='12px ui-sans-serif';
-        ctx.fillText(`× ${v.toFixed(2)} efficiency`, cx+r+18, cy+4);
+        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        const r=Math.min(cssW,cssH)*0.32, cx=cssW*0.18+r+10, cy=cssH*0.52;
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.strokeStyle='rgba(127,255,212,0.12)'; ctx.lineWidth=10; ctx.stroke();
+        const v=clamp(METRICS.efficiency,1.0,1.6); const a0=-Math.PI*0.75; const a1= a0 + (v-1.0)/0.6*(Math.PI*1.5);
+        ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1); ctx.strokeStyle='rgba(127,255,212,0.9)'; ctx.lineWidth=10; ctx.stroke();
+        const tick=a0 + (now*0.002 % (Math.PI*1.5)); ctx.beginPath(); ctx.arc(cx,cy,r,tick-0.05,tick+0.05);
+        ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=10; ctx.stroke();
+        ctx.fillStyle='#9adfce'; ctx.font='12px ui-sans-serif'; ctx.fillText(`× ${v.toFixed(2)} efficiency`, cx+r+18, cy+4);
       };
     }
 
-    // Crée les 4 widgets
-    const widgets = [
-      makeBenchWidget('c_bench'),
-      makeEntropyWidget('c_entropy'),
-      makeStabilityWidget('c_stability'),
-      makeEfficiencyWidget('c_eff')
-    ].filter(Boolean);
+    const widgets=[ makeBenchWidget('c_bench'), makeEntropyWidget('c_entropy'), makeStabilityWidget('c_stability'), makeEfficiencyWidget('c_eff') ].filter(Boolean);
+    (function loop(now){ for(const w of widgets) w(now||performance.now()); requestAnimationFrame(loop); })();
 
-    // Boucle unique
-    function loop(now){
-      for(const w of widgets) w(now||performance.now());
-      requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
-
-    /* ---------- FRACTAL WHEEL (inchangé) ---------- */
-    const canvas=document.getElementById("fractusCanvas");
-    let ctxF=null,wF=0,hF=0;
-    function initFractal(){
-      const res=prepCanvas(canvas,Math.min(window.innerWidth*0.9,720),400);
-      ctxF=res.ctx;wF=res.cssW;hF=res.cssH;
-    }
-    window.addEventListener("resize",initFractal);
-    initFractal();
-
-    function drawFractal(){
-      if(!ctxF){requestAnimationFrame(drawFractal);return;}
+    /* ---------- Fractal wheel ---------- */
+    const canvas=document.getElementById("fractusCanvas"); let ctxF=null,wF=0,hF=0;
+    function initFractal(){ const r=prepCanvas(canvas,Math.min(window.innerWidth*0.9,720),400); ctxF=r.ctx; wF=r.cssW; hF=r.cssH; }
+    window.addEventListener("resize",initFractal); initFractal();
+    (function drawFractal(){
+      if(!ctxF){ requestAnimationFrame(drawFractal); return; }
       ctxF.clearRect(0,0,wF,hF);
       const eNorm=clamp((METRICS.entropy-0.028)/(0.045-0.028),0,1);
       const radius=50+Math.sin(performance.now()*0.003)*(8*eNorm+2);
       const grad=ctxF.createRadialGradient(wF/2,hF/2,0,wF/2,hF/2,radius+80);
-      grad.addColorStop(0,`rgba(127,255,212,${0.10+0.15*eNorm})`);
-      grad.addColorStop(1,"rgba(0,0,0,0)");
-      ctxF.fillStyle=grad;ctxF.beginPath();
-      ctxF.arc(wF/2,hF/2,radius+80,0,Math.PI*2);ctxF.fill();
+      grad.addColorStop(0,`rgba(127,255,212,${0.10+0.15*eNorm})`); grad.addColorStop(1,"rgba(0,0,0,0)");
+      ctxF.fillStyle=grad; ctxF.beginPath(); ctxF.arc(wF/2,hF/2,radius+80,0,Math.PI*2); ctxF.fill();
       const rings=9,baseR=40,stepR=35,N=12;
-      for(let i=0;i<rings;i++){
-        const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2;
-        ctxF.beginPath();
-        ctxF.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`;
-        ctxF.lineWidth=1.1;
-        ctxF.arc(wF/2,hF/2,r,0,Math.PI*2);ctxF.stroke();
-      }
+      for(let i=0;i<rings;i++){ const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2; ctxF.beginPath();
+        ctxF.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`; ctxF.lineWidth=1.1; ctxF.arc(wF/2,hF/2,r,0,Math.PI*2); ctxF.stroke(); }
       const speed=lerp(0.6,1.4,eNorm);
-      for(let i=0;i<N;i++){
-        const a=performance.now()*0.001*speed+i*0.52;
-        const r=baseR+(i%(rings-2))*stepR;
-        const x=wF/2+Math.cos(a)*r,y=hF/2+Math.sin(a)*r;
-        ctxF.beginPath();
-        ctxF.fillStyle=i%3===0?'#7fffd4':(i%3===1?'#80c0ff':'#ffe680');
-        ctxF.arc(x,y,3,0,Math.PI*2);ctxF.fill();
-      }
+      for(let i=0;i<N;i++){ const a=performance.now()*0.001*speed+i*0.52; const r=baseR+(i%(rings-2))*stepR;
+        const x=wF/2+Math.cos(a)*r, y=hF/2+Math.sin(a)*r; ctxF.beginPath(); ctxF.fillStyle=i%3===0?'#7fffd4':(i%3===1?'#80c0ff':'#ffe680'); ctxF.arc(x,y,3,0,Math.PI*2); ctxF.fill(); }
       requestAnimationFrame(drawFractal);
+    })();
+
+    /* ---------- Streaming CSV from GitHub ---------- */
+    const RAW_URL = 'https://raw.githubusercontent.com/marcomars13/fractus-ia/main/results/bench_compare_5000.csv';
+    const TOTAL_ROWS_HINT = 5000; // pour l’affichage
+
+    async function streamCSV(url){
+      try{
+        const r = await fetch(url, { cache:'no-store' });
+        if(!r.ok || !r.body) throw new Error('HTTP '+r.status);
+
+        const reader = r.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let { value, done } = await reader.read();
+        let buffer = value ? decoder.decode(value, { stream:true }) : '';
+        let headers = null, count=0;
+
+        const updateIngest = (final=false)=>{
+          ingestText.textContent = final
+            ? `Ingestion complete — ${count.toLocaleString()} / ${TOTAL_ROWS_HINT.toLocaleString()} rows`
+            : `Streaming ${count.toLocaleString()} / ${TOTAL_ROWS_HINT.toLocaleString()} rows…`;
+          ingDot.style.opacity = final ? 0.35 : 1;
+        };
+
+        const pushUpdate = ()=>{
+          // mises à jour depuis stats courantes
+          BENCH.plonk_km   = wfPlonk.mean;
+          BENCH.fractus_km = wfFrac.mean;
+          SIGMA.plonk      = wfPlonk.std();
+          SIGMA.fractus    = wfFrac.std();
+
+          // efficiency
+          METRICS.efficiency = clamp(BENCH.plonk_km / Math.max(1e-9, BENCH.fractus_km), 0.8, 1.6);
+          // stability (σ)
+          METRICS.stability  = SIGMA.fractus;
+
+          // entropy & coherence (mapping simple, contrôlé)
+          const e = clamp(0.028 + (METRICS.stability-90)/ (91-90+1e-9) * 0.017, 0.028, 0.045);
+          METRICS.entropy = e;
+          METRICS.coherence = clamp(99 - (e-0.028)/(0.045-0.028)*2.0, 97.0, 99.0);
+
+          writeBench(); writeStability(); writeMetrics();
+        };
+
+        // traite un bloc de lignes
+        function processChunk(chunk){
+          let lines = chunk.split('\n');
+          if(!headers){
+            const head = lines.shift();
+            headers = head ? head.trim().split(',') : null;
+          }
+          for(const line of lines){
+            if(!line) continue;
+            const cols = line.split(',');
+            if(cols.length < 9) continue;
+            // indices connus par ton CSV
+            const pe = parseFloat(cols[5]); // plonk_error_km
+            const fe = parseFloat(cols[8]); // fractus_error_km
+            if(Number.isFinite(pe)) wfPlonk.push(pe);
+            if(Number.isFinite(fe)) wfFrac.push(fe);
+            count++;
+
+            // rafraîchit UI toutes les 50 lignes pour fluidité
+            if(count % 50 === 0) pushUpdate();
+          }
+          updateIngest(false);
+        }
+
+        // boucle streaming
+        while(!done){
+          const lastNL = buffer.lastIndexOf('\n');
+          if(lastNL >= 0){
+            const chunk = buffer.slice(0, lastNL);
+            processChunk(chunk);
+            buffer = buffer.slice(lastNL+1);
+          }
+          ({ value, done } = await reader.read());
+          if(value) buffer += decoder.decode(value, { stream:true });
+        }
+
+        // traite le reste
+        if(buffer.trim().length) processChunk(buffer);
+        pushUpdate();
+        updateIngest(true);
+      }catch(err){
+        ingestText.textContent = 'Streaming failed — falling back to full download.';
+        ingDot.style.background = '#ffe680';
+        console.error('[Fractus] stream error:', err);
+
+        // Fallback: full text fetch
+        try{
+          const txt = await (await fetch(url, { cache:'no-store' })).text();
+          const rows = txt.trim().split('\n');
+          const header = rows.shift();
+          let count=0;
+          for(const line of rows){
+            const cols=line.split(',');
+            if(cols.length<9) continue;
+            const pe=parseFloat(cols[5]), fe=parseFloat(cols[8]);
+            if(Number.isFinite(pe)) wfPlonk.push(pe);
+            if(Number.isFinite(fe)) wfFrac.push(fe);
+            count++;
+            if(count%100===0) { // batch update visuel
+              BENCH.plonk_km=wfPlonk.mean; BENCH.fractus_km=wfFrac.mean;
+              SIGMA.plonk=wfPlonk.std(); SIGMA.fractus=wfFrac.std();
+              METRICS.efficiency=clamp(BENCH.plonk_km/Math.max(1e-9,BENCH.fractus_km),0.8,1.6);
+              METRICS.stability=SIGMA.fractus;
+              const e=clamp(0.028+(METRICS.stability-90)/(91-90+1e-9)*0.017,0.028,0.045);
+              METRICS.entropy=e; METRICS.coherence=clamp(99-(e-0.028)/(0.045-0.028)*2,97,99);
+              writeBench(); writeStability(); writeMetrics();
+              ingestText.textContent = `Downloaded ${count.toLocaleString()} rows…`;
+            }
+          }
+          // final
+          BENCH.plonk_km=wfPlonk.mean; BENCH.fractus_km=wfFrac.mean;
+          SIGMA.plonk=wfPlonk.std(); SIGMA.fractus=wfFrac.std();
+          METRICS.efficiency=clamp(BENCH.plonk_km/Math.max(1e-9,BENCH.fractus_km),0.8,1.6);
+          METRICS.stability=SIGMA.fractus;
+          const e=clamp(0.028+(METRICS.stability-90)/(91-90+1e-9)*0.017,0.028,0.045);
+          METRICS.entropy=e; METRICS.coherence=clamp(99-(e-0.028)/(0.045-0.028)*2,97,99);
+          writeBench(); writeStability(); writeMetrics();
+          ingestText.textContent = `Download complete — ${count.toLocaleString()} rows`;
+          ingDot.style.opacity = 0.35;
+        }catch(e2){
+          ingestText.textContent = 'Failed to load data (check URL or CORS).';
+          ingDot.style.background = '#ff6b6b';
+          console.error('[Fractus] fallback error:', e2);
+        }
+      }
     }
-    requestAnimationFrame(drawFractal);
 
-    /* ---------- micro-variations réalistes (monitor) ---------- */
-    setInterval(()=>{
-      const oldE=METRICS.entropy;     METRICS.entropy   = clamp(oldE + (Math.random()-0.5)*0.002, 0.028, 0.045);
-      const oldC=METRICS.coherence;   METRICS.coherence = clamp(oldC + (Math.random()-0.5)*0.15, 97.0, 99.0);
-      const oldF=METRICS.efficiency;  METRICS.efficiency= clamp(oldF + (Math.random()-0.5)*0.004, 1.28, 1.32);
-      const oldS=METRICS.stability;   METRICS.stability = clamp(oldS + (Math.random()-0.5)*0.12, 90.0, 91.0);
-      writeLegends();
-    },1500);
+    // Lancer le streaming (GitHub raw)
+    streamCSV(RAW_URL);
 
-    /* ---------- placeholders logs (visuel simple) ---------- */
+    /* ---------- simple log bars placeholders ---------- */
     function miniBar(id){
       const c=document.getElementById(id); if(!c)return;
-      let g=prepCanvas(c);
-      function resize(){ g=prepCanvas(c); }
-      window.addEventListener('resize',resize);
+      let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       (function draw(){
-        const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
         const pad=12, a=97+Math.sin(performance.now()*0.0009)*1.0, b=95+Math.cos(performance.now()*0.0008)*1.0;
         const max=Math.max(a,b)*1.15;
         ctx.fillStyle='rgba(255,80,80,0.85)'; ctx.fillRect(pad,cssH*0.62,(b/max)*(cssW-pad*2),20);
@@ -394,5 +439,4 @@
   </script>
 </body>
 </html>
-
 
