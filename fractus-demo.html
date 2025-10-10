@@ -26,10 +26,6 @@
       box-shadow: 0 0 25px rgba(127, 255, 212, 0.25);
     }
 
-    .demo-card img {
-      display: none;
-    }
-
     .demo-overlay {
       position: relative;
       inset: 0;
@@ -85,6 +81,22 @@
       font-size: 0.95rem;
       opacity: 0.85;
       margin-top: 14px;
+    }
+
+    /* --------- Légende dynamique --------- */
+    .dynamic-legend {
+      margin-top: 10px;
+      font-family: monospace;
+      color: #9fffe0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 8px rgba(127,255,212,0.3);
+    }
+
+    .dynamic-legend span.value {
+      color: #7fffd4;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -169,6 +181,9 @@
       <section class="fractus-visual">
         <canvas id="fractusCanvas"></canvas>
         <p class="caption">Fractal pattern coherence simulation — energy layers in continuous self-similarity.</p>
+        <div class="dynamic-legend">
+          Entropy: <span id="entropy" class="value">0.000</span> ↓ | Coherence: <span id="coherence" class="value">100.0%</span> ↑
+        </div>
       </section>
 
       <a href="/fractus-access.html" class="btn glow">🚀 Try Fractus Engine</a>
@@ -184,6 +199,8 @@
   <script>
     const canvas = document.getElementById("fractusCanvas");
     const ctx = canvas.getContext("2d");
+    const entropyEl = document.getElementById("entropy");
+    const coherenceEl = document.getElementById("coherence");
 
     function resizeCanvas() {
       canvas.width = Math.min(window.innerWidth * 0.9, 720);
@@ -192,7 +209,8 @@
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    let t = 0;
+    let t = 0, entropy = 0.03, coherence = 98.7;
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const cx = canvas.width / 2;
@@ -217,6 +235,16 @@
           ctx.fill();
         }
       }
+
+      // Légende dynamique simulée
+      entropy += (Math.random() - 0.5) * 0.002;
+      coherence += (Math.random() - 0.5) * 0.08;
+      entropy = Math.max(0.01, Math.min(0.05, entropy));
+      coherence = Math.max(97.8, Math.min(99.9, coherence));
+
+      entropyEl.textContent = entropy.toFixed(3);
+      coherenceEl.textContent = coherence.toFixed(1) + "%";
+
       t += 0.8;
       requestAnimationFrame(draw);
     }
