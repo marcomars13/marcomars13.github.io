@@ -1,5 +1,5 @@
 /* =========================================
-   FRACTUS DEMO — VERSION ORBITAL 2.0
+   FRACTUS DEMO — VERSION MATRIX 4.0
    Auteur : Marc Cedrych (Fractys)
    ========================================= */
 
@@ -23,8 +23,8 @@
 }
 
 .demo-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 35px rgba(127, 255, 212, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px rgba(127, 255, 212, 0.25);
 }
 
 /* ====== IMAGES ====== */
@@ -38,8 +38,8 @@
 }
 
 .demo-card:hover img {
-  opacity: 0.4;
-  transform: scale(1.05);
+  opacity: 0.5;
+  transform: scale(1.04);
 }
 
 /* ====== OVERLAY TEXTE ====== */
@@ -54,8 +54,6 @@
   color: #c8fff2;
   text-align: left;
   z-index: 2;
-  opacity: 1;
-  transition: opacity 0.3s ease;
 }
 
 .demo-overlay h3 {
@@ -125,30 +123,19 @@
   box-shadow: 0 0 14px rgba(127,255,212,0.08);
   position: relative;
   overflow: hidden;
-  animation: orbit 8s ease-in-out infinite;
-  animation-delay: calc(var(--i, 0) * 1.5s);
+  transition: all 0.3s ease;
 }
 
-.lab-card::after {
-  content: "";
-  position: absolute;
-  inset: -25%;
-  background: radial-gradient(60% 60% at 30% 30%, rgba(127,255,212,0.05), transparent 60%);
-  animation: breathe 4.6s ease-in-out infinite;
-  pointer-events: none;
+.lab-card:hover {
+  border-color: rgba(127,255,212,0.25);
+  box-shadow: 0 0 25px rgba(127,255,212,0.12);
 }
 
-@keyframes breathe {
-  0%,100% { transform: scale(1); opacity: .7; }
-  50% { transform: scale(1.05); opacity: 1; }
+.lab-card h4 {
+  margin: 0 0 8px;
+  color: #bfffea;
+  font-weight: 600;
 }
-
-@keyframes orbit {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-.lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
 
 .lab-meta {
   font-size: 0.86rem;
@@ -188,25 +175,24 @@
 }
 
 /* =========================================
-   FRACTUS ENGINE — ORBITAL LAYOUT
+   FRACTUS ENGINE — MATRIX LAYOUT
    ========================================= */
 
 .fractus-lab-center {
-  padding: 30px 0 60px;
+  padding: 40px 0 60px;
   text-align: center;
 }
 
-/* Nouvelle grille orbitale */
+/* Grille 3x2 équilibrée */
 .fractus-grid-core {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
   grid-template-areas:
-    ". entropy eff"
-    "error center stability"
-    ". logs meta";
-  gap: 26px 36px;
-  align-items: center;
+    "error entropy eff"
+    "stability center meta";
+  gap: 28px 36px;
+  align-items: stretch;
   justify-items: center;
   max-width: 1200px;
   margin: 0 auto;
@@ -214,20 +200,19 @@
 }
 
 /* Zones */
-#card-error     { grid-area: error; --i:1; }
-#card-entropy   { grid-area: entropy; --i:2; }
-#card-stability { grid-area: stability; --i:3; }
-#card-eff       { grid-area: eff; --i:4; }
-#card-logs      { grid-area: logs; --i:5; }
-#card-meta      { grid-area: meta; --i:6; }
+#card-error     { grid-area: error; }
+#card-entropy   { grid-area: entropy; }
+#card-stability { grid-area: stability; }
+#card-eff       { grid-area: eff; }
+#card-meta      { grid-area: meta; }
 
 /* Cœur fractal */
 .engine-core {
   grid-area: center;
-  background: radial-gradient(circle at center, rgba(0,255,180,0.08), rgba(0,0,0,1) 85%);
+  background: radial-gradient(circle at center, rgba(0,255,200,0.06), rgba(0,0,0,1) 85%);
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(127,255,212,0.18);
-  padding: 20px;
+  box-shadow: 0 0 30px rgba(127,255,212,0.12);
+  padding: 22px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -242,14 +227,14 @@
   position: absolute;
   inset: -4px;
   border-radius: 22px;
-  background: radial-gradient(circle at 50% 50%, rgba(127,255,212,0.05), transparent 80%);
-  animation: pulse-halo 5s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 50%, rgba(127,255,212,0.04), transparent 80%);
+  animation: pulse-halo 6s ease-in-out infinite;
   z-index: 0;
 }
 
 @keyframes pulse-halo {
   0%,100% { opacity: .4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+  50% { opacity: 0.9; transform: scale(1.03); }
 }
 
 .engine-core canvas {
@@ -257,12 +242,12 @@
   max-width: 480px;
   height: 320px;
   border-radius: 14px;
-  border: 1px solid rgba(127,255,212,0.2);
+  border: 1px solid rgba(127,255,212,0.18);
   position: relative;
   z-index: 1;
 }
 
-/* Cartes orbitantes */
+/* Cartes */
 .lab-card {
   width: 100%;
   max-width: 320px;
@@ -270,7 +255,7 @@
   background: rgba(0, 10, 10, 0.65);
   border: 1px solid rgba(127,255,212,0.12);
   border-radius: 14px;
-  box-shadow: 0 0 20px rgba(127,255,212,0.05);
+  box-shadow: 0 0 15px rgba(127,255,212,0.05);
   padding: 12px 14px;
 }
 
@@ -300,7 +285,6 @@
       "eff"
       "error"
       "stability"
-      "logs"
       "meta";
     grid-template-columns: 1fr;
     gap: 22px;
