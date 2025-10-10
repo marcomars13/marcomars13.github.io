@@ -206,3 +206,13 @@
   max-width: 720px;
   height: 400px;
 }
+/* === FIX Fractus Engine canvas visibility === */
+#fractusCanvas {
+  min-height: 400px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  display: block;
+  position: relative;
+  background: radial-gradient(circle at center, rgba(0,255,180,0.06), #000 90%) !important;
+  z-index: 2;
+}
