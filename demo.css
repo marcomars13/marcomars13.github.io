@@ -1,5 +1,5 @@
 /* =========================================
-   FRACTUS DEMO — VERSION STABLE UNIFIÉE
+   FRACTUS DEMO — VERSION STABLE 3.2
    Auteur : Marc Cedrych (Fractys)
    ========================================= */
 
@@ -58,10 +58,6 @@
   transition: opacity 0.3s ease;
 }
 
-.demo-card:hover .demo-overlay {
-  opacity: 1;
-}
-
 .demo-overlay h3 {
   margin: 0 0 4px;
   font-size: 1.1rem;
@@ -73,27 +69,6 @@
   font-size: 0.9rem;
   line-height: 1.4;
   color: #bdfaea;
-}
-
-/* ====== SECTION ENGINE IMAGE ====== */
-.demo-engine {
-  text-align: center;
-  padding: 60px 20px 100px;
-}
-
-.demo-engine h2 {
-  color: #7fffd4;
-  margin-bottom: 12px;
-  text-shadow: 0 0 12px rgba(127, 255, 212, 0.4);
-}
-
-.demo-engine img {
-  max-width: 720px;
-  width: 100%;
-  border-radius: 16px;
-  border: 1px solid rgba(127, 255, 212, 0.15);
-  box-shadow: 0 0 35px rgba(127, 255, 212, 0.15);
-  margin-top: 20px;
 }
 
 /* ====== BOUTONS ====== */
@@ -166,11 +141,7 @@
   50% { transform: scale(1.05); opacity: 1; }
 }
 
-.lab-card h4 {
-  margin: 0 0 8px;
-  color: #bfffea;
-  font-weight: 600;
-}
+.lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
 
 .lab-meta {
   font-size: 0.86rem;
@@ -179,7 +150,6 @@
   margin-bottom: 10px;
 }
 
-/* ✅ Correction : hauteur canvas stable */
 .lab-canvas {
   width: 100%;
   min-height: 160px;
@@ -220,6 +190,11 @@
   color: #bfffea;
   max-width: 1080px;
   margin: 0 auto;
+  animation: fadeInLab 1s ease forwards;
+  opacity: 0;
+}
+@keyframes fadeInLab {
+  to { opacity: 1; }
 }
 
 .fractus-visual h2 {
