@@ -1,0 +1,126 @@
+/* =========================================
+   FRACTYS — DEMO PAGE STYLES
+   Version : 1.0 (Fractus Proof of Pattern)
+   ========================================= */
+
+.demo-hero {
+  text-align: center;
+  padding: 140px 20px 80px;
+  background: radial-gradient(circle at center, rgba(0,255,200,0.1), #000 85%);
+  color: var(--fg);
+}
+.demo-hero h1 {
+  color: var(--accent);
+  font-size: 2.8rem;
+  text-shadow: 0 0 25px rgba(127,255,212,0.4);
+}
+.demo-hero .subtitle {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-top: 10px;
+}
+
+.demo-intro {
+  max-width: 900px;
+  margin: 0 auto 60px;
+  font-size: 1.1rem;
+  color: var(--fg);
+  opacity: 0.9;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* GRID */
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto 100px;
+  padding: 0 20px;
+}
+.demo-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(127,255,212,0.15);
+  box-shadow: 0 0 25px rgba(127,255,212,0.08);
+  transition: all 0.35s ease;
+}
+.demo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.demo-card:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+.demo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  opacity: 0;
+  color: var(--accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  transition: opacity 0.35s ease;
+}
+.demo-card:hover .demo-overlay {
+  opacity: 1;
+}
+.demo-overlay h3 {
+  color: var(--accent);
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+.demo-overlay p {
+  color: var(--fg);
+  opacity: 0.9;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* ENGINE SECTION */
+.demo-engine {
+  text-align: center;
+  padding: 80px 20px;
+  border-top: 1px solid rgba(127,255,212,0.1);
+  background: radial-gradient(circle at center, rgba(0,255,180,0.05), #000 90%);
+}
+.demo-engine h2 {
+  color: var(--accent);
+  font-size: 2rem;
+  text-shadow: 0 0 25px rgba(127,255,212,0.35);
+}
+.demo-engine p {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  color: var(--fg);
+  opacity: 0.9;
+  line-height: 1.6;
+}
+.engine-img {
+  max-width: 700px;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(127,255,212,0.15);
+  box-shadow: 0 0 35px rgba(127,255,212,0.15);
+  margin-bottom: 40px;
+  transition: transform 0.4s ease;
+}
+.engine-img:hover {
+  transform: scale(1.03);
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .demo-hero { padding: 100px 15px 50px; }
+  .demo-hero h1 { font-size: 2.2rem; }
+  .demo-intro { font-size: 1rem; padding: 0 15px; }
+}
