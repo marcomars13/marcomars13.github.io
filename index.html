@@ -1,19 +1,144 @@
-/* ===== LINKS CARD + X TIMELINE ===== */
-.links-card { display: flex; flex-direction: column; align-items: center; }
-.links-card .social-icons { gap: 26px; margin-bottom: 14px; }
-.links-card .x-timeline {
-  width: 100%;
-  max-width: 380px;
-  margin: 6px auto 0;
-  border-radius: 12px;
-  border: 1px solid rgba(127,255,212,0.10);
-  box-shadow: 0 0 22px rgba(127,255,212,0.12);
-  overflow: hidden; /* coupe proprement si l'iframe dépasse */
-}
-.links-card .x-timeline iframe { display: block; width: 100% !important; }
-@media (max-width: 700px) {
-  .links-card .x-timeline { max-width: 100%; }
-}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fractys (FTS) — Official</title>
+  <meta name="description" content="Created by Marc Cedrych, France — Author & Researcher.">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
+</head>
 
+<body>
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="fractal-bg">
+      <img src="fractys-banner.png" alt="Fractys background">
+    </div>
+    <div class="hero-inner">
+      <h1>FRACTYS</h1>
+      <div class="sub">(FTS)</div>
+    </div>
+  </section>
 
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="brand">
+      <img src="logo.png" alt="Fractys logo"/>
+      <span>Fractys (FTS)</span>
+    </div>
+    <div class="links">
+      <a href="index.html" class="active">Home</a>
+      <a href="airdrop.html">Airdrop</a>
+      <a href="fractus-access.html">Fractus Access</a>
+      <a href="fractus-demo.html">Demo</a>
+      <a href="https://marcomars13.github.io/Fractys_Whitepaper_v2.0.png" target="_blank">Whitepaper</a>
+      <a href="https://solscan.io/token/BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy" target="_blank">Token</a>
+      <a href="https://github.com/marcomars13" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="container">
+    <section class="section">
+      <div class="grid">
+
+        <!-- ABOUT -->
+        <div class="card">
+          <h3>About</h3>
+          <p>
+            <strong>Fractys</strong> is the evolution of the <em>Fractus Algorithm</em> — a next-generation fractal engine merging AI, mathematics, and blockchain validation.
+            Its goal is to make advanced pattern analysis accessible through transparent and decentralized tools.
+            Fractys aims to build a simple, ethical, and verifiable ecosystem where innovation serves knowledge, not speculation.
+          </p>
+          <p><a class="btn" href="https://marcomars13.github.io/Fractys_Whitepaper_v2.0.png" target="_blank">Read the Whitepaper (EN/FR) →</a></p>
+        </div>
+
+        <!-- PURPOSE -->
+        <div class="card">
+          <h3>Purpose of the Token</h3>
+          <p>
+            The <strong>FTS</strong> token is the utility key of the <em>Fractus Algorithm</em>. It allows users to acquire different levels of 
+            <strong>Fractus Licenses®</strong> — Trial, Research, or Professional — granting access to real data analysis modules such as DNA sequencing, anomaly detection, and AI validation.
+            Beyond its utility, FTS remains a tradable and verifiable digital asset on the Solana network, fully transparent and locked for one year.
+            <br><em>(Fractus Licenses® — patent pending)</em>
+          </p>
+          <p><a class="btn" href="https://solscan.io/token/BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy" target="_blank">Open Token Page →</a></p>
+          <p><a class="btn" href="fractus-access.html">⚡ Explore Fractus Access</a></p>
+        </div>
+
+        <!-- OFFICIAL LINKS + X FEED -->
+        <div class="card links-card">
+          <h3>Official Links</h3>
+          <div class="social-icons">
+            <a href="https://x.com/MarcFractys" target="_blank" title="X (Twitter)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2H21l-6.475 7.396L22 22h-5.654l-4.377-6.44L6.018 22H3.25l6.89-7.872L2 2h5.75l4.006 5.93L18.244 2zm-2.037 18h1.17L8.338 4h-1.26l9.129 16z"/>
+              </svg>
+            </a>
+            <a href="https://t.me/FractysToken" target="_blank" title="Telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9.993 15.574l-.395 4.453c.564 0 .806-.243 1.097-.534l2.628-2.497 5.443 3.99c.997.549 1.704.26 1.96-.918l3.55-16.662c.316-1.422-.513-1.977-1.488-1.632L1.723 9.683c-1.378.54-1.357 1.313-.235 1.66l4.37 1.364 10.145-6.4c.477-.289.911-.13.553.184"/>
+              </svg>
+            </a>
+            <a href="https://github.com/marcomars13" target="_blank" title="GitHub">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.084 3.292 9.388 7.861 10.912.575.106.788-.25.788-.555v-1.936c-3.202.694-3.878-1.376-3.878-1.376-.523-1.327-1.278-1.682-1.278-1.682-1.045-.715.08-.7.08-.7 1.155.082 1.764 1.187 1.764 1.187 1.027 1.758 2.696 1.25 3.352.956.103-.743.402-1.25.73-1.54-2.554-.29-5.238-1.277-5.238-5.681 0-1.255.448-2.282 1.184-3.087-.119-.29-.512-1.458.112-3.04 0 0 .965-.308 3.164 1.176A10.978 10.978 0 0 1 12 6.844a10.94 10.94 0 0 1 2.88.387c2.197-1.484 3.16-1.176 3.16-1.176.626 1.582.233 2.75.115 3.04.738.805 1.182 1.832 1.182 3.087 0 4.418-2.69 5.387-5.252 5.673.414.358.782 1.068.782 2.152v3.189c0 .309.21.666.794.552C20.714 21.38 24 17.08 24 12 24 5.648 18.852.5 12 .5z"/>
+              </svg>
+            </a>
+          </div>
+
+          <div class="x-timeline">
+            <!-- Timeline X officielle -->
+            <a class="twitter-timeline"
+               data-theme="dark"
+               data-chrome="transparent nofooter noheader noborders"
+               data-tweet-limit="3"
+               href="https://twitter.com/MarcFractys">
+               Tweets by @MarcFractys
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AIRDROP BANNER (clean, sans logo) -->
+    <section class="airdrop-banner clean">
+      <div class="airdrop-content">
+        <h2>🎁 Fractys Airdrop is Coming</h2>
+        <p>
+          Be ready to claim your FTS reward and join the network.<br>
+          Each transaction strengthens open research and the Fractys ecosystem.
+        </p>
+        <a href="airdrop.html" class="btn glow">⚡ Go to Airdrop Page</a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      © 2025 Fractys — Created by Marc Cedrych — Built on Solana
+    </footer>
+  </main>
+
+  <!-- COUNTDOWN (si utilisé sur d'autres pages) -->
+  <script>
+    const launchDate = new Date("October 22, 2025 18:00:00").getTime();
+    setInterval(() => {
+      const el = document.getElementById("countdown");
+      if (!el) return;
+      const diff = launchDate - new Date().getTime();
+      if (diff < 0) { el.textContent = "🚀 LIVE!"; return; }
+      const d = Math.floor(diff/(1000*60*60*24));
+      const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+      const m = Math.floor((diff%(1000*60*60))/(1000*60));
+      const s = Math.floor((diff%(1000*60))/1000);
+      el.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  </script>
+
+  <!-- Script officiel des widgets X (nécessaire pour la timeline) -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>
 
