@@ -88,16 +88,8 @@
             </a>
           </div>
 
-          <!-- Flux X (Twitter) intégré -->
-          <div class="x-timeline">
-            <a class="twitter-timeline"
-               data-theme="dark"
-               data-chrome="noheader nofooter noborders transparent"
-               data-tweet-limit="3"
-               href="https://twitter.com/MarcFractys?ref_src=twsrc%5Etfw">
-               Loading @MarcFractys feed...
-            </a>
-          </div>
+          <!-- Flux X intégré proprement -->
+          <div class="x-timeline" id="x-timeline"></div>
         </div>
 
       </div>
@@ -121,7 +113,7 @@
     </footer>
   </main>
 
-  <!-- COUNTDOWN (si utilisé sur d'autres pages) -->
+  <!-- COUNTDOWN -->
   <script>
     const launchDate = new Date("October 22, 2025 18:00:00").getTime();
     setInterval(() => {
@@ -139,6 +131,36 @@
 
   <!-- Script officiel des widgets X -->
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <!-- Injection forcée du flux X -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const container = document.getElementById("x-timeline");
+
+      function createFeed() {
+        if (window.twttr && twttr.widgets) {
+          twttr.widgets.createTimeline(
+            {
+              sourceType: "profile",
+              screenName: "MarcFractys"
+            },
+            container,
+            {
+              theme: "dark",
+              chrome: "noheader nofooter noborders transparent",
+              tweetLimit: 3,
+              width: "100%",
+              height: "420"
+            }
+          );
+        } else {
+          setTimeout(createFeed, 1000);
+        }
+      }
+
+      createFeed();
+    });
+  </script>
 </body>
 </html>
 
