@@ -407,6 +407,22 @@ footer {
   overflow: hidden;
 }
 
+/* ===== LINKS CARD + X TIMELINE ===== */
+.links-card { display: flex; flex-direction: column; align-items: center; }
+.links-card .social-icons { gap: 26px; margin-bottom: 14px; }
+.links-card .x-timeline {
+  width: 100%;
+  max-width: 380px;
+  margin: 6px auto 0;
+  border-radius: 12px;
+  border: 1px solid rgba(127,255,212,0.10);
+  box-shadow: 0 0 22px rgba(127,255,212,0.12);
+  overflow: hidden; /* coupe proprement si l'iframe dépasse */
+}
+.links-card .x-timeline iframe { display: block; width: 100% !important; }
+@media (max-width: 700px) {
+  .links-card .x-timeline { max-width: 100%; }
+}
 
 
 
