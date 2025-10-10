@@ -1,5 +1,5 @@
 /* =========================================
-   FRACTUS DEMO — VERSION MATRIX 4.2 (Roue ajustée)
+   FRACTUS DEMO — VERSION MATRIX 4.3 (Roue réalignée)
    Auteur : Marc Cedrych (Fractys)
    ========================================= */
 
@@ -175,7 +175,7 @@
 }
 
 /* =========================================
-   FRACTUS ENGINE — MATRIX FIX (Roue en bas)
+   FRACTUS ENGINE — MATRIX RÉALIGNÉE
    ========================================= */
 
 .fractus-lab-center {
@@ -183,21 +183,21 @@
   text-align: center;
 }
 
-/* Grille corrigée */
+/* Grille réalignée pour ton HTML actuel */
 .fractus-grid-core {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, auto);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto auto;
   grid-template-areas:
-    "error entropy eff"
-    "stability center meta"
-    ". . .";
-  gap: 20px 36px;
+    "error entropy"
+    "stability eff"
+    "center center";
+  gap: 26px 40px;
   align-items: start;
   justify-items: center;
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 0 30px;
+  padding-top: 10px;
   position: relative;
 }
 
@@ -206,11 +206,10 @@
 #card-entropy   { grid-area: entropy; }
 #card-stability { grid-area: stability; }
 #card-eff       { grid-area: eff; }
-#card-meta      { grid-area: meta; }
+.engine-core    { grid-area: center; }
 
-/* Centre fractal descendu */
+/* Centre fractal ajusté (roue en bas, centrée) */
 .engine-core {
-  grid-area: center;
   background: radial-gradient(circle at center, rgba(0,255,200,0.06), rgba(0,0,0,1) 85%);
   border-radius: 20px;
   box-shadow: 0 0 30px rgba(127,255,212,0.12);
@@ -220,11 +219,19 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 480px;
-  position: relative;
-  margin-top: 25px; /* descend la roue pour équilibrer */
+  max-width: 520px;
+  margin-top: -10px; /* remonte légèrement */
 }
 
+.engine-core canvas {
+  width: 100%;
+  max-width: 480px;
+  height: 300px;
+  border-radius: 14px;
+  border: 1px solid rgba(127,255,212,0.18);
+}
+
+/* Halo respirant */
 .engine-core::before {
   content: "";
   position: absolute;
@@ -240,57 +247,17 @@
   50% { opacity: 0.9; transform: scale(1.03); }
 }
 
-.engine-core canvas {
-  width: 100%;
-  max-width: 460px;
-  height: 300px;
-  border-radius: 14px;
-  border: 1px solid rgba(127,255,212,0.18);
-  position: relative;
-  z-index: 1;
-}
-
-/* Cartes */
-.lab-card {
-  width: 100%;
-  max-width: 320px;
-  text-align: left;
-  background: rgba(0, 10, 10, 0.65);
-  border: 1px solid rgba(127,255,212,0.12);
-  border-radius: 14px;
-  box-shadow: 0 0 15px rgba(127,255,212,0.05);
-  padding: 12px 14px;
-}
-
-/* Légendes sous la roue */
-.live-monitor {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-family: ui-monospace, monospace;
-  font-size: 0.9rem;
-  color: #9fffe0;
-  width: 100%;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(127,255,212,0.12);
-  border-radius: 8px;
-  padding: 6px;
-}
-
-/* Responsive mobile */
+/* Responsive */
 @media (max-width: 900px) {
   .fractus-grid-core {
+    grid-template-columns: 1fr;
     grid-template-areas:
       "error"
       "entropy"
-      "eff"
       "stability"
-      "center"
-      "meta";
-    grid-template-columns: 1fr;
-    gap: 20px;
+      "eff"
+      "center";
+    gap: 22px;
     padding: 20px;
   }
 }
