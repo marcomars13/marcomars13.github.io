@@ -180,70 +180,78 @@
   .lab-legend { flex-direction: column; align-items: flex-start; }
 }
 
-/* =========================================
-   FRACTUS ENGINE VISUAL (roue + monitor)
-   ========================================= */
+/* === FRACTUS ENGINE — NOUVELLE DISPOSITION CENTRÉE === */
+.fractus-lab-center {
+  padding: 20px 0 40px;
+}
 
-.fractus-visual {
-  text-align: center;
-  padding: 60px 0 20px;
-  color: #bfffea;
-  max-width: 1080px;
+.fractus-grid-core {
+  display: grid;
+  grid-template-areas:
+    "error entropy"
+    "center center"
+    "stability eff";
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  grid-auto-rows: auto;
+  gap: 32px 60px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  max-width: 1000px;
   margin: 0 auto;
-  animation: fadeInLab 1s ease forwards;
-  opacity: 0;
-}
-@keyframes fadeInLab {
-  to { opacity: 1; }
 }
 
-.fractus-visual h2 {
-  margin-bottom: 12px;
-  color: #bfffea;
-}
+/* Zones de la grille */
+#card-error     { grid-area: error; }
+#card-entropy   { grid-area: entropy; }
+#card-stability { grid-area: stability; }
+#card-eff       { grid-area: eff; }
 
-/* ✅ Canvas fractal sans conflits */
-#fractusCanvas {
-  display: block;
-  width: 100%;
-  max-width: 720px;
-  min-height: 400px;
-  height: auto !important;
-  aspect-ratio: 16 / 9;
-  margin: 0 auto;
-  background: radial-gradient(circle at center, rgba(0,255,180,0.05), #000 80%) !important;
-  border: 1px solid rgba(127,255,212,0.2);
-  border-radius: 16px;
-  box-shadow: 0 0 40px rgba(127,255,212,0.1);
-  position: relative;
-  z-index: 2;
-}
-
-/* Monitor (valeurs dynamiques sous la roue) */
-.live-monitor {
+.engine-core {
+  grid-area: center;
+  background: radial-gradient(circle at center, rgba(0,255,180,0.06), rgba(0,0,0,1) 80%);
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  padding: 20px;
   display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  background: rgba(10,15,15,0.9);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.engine-core canvas {
+  width: 100%;
+  max-width: 480px;
+  height: 320px;
+  border-radius: 14px;
+  border: 1px solid rgba(127,255,212,0.2);
+}
+
+.lab-card {
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+  background: rgba(0, 10, 10, 0.6);
   border: 1px solid rgba(127,255,212,0.12);
-  border-radius: 12px;
-  margin-top: 12px;
-  padding: 10px 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.9rem;
-  color: #9fffe0;
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(127,255,212,0.05);
+  padding: 12px 14px;
 }
 
-.monitor-item {
-  margin: 4px 10px;
-  min-width: 140px;
+/* Mobile */
+@media (max-width: 900px) {
+  .fractus-grid-core {
+    grid-template-areas:
+      "center"
+      "error"
+      "entropy"
+      "stability"
+      "eff";
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
-.monitor-item span {
-  font-weight: 600;
-  color: #7fffd4;
-  transition: color 0.3s ease;
-}
 
 /* =========================================
    FOOTER / GÉNÉRAL
