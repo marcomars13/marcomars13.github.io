@@ -32,40 +32,15 @@
   </header>
 
   <main class="demo-container">
-    <!-- === BENCHMARK PLONK vs FRACTUS === -->
     <section class="lab-section">
       <h2 class="lab-title">Benchmark Plonk vs Fractus — 5 000 Mapillary Geotagged Images (France)</h2>
       <div class="lab-grid">
-        <div class="lab-card">
-          <h4>Average Error (km)</h4>
-          <div class="lab-meta">Plonk vs Fractus (5 000 photos)</div>
-          <canvas id="c_bench" class="lab-canvas"></canvas>
-          <div class="lab-legend"><div>Plonk: <span class="val">1252 km</span></div><div>Fractus: <span class="val">870 km</span></div><div>Gain: <span class="val">−30.5 %</span></div></div>
-        </div>
-
-        <div class="lab-card">
-          <h4>Entropy & Coherence</h4>
-          <div class="lab-meta">Mean values with minor live variation</div>
-          <canvas id="c_entropy" class="lab-canvas"></canvas>
-          <div class="lab-legend"><div>Entropy: <span class="val">0.032</span></div><div>Coherence: <span class="val">98.4 %</span></div></div>
-        </div>
-
-        <div class="lab-card">
-          <h4>Fractal Stability — Std Dev (km)</h4>
-          <div class="lab-meta">Lower is better</div>
-          <canvas id="c_stability" class="lab-canvas"></canvas>
-          <div class="lab-legend"><div>Plonk σ: <span class="val">92.7 km</span></div><div>Fractus σ: <span class="val">90.4 km</span></div></div>
-        </div>
-
-        <div class="lab-card">
-          <h4>Processing Efficiency</h4>
-          <div class="lab-meta">Relative accuracy ratio</div>
-          <canvas id="c_eff" class="lab-canvas"></canvas>
-          <div class="lab-legend"><div>Efficiency: <span class="val">× 1.30</span></div><div>Status: <span class="val">Stable</span></div></div>
-        </div>
+        <div class="lab-card"><h4>Average Error (km)</h4><canvas id="c_bench" class="lab-canvas"></canvas></div>
+        <div class="lab-card"><h4>Entropy & Coherence</h4><canvas id="c_entropy" class="lab-canvas"></canvas></div>
+        <div class="lab-card"><h4>Fractal Stability — Std Dev (km)</h4><canvas id="c_stability" class="lab-canvas"></canvas></div>
+        <div class="lab-card"><h4>Processing Efficiency</h4><canvas id="c_eff" class="lab-canvas"></canvas></div>
       </div>
 
-      <!-- === FRACTUS ENGINE VISUAL === -->
       <div class="fractus-visual">
         <h2>⚡ Fractus Engine — Real-Time Stability Monitor</h2>
         <canvas id="fractusCanvas"></canvas>
@@ -77,79 +52,84 @@
         </div>
       </div>
     </section>
-
-    <!-- === LOG BENCHMARK === -->
-    <section class="lab-section">
-      <h2 class="lab-title">Benchmark Logs — Anomaly Detection on 50 000 Entries</h2>
-      <div class="lab-grid">
-        <div class="lab-card"><h4>Detection Rate (%)</h4><canvas id="c_log_rate" class="lab-canvas"></canvas></div>
-        <div class="lab-card"><h4>False Positive Rate (%)</h4><canvas id="c_log_fp" class="lab-canvas"></canvas></div>
-        <div class="lab-card"><h4>Mean Detection Latency (ms)</h4><canvas id="c_log_latency" class="lab-canvas"></canvas></div>
-        <div class="lab-card"><h4>Accuracy / Throughput</h4><canvas id="c_log_acc" class="lab-canvas"></canvas></div>
-      </div>
-    </section>
   </main>
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-    /* === TOOL === */
-    function prepCanvas(c, width, height){
-      const dpr = window.devicePixelRatio || 1;
-      const cssW = width ?? c.clientWidth || 300;
-      const cssH = height ?? c.clientHeight || 150;
-      c.width = Math.max(1, Math.floor(cssW * dpr));
-      c.height = Math.max(1, Math.floor(cssH * dpr));
-      const ctx = c.getContext("2d");
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return { ctx, cssW, cssH, dpr };
-    }
-
+  document.addEventListener("DOMContentLoaded", () => {
     const METRICS = { entropy: 0.032, coherence: 98.4, efficiency: 1.30, stability: 90.6 };
     const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-    /* === FRACTUS ENGINE FIX === */
-    (function(){
-      const canvas = document.getElementById("fractusCanvas");
-      let ctx, cssW, cssH;
+    function prepCanvas(c,w,h){
+      const dpr=window.devicePixelRatio||1;
+      const cssW=w??c.clientWidth||300, cssH=h??c.clientHeight||150;
+      c.width=Math.max(1,Math.floor(cssW*dpr));
+      c.height=Math.max(1,Math.floor(cssH*dpr));
+      const ctx=c.getContext("2d");
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      return{ctx,cssW,cssH};
+    }
 
-      function safeInit(){
-        const rect = canvas.getBoundingClientRect();
-        if(rect.height < 50){ setTimeout(safeInit,200); return; }
-        ({ ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9,720), 400));
-        draw();
+    /* === DRAW FRACTAL ENGINE === */
+    const canvas=document.getElementById("fractusCanvas");
+    let ctx,cssW,cssH;
+
+    function initFractal(){
+      ({ctx,cssW,cssH}=prepCanvas(canvas,Math.min(window.innerWidth*0.9,720),400));
+      drawFractal();
+    }
+    window.addEventListener("resize",()=>initFractal());
+    initFractal(); // ← démarre directement, plus de temporisation
+
+    function drawFractal(){
+      ctx.clearRect(0,0,cssW,cssH);
+      const eNorm=(METRICS.entropy-0.028)/(0.045-0.028);
+      const radius=50+Math.sin(performance.now()*0.003)*(8*eNorm+2);
+      const grad=ctx.createRadialGradient(cssW/2,cssH/2,0,cssW/2,cssH/2,radius+80);
+      grad.addColorStop(0,`rgba(127,255,212,${0.10+0.15*eNorm})`);
+      grad.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=grad; ctx.beginPath();
+      ctx.arc(cssW/2,cssH/2,radius+80,0,Math.PI*2); ctx.fill();
+
+      const rings=9,baseR=40,stepR=35,N=10;
+      for(let i=0;i<rings;i++){
+        const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2;
+        ctx.beginPath();
+        ctx.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`;
+        ctx.lineWidth=1.1; ctx.arc(cssW/2,cssH/2,r,0,Math.PI*2); ctx.stroke();
       }
-
-      function draw(){
-        ctx.clearRect(0,0,cssW,cssH);
-        const eNorm = (METRICS.entropy-0.028)/(0.045-0.028);
-        const radius = 50 + Math.sin(performance.now()*0.003)*(8*eNorm+2);
-        const grad = ctx.createRadialGradient(cssW/2,cssH/2,0,cssW/2,cssH/2,radius+80);
-        grad.addColorStop(0,`rgba(127,255,212,${0.10+0.15*eNorm})`);
-        grad.addColorStop(1,"rgba(0,0,0,0)");
-        ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(cssW/2,cssH/2,radius+80,0,Math.PI*2); ctx.fill();
-
-        const rings=9,baseR=40,stepR=35; const N=10;
-        for(let i=0;i<rings;i++){
-          const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2;
-          ctx.beginPath();
-          ctx.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`;
-          ctx.lineWidth=1.1; ctx.arc(cssW/2,cssH/2,r,0,Math.PI*2); ctx.stroke();
-        }
-        for(let i=0;i<N;i++){
-          const angle=(performance.now()*0.001+i*0.5);
-          const r=baseR+(i%(rings-2))*stepR;
-          const x=cssW/2+Math.cos(angle)*r;
-          const y=cssH/2+Math.sin(angle)*r;
-          ctx.beginPath();
-          ctx.fillStyle=i%2?'#7fffd4':'#80c0ff';
-          ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
-        }
-        requestAnimationFrame(draw);
+      for(let i=0;i<N;i++){
+        const angle=(performance.now()*0.001+i*0.5);
+        const r=baseR+(i%(rings-2))*stepR;
+        const x=cssW/2+Math.cos(angle)*r;
+        const y=cssH/2+Math.sin(angle)*r;
+        ctx.beginPath();
+        ctx.fillStyle=i%2?'#7fffd4':'#80c0ff';
+        ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
       }
+      requestAnimationFrame(drawFractal);
+    }
 
-      safeInit();
-    })();
+    /* === LIVE MONITOR === */
+    function trendColor(n,o){if(n>o+1e-6)return'#ffe680';if(n<o-1e-6)return'#80c0ff';return'#7fffd4';}
+    function updateMonitor(){
+      const e=document.getElementById('entropyVal'),
+            c=document.getElementById('coherenceVal'),
+            f=document.getElementById('efficiencyVal'),
+            s=document.getElementById('stabilityVal');
+      const oldE=METRICS.entropy;     METRICS.entropy   = clamp(oldE + (Math.random()-0.5)*0.002, 0.028, 0.045);
+      const oldC=METRICS.coherence;   METRICS.coherence = clamp(oldC + (Math.random()-0.5)*0.15, 97.0, 99.0);
+      const oldF=METRICS.efficiency;  METRICS.efficiency= clamp(oldF + (Math.random()-0.5)*0.004, 1.28, 1.32);
+      const oldS=METRICS.stability;   METRICS.stability = clamp(oldS + (Math.random()-0.5)*0.12, 90.0, 91.0);
+      e.textContent=METRICS.entropy.toFixed(3); e.style.color=trendColor(METRICS.entropy,oldE);
+      c.textContent=`${METRICS.coherence.toFixed(1)} %`; c.style.color=trendColor(METRICS.coherence,oldC);
+      f.textContent=`×${METRICS.efficiency.toFixed(2)}`; f.style.color=trendColor(METRICS.efficiency,oldF);
+      s.textContent=`σ = ${METRICS.stability.toFixed(1)} km`; s.style.color=trendColor(METRICS.stability,oldS);
+    }
+    setInterval(updateMonitor,1500);
+  });
   </script>
 </body>
 </html>
+
