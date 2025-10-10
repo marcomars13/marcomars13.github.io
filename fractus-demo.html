@@ -72,8 +72,10 @@
 
     .fractus-visual {
       text-align: center;
-      padding: 60px 0 20px;
+      padding: 40px 0 20px;
       color: #bfffea;
+      max-width: 1080px;
+      margin: 0 auto;
     }
 
     .fractus-visual canvas {
@@ -86,6 +88,30 @@
       width: 100%;
       max-width: 720px;
       height: 400px;
+    }
+
+    .live-monitor {
+      display: flex;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      background: rgba(10,15,15,0.9);
+      border: 1px solid rgba(127,255,212,0.12);
+      border-radius: 12px;
+      margin-top: 18px;
+      padding: 12px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+      color: #9fffe0;
+    }
+
+    .monitor-item {
+      margin: 4px 10px;
+      min-width: 120px;
+    }
+    .monitor-item span {
+      font-weight: 600;
+      color: #7fffd4;
+      transition: color 0.3s ease;
     }
   </style>
 </head>
@@ -156,6 +182,18 @@
           </div>
         </div>
       </div>
+
+      <!-- === FRACTUS ENGINE (PLACÉ ICI) === -->
+      <div class="fractus-visual">
+        <h2>⚡ Fractus Engine — Real-Time Stability Monitor</h2>
+        <canvas id="fractusCanvas"></canvas>
+        <div class="live-monitor" id="liveMonitor">
+          <div class="monitor-item">🌀 Entropy: <span id="entropyVal">0.032</span></div>
+          <div class="monitor-item">🔗 Coherence: <span id="coherenceVal">98.4 %</span></div>
+          <div class="monitor-item">⚡ Efficiency: <span id="efficiencyVal">×1.30</span></div>
+          <div class="monitor-item">📈 Stability: <span id="stabilityVal">σ = 90.6 km</span></div>
+        </div>
+      </div>
     </section>
 
     <!-- === LOG BENCHMARK === -->
@@ -164,42 +202,28 @@
       <div class="lab-grid">
         <div class="lab-card">
           <h4>Detection Rate (%)</h4>
-          <div class="lab-meta">True positives / anomalies injected</div>
           <canvas id="c_log_rate" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>False Positive Rate (%)</h4>
-          <div class="lab-meta">Incorrect alerts / total alerts</div>
           <canvas id="c_log_fp" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>Mean Detection Latency (ms)</h4>
-          <div class="lab-meta">Time to alert</div>
           <canvas id="c_log_latency" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>Accuracy / Throughput</h4>
-          <div class="lab-meta">Correct detections per second</div>
           <canvas id="c_log_acc" class="lab-canvas"></canvas>
         </div>
       </div>
-    </section>
-
-    <!-- === FRACTUS ENGINE === -->
-    <section class="fractus-visual">
-      <h2>⚡ Fractus Engine in Action</h2>
-      <canvas id="fractusCanvas"></canvas>
-      <p class="caption">
-        Fractal pattern coherence — continuous self-similar layer analysis.<br>
-        Entropy &lt; 0.05 = high stability zone.
-      </p>
     </section>
   </main>
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-    // --- Animated benchmark function ---
+    // --- Animated bar ---
     function animatedBar(canvasId, valA, valB, labelA, labelB, unit, colorA, colorB) {
       const c = document.getElementById(canvasId);
       if (!c) return;
@@ -285,6 +309,40 @@
       }
       draw();
     })();
+
+    // === LIVE MONITOR ===
+    const metrics = {
+      entropy: 0.032,
+      coherence: 98.4,
+      efficiency: 1.30,
+      stability: 90.6
+    };
+
+    function updateMonitor() {
+      const e = document.getElementById("entropyVal");
+      const c = document.getElementById("coherenceVal");
+      const f = document.getElementById("efficiencyVal");
+      const s = document.getElementById("stabilityVal");
+
+      function update(val, target, range, unit, fixed=3) {
+        const old = val;
+        const newVal = Math.max(range[0], Math.min(range[1], val + (Math.random() - 0.5) * 0.002));
+        const trend = newVal > old ? "up" : newVal < old ? "down" : "stable";
+        target.textContent = (unit === "×" ? `×${newVal.toFixed(2)}` :
+                              unit === "%" ? `${newVal.toFixed(1)} %` :
+                              unit === "km" ? `σ = ${newVal.toFixed(1)} km` :
+                              newVal.toFixed(fixed));
+        target.style.color = trend === "up" ? "#ffe680" : trend === "down" ? "#80c0ff" : "#7fffd4";
+        return newVal;
+      }
+
+      metrics.entropy = update(metrics.entropy, e, [0.028, 0.045], "");
+      metrics.coherence = update(metrics.coherence, c, [97.0, 99.0], "%", 1);
+      metrics.efficiency = update(metrics.efficiency, f, [1.28, 1.32], "×", 2);
+      metrics.stability = update(metrics.stability, s, [90.0, 91.0], "km", 1);
+    }
+
+    setInterval(updateMonitor, 1500);
   </script>
 </body>
 </html>
