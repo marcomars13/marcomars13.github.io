@@ -1,126 +1,121 @@
-/* =========================================
-   FRACTYS — DEMO PAGE STYLES
-   Version : 1.0 (Fractus Proof of Pattern)
-   ========================================= */
+/* ===== FRACTUS DEMO - FIX VISIBILITY ===== */
 
-.demo-hero {
-  text-align: center;
-  padding: 140px 20px 80px;
-  background: radial-gradient(circle at center, rgba(0,255,200,0.1), #000 85%);
-  color: var(--fg);
-}
-.demo-hero h1 {
-  color: var(--accent);
-  font-size: 2.8rem;
-  text-shadow: 0 0 25px rgba(127,255,212,0.4);
-}
-.demo-hero .subtitle {
-  font-size: 1.1rem;
-  opacity: 0.85;
-  margin-top: 10px;
-}
-
-.demo-intro {
-  max-width: 900px;
-  margin: 0 auto 60px;
-  font-size: 1.1rem;
-  color: var(--fg);
-  opacity: 0.9;
-  text-align: center;
-  line-height: 1.6;
-}
-
-/* GRID */
+/* Structure de base */
 .demo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
-  max-width: 1100px;
-  margin: 0 auto 100px;
-  padding: 0 20px;
+  padding: 40px;
+  justify-items: center;
 }
+
 .demo-card {
   position: relative;
+  background: rgba(10, 12, 14, 0.9);
+  border: 1px solid rgba(127, 255, 212, 0.2);
+  border-radius: 14px;
   overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(127,255,212,0.15);
-  box-shadow: 0 0 25px rgba(127,255,212,0.08);
-  transition: all 0.35s ease;
+  box-shadow: 0 0 25px rgba(127, 255, 212, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+
+.demo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 35px rgba(127, 255, 212, 0.25);
+}
+
+/* Images */
 .demo-card img {
   width: 100%;
-  height: 100%;
+  height: 220px;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  opacity: 0.9;
+  display: block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
 .demo-card:hover img {
-  transform: scale(1.08);
-  filter: brightness(1.15);
+  opacity: 0.4;
+  transform: scale(1.05);
 }
+
+/* Overlay (texte) — FIX visibilité */
 .demo-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.75);
-  opacity: 0;
-  color: var(--accent);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  transition: opacity 0.35s ease;
+  justify-content: flex-end;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 20%, rgba(0, 0, 0, 0.1) 100%);
+  color: #c8fff2;
+  text-align: left;
+  z-index: 2;
+  opacity: 1; /* ✅ toujours visible, même sans hover */
+  transition: opacity 0.3s ease;
 }
+
 .demo-card:hover .demo-overlay {
   opacity: 1;
 }
+
+/* Titres et texte */
 .demo-overlay h3 {
-  color: var(--accent);
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-}
-.demo-overlay p {
-  color: var(--fg);
-  opacity: 0.9;
-  line-height: 1.4;
-  font-size: 0.95rem;
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  color: #7fffd4;
 }
 
-/* ENGINE SECTION */
+.demo-overlay p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #bdfaea;
+}
+
+/* Section engine */
 .demo-engine {
   text-align: center;
-  padding: 80px 20px;
-  border-top: 1px solid rgba(127,255,212,0.1);
-  background: radial-gradient(circle at center, rgba(0,255,180,0.05), #000 90%);
-}
-.demo-engine h2 {
-  color: var(--accent);
-  font-size: 2rem;
-  text-shadow: 0 0 25px rgba(127,255,212,0.35);
-}
-.demo-engine p {
-  max-width: 900px;
-  margin: 0 auto 40px;
-  color: var(--fg);
-  opacity: 0.9;
-  line-height: 1.6;
-}
-.engine-img {
-  max-width: 700px;
-  width: 100%;
-  border-radius: 16px;
-  border: 1px solid rgba(127,255,212,0.15);
-  box-shadow: 0 0 35px rgba(127,255,212,0.15);
-  margin-bottom: 40px;
-  transition: transform 0.4s ease;
-}
-.engine-img:hover {
-  transform: scale(1.03);
+  padding: 60px 20px 100px;
 }
 
-/* RESPONSIVE */
+.demo-engine h2 {
+  color: #7fffd4;
+  margin-bottom: 12px;
+  text-shadow: 0 0 12px rgba(127, 255, 212, 0.4);
+}
+
+.demo-engine img {
+  max-width: 720px;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(127, 255, 212, 0.15);
+  box-shadow: 0 0 35px rgba(127, 255, 212, 0.15);
+  margin-top: 20px;
+}
+
+/* Bouton */
+.btn.glow {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 22px;
+  border: 1px solid #7fffd4;
+  border-radius: 8px;
+  color: #7fffd4;
+  text-decoration: none;
+  background: rgba(0, 255, 200, 0.05);
+  box-shadow: 0 0 15px rgba(127, 255, 212, 0.15);
+  transition: all 0.3s ease;
+}
+
+.btn.glow:hover {
+  background: #7fffd4;
+  color: #000;
+  box-shadow: 0 0 25px rgba(127, 255, 212, 0.55);
+}
+
+/* Responsive */
 @media (max-width: 700px) {
-  .demo-hero { padding: 100px 15px 50px; }
-  .demo-hero h1 { font-size: 2.2rem; }
-  .demo-intro { font-size: 1rem; padding: 0 15px; }
+  .demo-grid { padding: 20px; gap: 18px; }
+  .demo-card img { height: 180px; }
 }
