@@ -4,18 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Fractus Demo — Powered by Fractys</title>
-  <meta name="description" content="Live benchmark of the Fractus Algorithm — streaming real data from GitHub (Mapillary 5k).">
+  <meta name="description" content="Live, per-image benchmark of the Fractus Algorithm — Mapillary 5k streaming.">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/demo.css">
   <style>
-    .ingest-badge{
-      margin:8px auto 0; display:inline-flex; gap:8px; align-items:center;
-      padding:6px 10px; border:1px solid rgba(127,255,212,.2); border-radius:10px;
-      background:rgba(10,15,15,.9); color:#9fffe0; font-family:ui-monospace,monospace;
-      box-shadow:0 0 12px rgba(127,255,212,.08);
+    /* --- Vignette au-dessus des cartes --- */
+    .sample-viewer {
+      max-width: 1080px; margin: 8px auto 18px; padding: 12px;
+      background: rgba(10,15,15,.9); border:1px solid rgba(127,255,212,.14);
+      border-radius: 12px; box-shadow:0 0 14px rgba(127,255,212,.08);
+      display: grid; grid-template-columns: 220px 1fr; gap: 12px; align-items: center;
     }
-    .dot{width:8px;height:8px;border-radius:50%;background:#7fffd4;box-shadow:0 0 10px #7fffd4;}
+    .sample-thumb {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 10px;
+      border:1px solid rgba(127,255,212,.18); box-shadow:0 0 12px rgba(127,255,212,.10);
+      background: radial-gradient(120% 80% at 50% 50%, rgba(127,255,212,.06), rgba(0,0,0,.9));
+    }
+    .thumb-fallback {
+      display:flex; align-items:center; justify-content:center;
+      width:100%; aspect-ratio:4/3; border-radius:10px;
+      border:1px solid rgba(127,255,212,.18); color:#9fffe0; font-family:ui-monospace,monospace;
+      background: repeating-linear-gradient(45deg, rgba(127,255,212,.06) 0 12px, rgba(0,0,0,.9) 12px 24px);
+    }
+    .sample-meta {
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:8px; color:#9fffe0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.9rem;
+    }
+    .badge {
+      display:inline-flex; gap:6px; align-items:center; padding:4px 8px;
+      border:1px solid rgba(127,255,212,.22); border-radius:8px; color:#9fffe0;
+      background: rgba(10,15,15,.88);
+    }
+    .muted { color:#7fbfb0; }
   </style>
 </head>
 
@@ -36,16 +57,30 @@
   <header class="demo-hero">
     <div class="hero-inner">
       <h1>🧠 Fractus Scientific Demo</h1>
-      <p class="subtitle">Benchmark Plonk vs Fractus — Mapillary France (5 000 images) — <strong>Live from GitHub CSV</strong></p>
+      <p class="subtitle">Per-image live benchmark — Mapillary France (500-frame loop, 2 s / frame)</p>
     </div>
   </header>
 
   <main class="demo-container">
-
-    <!-- === BENCHMARK SECTION === -->
     <section class="lab-section">
-      <h2 class="lab-title">Benchmark Plonk vs Fractus — Streaming Real Data</h2>
+      <h2 class="lab-title">Live Observatory — Fractus vs Plonk (per image)</h2>
 
+      <!-- === Vignette + métadonnées === -->
+      <div class="sample-viewer">
+        <div>
+          <img id="mapiImg" class="sample-thumb" alt="Mapillary sample" />
+          <div id="thumbFallback" class="thumb-fallback" style="display:none;">image unavailable</div>
+        </div>
+        <div class="sample-meta">
+          <div class="badge">🖼️ <span id="metaFilename">—</span></div>
+          <div>📍 GT: <span id="metaGT" class="muted">—</span></div>
+          <div>🪪 Plonk err: <span id="metaPlonkErr">—</span></div>
+          <div>🧬 Fractus err: <span id="metaFracErr">—</span></div>
+          <div>⏱️ Frame: <span id="metaFrame">0 / 500</span></div>
+        </div>
+      </div>
+
+      <!-- === WIDGETS === -->
       <div class="lab-grid">
         <div class="lab-card">
           <h4>Average Error (km)</h4>
@@ -70,8 +105,8 @@
           <h4>Fractal Stability — Std Dev (km)</h4>
           <canvas id="c_stability" class="lab-canvas"></canvas>
           <div class="lab-legend">
-            <div>Plonk σ: <span class="val" id="sigmaPlonk">—</span></div>
-            <div>Fractus σ: <span class="val" id="stabilityVal">—</span></div>
+            <div>Plonk σ (win): <span class="val" id="sigmaPlonk">—</span></div>
+            <div>Fractus σ (win): <span class="val" id="stabilityVal">—</span></div>
           </div>
         </div>
 
@@ -80,18 +115,12 @@
           <canvas id="c_eff" class="lab-canvas"></canvas>
           <div class="lab-legend">
             <div>Efficiency: <span class="val" id="efficiencyVal">—</span></div>
-            <div>Status: <span class="val" id="statusVal">Init</span></div>
+            <div>Status: <span class="val" id="statusVal">Live (2 s)</span></div>
           </div>
         </div>
       </div>
 
-      <!-- Ingestion badge -->
-      <div class="ingest-badge" id="ingestBadge" aria-live="polite">
-        <span class="dot" id="ingDot"></span>
-        <span id="ingestText">Loading data…</span>
-      </div>
-
-      <!-- === FRACTUS ENGINE VISUAL === -->
+      <!-- === FRACTUS ENGINE === -->
       <div class="fractus-visual">
         <h2>⚡ Fractus Engine — Real-Time Stability Monitor</h2>
         <canvas id="fractusCanvas"></canvas>
@@ -104,7 +133,7 @@
       </div>
     </section>
 
-    <!-- Logs (visuels simples) -->
+    <!-- Logs placeholders -->
     <section class="lab-section">
       <h2 class="lab-title">Benchmark Logs — Anomaly Detection on 50 000 Entries</h2>
       <div class="lab-grid">
@@ -120,11 +149,10 @@
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-    /* ------------ Utils ------------- */
+    /* ------------ Utils & canvas ------------ */
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     const lerp=(a,b,t)=>a+(b-a)*t;
     const easeOutExpo=t=>t>=1?1:1-Math.pow(2,-10*t);
-
     function prepCanvas(c,w,h){
       const dpr=window.devicePixelRatio||1;
       const cssW=w??(c.clientWidth||300);
@@ -136,36 +164,29 @@
       return{ctx,cssW,cssH};
     }
 
-    /* ------------ State ------------- */
-    const METRICS={entropy:0.032,coherence:98.4,efficiency:1.30,stability:90.6};
-    const BENCH={plonk_km:0,fractus_km:0};
-    const SIGMA={plonk:0,fractus:0};
+    /* ------------ State ------------ */
+    const RAW_URL='https://raw.githubusercontent.com/marcomars13/fractus-ia/main/results/bench_compare_5000.csv';
+    const LOOP_COUNT=500;          // 500 frames par boucle
+    const FRAME_MS=2000;           // 2 s par frame
+    const STAB_WIN=60;             // fenêtre pour σ glissant
 
-    // Welford online stats for streaming stddev
-    function makeWelford(){
-      return {n:0,mean:0,M2:0,
-        push(x){this.n++;const d=x-this.mean;this.mean+=d/this.n;const d2=x-this.mean;this.M2+=d*d2;},
-        variance(){return this.n>1?this.M2/(this.n-1):0;},
-        std(){return Math.sqrt(this.variance());}
-      };
-    }
-    const wfPlonk = makeWelford();
-    const wfFrac  = makeWelford();
+    const METRICS={entropy:0.032, coherence:98.4, efficiency:1.30, stability:90.6};
+    const BENCH={plonk_km:0, fractus_km:0};
+    const SIGMA={plonk:0, fractus:0};
 
-    /* ---------- DOM writers ---------- */
-    function writeBench(){
+    const ringQueuePlonk=[], ringQueueFrac=[]; // files pour σ glissant
+
+    /* ------------ DOM helpers ------------ */
+    function writePerImage(){
       lg_plonk.textContent   = `${BENCH.plonk_km.toFixed(1)} km`;
       lg_fractus.textContent = `${BENCH.fractus_km.toFixed(1)} km`;
       const gain=(BENCH.plonk_km - BENCH.fractus_km)/Math.max(1e-9,BENCH.plonk_km)*100;
-      const s = `${gain<0?'−':''}${Math.abs(gain).toFixed(1)} %`;
-      lg_gain.textContent = s;
+      lg_gain.textContent = `${gain<0?'−':''}${Math.abs(gain).toFixed(1)} %`;
       lg_gain.style.color = gain>0?'#7fffd4':'#ffe680';
-    }
-    function writeStability(){
+
       sigmaPlonk.textContent = `${SIGMA.plonk.toFixed(1)} km`;
       stabilityVal.textContent = `${SIGMA.fractus.toFixed(1)} km`;
-    }
-    function writeMetrics(){
+
       entropyVal.textContent = METRICS.entropy.toFixed(3);
       coherenceVal.textContent = `${METRICS.coherence.toFixed(1)} %`;
       efficiencyVal.textContent = `× ${METRICS.efficiency.toFixed(2)}`;
@@ -173,26 +194,44 @@
       m_coherence.textContent = `${METRICS.coherence.toFixed(1)} %`;
       m_efficiency.textContent = `× ${METRICS.efficiency.toFixed(2)}`;
       m_stability.textContent = `σ = ${METRICS.stability.toFixed(1)} km`;
-      statusVal.textContent = 'Live';
     }
 
-    /* ---------- Card widgets (anim) ---------- */
+    function updateThumb(filename, gtLat, gtLon, idx){
+      // Mapillary: si tu as un endpoint propre, remplace la fabrique d’URL ici.
+      // On tente <id>.jpg directement (si non dispo, fallback propre).
+      const id = filename.replace(/\.jpg$/i,'');
+      const tryUrls = [
+        // <-- remplace/ajoute ici si tu as un CDN d’images
+        `https://images.mapillary.com/${id}/thumb-1024.jpg`,  // hypothétique
+      ];
+      const img = document.getElementById('mapiImg');
+      const fb  = document.getElementById('thumbFallback');
+      let p = 0; img.style.display=''; fb.style.display='none';
+      function tryNext(){
+        if(p>=tryUrls.length){ img.style.display='none'; fb.style.display='flex'; return; }
+        img.src = tryUrls[p++];
+      }
+      img.onerror = tryNext; tryNext();
+
+      metaFilename.textContent = filename;
+      metaGT.textContent = `${gtLat.toFixed(5)}, ${gtLon.toFixed(5)}`;
+      metaFrame.textContent = `${idx+1} / ${LOOP_COUNT}`;
+    }
+
+    /* ------------ Widgets (anim continue) ------------ */
     function makeBenchWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
       let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
-      const t0=performance.now();
+      let lastA=0,lastB=0; // lissage
       return function draw(now){
-        const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH);
-        ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
-        const max=Math.max(BENCH.plonk_km,BENCH.fractus_km,1)*1.15;
+        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        // lissage doux entre frames
+        lastA = lerp(lastA || BENCH.fractus_km, BENCH.fractus_km, 0.15);
+        lastB = lerp(lastB || BENCH.plonk_km  , BENCH.plonk_km  , 0.15);
+        const max=Math.max(lastA,lastB,1)*1.15;
         const pad=12,yMid=cssH*0.62;
-        const pA=easeOutExpo(clamp((now-t0)/900,0,1));
-        const pB=easeOutExpo(clamp((now-t0-300)/900,0,1));
-        const wA=(BENCH.fractus_km/max)*(cssW-pad*2)*pA;
-        const wB=(BENCH.plonk_km/max)*(cssW-pad*2)*pB;
-        ctx.fillStyle='rgba(255,80,80,0.85)'; ctx.fillRect(pad,yMid,wB,20);
-        ctx.fillStyle='rgba(127,255,212,0.9)'; ctx.fillRect(pad,yMid-30,wA,20);
+        ctx.fillStyle='rgba(255,80,80,0.85)'; ctx.fillRect(pad,yMid,(lastB/max)*(cssW-pad*2),20);
+        ctx.fillStyle='rgba(127,255,212,0.9)'; ctx.fillRect(pad,yMid-30,(lastA/max)*(cssW-pad*2),20);
         ctx.fillStyle='#9adfce'; ctx.font='12px ui-sans-serif';
         ctx.fillText(`Fractus: ${BENCH.fractus_km.toFixed(1)} km`, pad, yMid-12);
         ctx.fillText(`Plonk: ${BENCH.plonk_km.toFixed(1)} km`, pad, yMid+35);
@@ -202,41 +241,35 @@
       const c=document.getElementById(id); if(!c) return ()=>{};
       let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       return function draw(now){
-        const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
         ctx.strokeStyle='rgba(127,255,212,0.08)'; ctx.beginPath();
         for(let x=0;x<cssW;x+=Math.max(16,cssW/20)){ ctx.moveTo(x,8); ctx.lineTo(x,cssH-8); }
         for(let y=0;y<cssH;y+=Math.max(16,cssH/10)){ ctx.moveTo(8,y); ctx.lineTo(cssW-8,y); }
         ctx.stroke();
         // entropy trace
+        const up=(METRICS.entropy-0.028)/(0.045-0.028);
         ctx.strokeStyle='rgba(127,200,255,0.9)'; ctx.lineWidth=1.6; ctx.beginPath();
         for(let x=0;x<cssW;x++){
           const t=(x/cssW)*6.283 + now*0.0035;
-          const up = (METRICS.entropy-0.028)/(0.045-0.028);
           const y=cssH*0.30 + Math.sin(t)*8*(0.6+up) + Math.sin(t*0.7+1.3)*3;
           x?ctx.lineTo(x+8,y):ctx.moveTo(x+8,y);
-        }
-        ctx.stroke();
+        } ctx.stroke();
         // coherence trace
+        const down=1-up;
         ctx.strokeStyle='rgba(127,255,212,0.9)'; ctx.beginPath();
         for(let x=0;x<cssW;x++){
           const t=(x/cssW)*6.283 + now*0.0025;
-          const down = 1-(METRICS.entropy-0.028)/(0.045-0.028);
           const y=cssH*0.72 + Math.sin(t)*4*(0.8+down*0.4) + Math.sin(t*1.3+0.6)*1.5;
           x?ctx.lineTo(x+8,y):ctx.moveTo(x+8,y);
-        }
-        ctx.stroke();
+        } ctx.stroke();
       };
     }
     function makeStabilityWidget(id){
       const c=document.getElementById(id); if(!c) return ()=>{};
       let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
       return function draw(now){
-        const {ctx,cssW,cssH}=g;
-        ctx.clearRect(0,0,cssW,cssH);
-        ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
         const mu=cssW*0.55;
-        const sigmaPx = Math.max(10, Math.min(260, METRICS.stability* (cssW/160))); // km -> px
         ctx.beginPath();
         for(let x=0;x<cssW;x++){
           const km=(x-mu)/(cssW/160);
@@ -246,8 +279,7 @@
         }
         ctx.strokeStyle='rgba(127,255,212,0.85)'; ctx.lineWidth=2; ctx.stroke();
         ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.18)';
-        ctx.beginPath(); ctx.moveTo(mu,10); ctx.lineTo(mu,cssH-10); ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(mu,10); ctx.lineTo(mu,cssH-10); ctx.stroke(); ctx.setLineDash([]);
       };
     }
     function makeEfficiencyWidget(id){
@@ -257,176 +289,43 @@
         const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
         const r=Math.min(cssW,cssH)*0.32, cx=cssW*0.18+r+10, cy=cssH*0.52;
         ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.strokeStyle='rgba(127,255,212,0.12)'; ctx.lineWidth=10; ctx.stroke();
-        const v=clamp(METRICS.efficiency,1.0,1.6); const a0=-Math.PI*0.75; const a1= a0 + (v-1.0)/0.6*(Math.PI*1.5);
+        const v=clamp(METRICS.efficiency,0.6,2.0); const a0=-Math.PI*0.75; const a1= a0 + (v-0.6)/1.4*(Math.PI*1.5);
         ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1); ctx.strokeStyle='rgba(127,255,212,0.9)'; ctx.lineWidth=10; ctx.stroke();
         const tick=a0 + (now*0.002 % (Math.PI*1.5)); ctx.beginPath(); ctx.arc(cx,cy,r,tick-0.05,tick+0.05);
         ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=10; ctx.stroke();
         ctx.fillStyle='#9adfce'; ctx.font='12px ui-sans-serif'; ctx.fillText(`× ${v.toFixed(2)} efficiency`, cx+r+18, cy+4);
       };
     }
-
     const widgets=[ makeBenchWidget('c_bench'), makeEntropyWidget('c_entropy'), makeStabilityWidget('c_stability'), makeEfficiencyWidget('c_eff') ].filter(Boolean);
     (function loop(now){ for(const w of widgets) w(now||performance.now()); requestAnimationFrame(loop); })();
 
-    /* ---------- Fractal wheel ---------- */
-    const canvas=document.getElementById("fractusCanvas"); let ctxF=null,wF=0,hF=0;
-    function initFractal(){ const r=prepCanvas(canvas,Math.min(window.innerWidth*0.9,720),400); ctxF=r.ctx; wF=r.cssW; hF=r.cssH; }
-    window.addEventListener("resize",initFractal); initFractal();
-    (function drawFractal(){
-      if(!ctxF){ requestAnimationFrame(drawFractal); return; }
-      ctxF.clearRect(0,0,wF,hF);
+    /* ------------ Fractal wheel ------------ */
+    const wheel=document.getElementById("fractusCanvas"); let fctx=null, fw=0, fh=0;
+    function initWheel(){ const r=prepCanvas(wheel,Math.min(window.innerWidth*0.9,720),400); fctx=r.ctx; fw=r.cssW; fh=r.cssH; }
+    window.addEventListener("resize",initWheel); initWheel();
+    (function drawWheel(){
+      if(!fctx){ requestAnimationFrame(drawWheel); return; }
+      fctx.clearRect(0,0,fw,fh);
       const eNorm=clamp((METRICS.entropy-0.028)/(0.045-0.028),0,1);
       const radius=50+Math.sin(performance.now()*0.003)*(8*eNorm+2);
-      const grad=ctxF.createRadialGradient(wF/2,hF/2,0,wF/2,hF/2,radius+80);
+      const grad=fctx.createRadialGradient(fw/2,fh/2,0,fw/2,fh/2,radius+80);
       grad.addColorStop(0,`rgba(127,255,212,${0.10+0.15*eNorm})`); grad.addColorStop(1,"rgba(0,0,0,0)");
-      ctxF.fillStyle=grad; ctxF.beginPath(); ctxF.arc(wF/2,hF/2,radius+80,0,Math.PI*2); ctxF.fill();
+      fctx.fillStyle=grad; fctx.beginPath(); fctx.arc(fw/2,fh/2,radius+80,0,Math.PI*2); fctx.fill();
       const rings=9,baseR=40,stepR=35,N=12;
-      for(let i=0;i<rings;i++){ const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2; ctxF.beginPath();
-        ctxF.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`; ctxF.lineWidth=1.1; ctxF.arc(wF/2,hF/2,r,0,Math.PI*2); ctxF.stroke(); }
+      for(let i=0;i<rings;i++){ const r=baseR+i*stepR+Math.sin(performance.now()*0.002+i)*2; fctx.beginPath();
+        fctx.strokeStyle=`hsl(${(i*28+performance.now()*0.02)%360},80%,70%)`; fctx.lineWidth=1.1; fctx.arc(fw/2,fh/2,r,0,Math.PI*2); fctx.stroke(); }
       const speed=lerp(0.6,1.4,eNorm);
       for(let i=0;i<N;i++){ const a=performance.now()*0.001*speed+i*0.52; const r=baseR+(i%(rings-2))*stepR;
-        const x=wF/2+Math.cos(a)*r, y=hF/2+Math.sin(a)*r; ctxF.beginPath(); ctxF.fillStyle=i%3===0?'#7fffd4':(i%3===1?'#80c0ff':'#ffe680'); ctxF.arc(x,y,3,0,Math.PI*2); ctxF.fill(); }
-      requestAnimationFrame(drawFractal);
+        const x=fw/2+Math.cos(a)*r, y=fh/2+Math.sin(a)*r; fctx.beginPath();
+        fctx.fillStyle=i%3===0?'#7fffd4':(i%3===1?'#80c0ff':'#ffe680'); fctx.arc(x,y,3,0,Math.PI*2); fctx.fill(); }
+      requestAnimationFrame(drawWheel);
     })();
 
-    /* ---------- Streaming CSV from GitHub ---------- */
-    const RAW_URL = 'https://raw.githubusercontent.com/marcomars13/fractus-ia/main/results/bench_compare_5000.csv';
-    const TOTAL_ROWS_HINT = 5000; // pour l’affichage
-
-    async function streamCSV(url){
-      try{
-        const r = await fetch(url, { cache:'no-store' });
-        if(!r.ok || !r.body) throw new Error('HTTP '+r.status);
-
-        const reader = r.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let { value, done } = await reader.read();
-        let buffer = value ? decoder.decode(value, { stream:true }) : '';
-        let headers = null, count=0;
-
-        const updateIngest = (final=false)=>{
-          ingestText.textContent = final
-            ? `Ingestion complete — ${count.toLocaleString()} / ${TOTAL_ROWS_HINT.toLocaleString()} rows`
-            : `Streaming ${count.toLocaleString()} / ${TOTAL_ROWS_HINT.toLocaleString()} rows…`;
-          ingDot.style.opacity = final ? 0.35 : 1;
-        };
-
-        const pushUpdate = ()=>{
-          // mises à jour depuis stats courantes
-          BENCH.plonk_km   = wfPlonk.mean;
-          BENCH.fractus_km = wfFrac.mean;
-          SIGMA.plonk      = wfPlonk.std();
-          SIGMA.fractus    = wfFrac.std();
-
-          // efficiency
-          METRICS.efficiency = clamp(BENCH.plonk_km / Math.max(1e-9, BENCH.fractus_km), 0.8, 1.6);
-          // stability (σ)
-          METRICS.stability  = SIGMA.fractus;
-
-          // entropy & coherence (mapping simple, contrôlé)
-          const e = clamp(0.028 + (METRICS.stability-90)/ (91-90+1e-9) * 0.017, 0.028, 0.045);
-          METRICS.entropy = e;
-          METRICS.coherence = clamp(99 - (e-0.028)/(0.045-0.028)*2.0, 97.0, 99.0);
-
-          writeBench(); writeStability(); writeMetrics();
-        };
-
-        // traite un bloc de lignes
-        function processChunk(chunk){
-          let lines = chunk.split('\n');
-          if(!headers){
-            const head = lines.shift();
-            headers = head ? head.trim().split(',') : null;
-          }
-          for(const line of lines){
-            if(!line) continue;
-            const cols = line.split(',');
-            if(cols.length < 9) continue;
-            // indices connus par ton CSV
-            const pe = parseFloat(cols[5]); // plonk_error_km
-            const fe = parseFloat(cols[8]); // fractus_error_km
-            if(Number.isFinite(pe)) wfPlonk.push(pe);
-            if(Number.isFinite(fe)) wfFrac.push(fe);
-            count++;
-
-            // rafraîchit UI toutes les 50 lignes pour fluidité
-            if(count % 50 === 0) pushUpdate();
-          }
-          updateIngest(false);
-        }
-
-        // boucle streaming
-        while(!done){
-          const lastNL = buffer.lastIndexOf('\n');
-          if(lastNL >= 0){
-            const chunk = buffer.slice(0, lastNL);
-            processChunk(chunk);
-            buffer = buffer.slice(lastNL+1);
-          }
-          ({ value, done } = await reader.read());
-          if(value) buffer += decoder.decode(value, { stream:true });
-        }
-
-        // traite le reste
-        if(buffer.trim().length) processChunk(buffer);
-        pushUpdate();
-        updateIngest(true);
-      }catch(err){
-        ingestText.textContent = 'Streaming failed — falling back to full download.';
-        ingDot.style.background = '#ffe680';
-        console.error('[Fractus] stream error:', err);
-
-        // Fallback: full text fetch
-        try{
-          const txt = await (await fetch(url, { cache:'no-store' })).text();
-          const rows = txt.trim().split('\n');
-          const header = rows.shift();
-          let count=0;
-          for(const line of rows){
-            const cols=line.split(',');
-            if(cols.length<9) continue;
-            const pe=parseFloat(cols[5]), fe=parseFloat(cols[8]);
-            if(Number.isFinite(pe)) wfPlonk.push(pe);
-            if(Number.isFinite(fe)) wfFrac.push(fe);
-            count++;
-            if(count%100===0) { // batch update visuel
-              BENCH.plonk_km=wfPlonk.mean; BENCH.fractus_km=wfFrac.mean;
-              SIGMA.plonk=wfPlonk.std(); SIGMA.fractus=wfFrac.std();
-              METRICS.efficiency=clamp(BENCH.plonk_km/Math.max(1e-9,BENCH.fractus_km),0.8,1.6);
-              METRICS.stability=SIGMA.fractus;
-              const e=clamp(0.028+(METRICS.stability-90)/(91-90+1e-9)*0.017,0.028,0.045);
-              METRICS.entropy=e; METRICS.coherence=clamp(99-(e-0.028)/(0.045-0.028)*2,97,99);
-              writeBench(); writeStability(); writeMetrics();
-              ingestText.textContent = `Downloaded ${count.toLocaleString()} rows…`;
-            }
-          }
-          // final
-          BENCH.plonk_km=wfPlonk.mean; BENCH.fractus_km=wfFrac.mean;
-          SIGMA.plonk=wfPlonk.std(); SIGMA.fractus=wfFrac.std();
-          METRICS.efficiency=clamp(BENCH.plonk_km/Math.max(1e-9,BENCH.fractus_km),0.8,1.6);
-          METRICS.stability=SIGMA.fractus;
-          const e=clamp(0.028+(METRICS.stability-90)/(91-90+1e-9)*0.017,0.028,0.045);
-          METRICS.entropy=e; METRICS.coherence=clamp(99-(e-0.028)/(0.045-0.028)*2,97,99);
-          writeBench(); writeStability(); writeMetrics();
-          ingestText.textContent = `Download complete — ${count.toLocaleString()} rows`;
-          ingDot.style.opacity = 0.35;
-        }catch(e2){
-          ingestText.textContent = 'Failed to load data (check URL or CORS).';
-          ingDot.style.background = '#ff6b6b';
-          console.error('[Fractus] fallback error:', e2);
-        }
-      }
-    }
-
-    // Lancer le streaming (GitHub raw)
-    streamCSV(RAW_URL);
-
-    /* ---------- simple log bars placeholders ---------- */
+    /* ------------ Logs placeholders (visuels légers) ------------ */
     function miniBar(id){
       const c=document.getElementById(id); if(!c)return;
       let g=prepCanvas(c); window.addEventListener('resize',()=>g=prepCanvas(c));
-      (function draw(){
-        const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
+      (function draw(){ const {ctx,cssW,cssH}=g; ctx.clearRect(0,0,cssW,cssH); ctx.fillStyle='#0b0f10'; ctx.fillRect(0,0,cssW,cssH);
         const pad=12, a=97+Math.sin(performance.now()*0.0009)*1.0, b=95+Math.cos(performance.now()*0.0008)*1.0;
         const max=Math.max(a,b)*1.15;
         ctx.fillStyle='rgba(255,80,80,0.85)'; ctx.fillRect(pad,cssH*0.62,(b/max)*(cssW-pad*2),20);
@@ -435,6 +334,73 @@
       })();
     }
     miniBar('c_log_rate'); miniBar('c_log_fp'); miniBar('c_log_latency'); miniBar('c_log_acc');
+
+    /* ------------ Charger 500 lignes et boucler ------------ */
+    async function loadFirst500(url){
+      const txt = await (await fetch(url, { cache:'no-store' })).text();
+      const rows = txt.trim().split('\n');
+      rows.shift(); // header
+      return rows.slice(0, LOOP_COUNT).map(line=>{
+        const c=line.split(',');
+        return {
+          filename: c[0],
+          gt_lat: parseFloat(c[1]), gt_lon: parseFloat(c[2]),
+          plonk_error_km: parseFloat(c[5]),
+          fractus_error_km: parseFloat(c[8]),
+        };
+      }).filter(r=>Number.isFinite(r.plonk_error_km)&&Number.isFinite(r.fractus_error_km));
+    }
+
+    function updateFromRow(r, idx){
+      // per-image metrics
+      BENCH.plonk_km   = r.plonk_error_km;
+      BENCH.fractus_km = r.fractus_error_km;
+      METRICS.efficiency = clamp(BENCH.plonk_km/Math.max(1e-9,BENCH.fractus_km), 0.6, 2.0);
+
+      // rolling window for σ
+      ringQueuePlonk.push(BENCH.plonk_km);  if(ringQueuePlonk.length>STAB_WIN) ringQueuePlonk.shift();
+      ringQueueFrac .push(BENCH.fractus_km);if(ringQueueFrac.length>STAB_WIN)  ringQueueFrac.shift();
+      const std = arr => {
+        const n=arr.length; if(n<2) return 0;
+        const m=arr.reduce((a,b)=>a+b,0)/n;
+        const v=arr.reduce((a,b)=>a+(b-m)*(b-m),0)/(n-1);
+        return Math.sqrt(v);
+      };
+      SIGMA.plonk   = std(ringQueuePlonk);
+      SIGMA.fractus = std(ringQueueFrac);
+      METRICS.stability = SIGMA.fractus;
+
+      // entropy & coherence: mapping contrôlé de σ (90..91 km → 0.028..0.045)
+      const e = clamp(0.028 + (METRICS.stability-90)/(91-90+1e-9) * 0.017, 0.028, 0.045);
+      METRICS.entropy = e;
+      METRICS.coherence = clamp(99 - (e-0.028)/(0.045-0.028)*2.0, 97.0, 99.0);
+
+      // vignette + meta
+      updateThumb(r.filename, r.gt_lat, r.gt_lon, idx);
+      metaPlonkErr.textContent = `${BENCH.plonk_km.toFixed(2)} km`;
+      metaFracErr.textContent  = `${BENCH.fractus_km.toFixed(2)} km`;
+
+      writePerImage();
+    }
+
+    (async function startLoop(){
+      try{
+        const sample = await loadFirst500(RAW_URL);
+        if(!sample.length) { statusVal.textContent='No data'; return; }
+
+        let idx = 0;
+        // 1er rendu immédiat
+        updateFromRow(sample[idx], idx);
+
+        setInterval(()=>{
+          idx = (idx + 1) % sample.length;
+          updateFromRow(sample[idx], idx);
+        }, FRAME_MS);
+      }catch(err){
+        console.error('[Fractus] load loop error:', err);
+        statusVal.textContent = 'Load error';
+      }
+    })();
   });
   </script>
 </body>
