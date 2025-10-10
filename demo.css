@@ -1,5 +1,5 @@
 /* =========================================
-   FRACTUS DEMO — VERSION STABLE 3.3
+   FRACTUS DEMO — VERSION ORBITAL 2.0
    Auteur : Marc Cedrych (Fractys)
    ========================================= */
 
@@ -125,6 +125,8 @@
   box-shadow: 0 0 14px rgba(127,255,212,0.08);
   position: relative;
   overflow: hidden;
+  animation: orbit 8s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 1.5s);
 }
 
 .lab-card::after {
@@ -139,6 +141,11 @@
 @keyframes breathe {
   0%,100% { transform: scale(1); opacity: .7; }
   50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes orbit {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 .lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
@@ -181,7 +188,7 @@
 }
 
 /* =========================================
-   FRACTUS ENGINE — LAYOUT FINAL COMPACT
+   FRACTUS ENGINE — ORBITAL LAYOUT
    ========================================= */
 
 .fractus-lab-center {
@@ -189,41 +196,60 @@
   text-align: center;
 }
 
-/* Grille compacte en croix */
+/* Nouvelle grille orbitale */
 .fractus-grid-core {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, auto);
   grid-template-areas:
-    "error entropy ."
-    "stability center eff"
-    ". . .";
-  gap: 24px 40px;
+    ". entropy eff"
+    "error center stability"
+    ". logs meta";
+  gap: 26px 36px;
   align-items: center;
   justify-items: center;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 40px 0;
 }
 
 /* Zones */
-#card-error     { grid-area: error; }
-#card-entropy   { grid-area: entropy; }
-#card-stability { grid-area: stability; }
-#card-eff       { grid-area: eff; }
+#card-error     { grid-area: error; --i:1; }
+#card-entropy   { grid-area: entropy; --i:2; }
+#card-stability { grid-area: stability; --i:3; }
+#card-eff       { grid-area: eff; --i:4; }
+#card-logs      { grid-area: logs; --i:5; }
+#card-meta      { grid-area: meta; --i:6; }
 
 /* Cœur fractal */
 .engine-core {
   grid-area: center;
-  background: radial-gradient(circle at center, rgba(0,255,180,0.05), rgba(0,0,0,1) 85%);
+  background: radial-gradient(circle at center, rgba(0,255,180,0.08), rgba(0,0,0,1) 85%);
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(127,255,212,0.12);
+  box-shadow: 0 0 25px rgba(127,255,212,0.18);
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
+  position: relative;
+}
+
+.engine-core::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 22px;
+  background: radial-gradient(circle at 50% 50%, rgba(127,255,212,0.05), transparent 80%);
+  animation: pulse-halo 5s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes pulse-halo {
+  0%,100% { opacity: .4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
 .engine-core canvas {
@@ -232,14 +258,16 @@
   height: 320px;
   border-radius: 14px;
   border: 1px solid rgba(127,255,212,0.2);
+  position: relative;
+  z-index: 1;
 }
 
-/* Cartes autour */
+/* Cartes orbitantes */
 .lab-card {
   width: 100%;
   max-width: 320px;
   text-align: left;
-  background: rgba(0, 10, 10, 0.6);
+  background: rgba(0, 10, 10, 0.65);
   border: 1px solid rgba(127,255,212,0.12);
   border-radius: 14px;
   box-shadow: 0 0 20px rgba(127,255,212,0.05);
@@ -268,12 +296,15 @@
   .fractus-grid-core {
     grid-template-areas:
       "center"
-      "error"
       "entropy"
+      "eff"
+      "error"
       "stability"
-      "eff";
+      "logs"
+      "meta";
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 22px;
+    padding: 20px;
   }
 }
 
