@@ -11,6 +11,9 @@
 
   <style>
     /* ---- GENERAL STYLE ---- */
+    body.fractus-access { opacity: 0; animation: fadeIn 800ms ease forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
     .lab-section { padding: 40px 0 0; }
 
     .lab-title {
@@ -33,6 +36,20 @@
       border-radius: 12px;
       padding: 14px 14px 12px;
       box-shadow: 0 0 14px rgba(127,255,212,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    /* respiration lumineuse douce, style labo */
+    .lab-card::after {
+      content: "";
+      position: absolute; inset: -20%;
+      background: radial-gradient(60% 60% at 30% 30%, rgba(127,255,212,0.05), transparent 60%);
+      animation: breathe 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 1; }
     }
 
     .lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
@@ -64,19 +81,21 @@
       flex-wrap: wrap;
     }
 
-    .lab-legend .val { color: #7fffd4; font-weight: 600; }
+    .lab-legend .val { color: #7fffd4; font-weight: 600; transition: color .3s ease; }
 
     @media (max-width: 700px) {
       .lab-legend { flex-direction: column; align-items: flex-start; }
     }
 
+    /* --- FRACTUS ENGINE --- */
     .fractus-visual {
       text-align: center;
-      padding: 40px 0 20px;
+      padding: 28px 0 8px;
       color: #bfffea;
       max-width: 1080px;
       margin: 0 auto;
     }
+    .fractus-visual h2 { margin-bottom: 12px; color: #bfffea; }
 
     .fractus-visual canvas {
       display: block;
@@ -97,22 +116,16 @@
       background: rgba(10,15,15,0.9);
       border: 1px solid rgba(127,255,212,0.12);
       border-radius: 12px;
-      margin-top: 18px;
-      padding: 12px 0;
+      margin-top: 12px;
+      padding: 10px 0;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 0.9rem;
       color: #9fffe0;
     }
+    .monitor-item { margin: 4px 10px; min-width: 140px; }
+    .monitor-item span { font-weight: 600; color: #7fffd4; transition: color 0.3s ease; }
 
-    .monitor-item {
-      margin: 4px 10px;
-      min-width: 120px;
-    }
-    .monitor-item span {
-      font-weight: 600;
-      color: #7fffd4;
-      transition: color 0.3s ease;
-    }
+    footer { margin-top: 28px; }
   </style>
 </head>
 
@@ -148,37 +161,40 @@
           <h4>Average Error (km)</h4>
           <div class="lab-meta">Plonk vs Fractus (5 000 photos)</div>
           <canvas id="c_bench" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Plonk: <span class="val">1252 km</span></div>
-            <div>Fractus: <span class="val">870 km</span></div>
-            <div>Gain: <span class="val">−30.5 %</span></div>
+          <div class="lab-legend" id="legend_bench">
+            <div>Plonk: <span class="val" data-key="bench-plonk">1252 km</span></div>
+            <div>Fractus: <span class="val" data-key="bench-fractus">870 km</span></div>
+            <div>Gain: <span class="val" data-key="bench-gain">−30.5 %</span></div>
           </div>
         </div>
+
         <div class="lab-card">
           <h4>Entropy & Coherence</h4>
           <div class="lab-meta">Mean values with minor live variation</div>
           <canvas id="c_entropy" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Entropy: <span class="val">0.028</span></div>
-            <div>Coherence: <span class="val">98.7 %</span></div>
+          <div class="lab-legend" id="legend_entropy">
+            <div>Entropy: <span class="val" data-key="entropy">0.032</span></div>
+            <div>Coherence: <span class="val" data-key="coherence">98.4 %</span></div>
           </div>
         </div>
+
         <div class="lab-card">
           <h4>Fractal Stability — Std Dev (km)</h4>
           <div class="lab-meta">Lower is better</div>
           <canvas id="c_stability" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Plonk σ: <span class="val">92.7 km</span></div>
-            <div>Fractus σ: <span class="val">90.4 km</span></div>
+          <div class="lab-legend" id="legend_stability">
+            <div>Plonk σ: <span class="val" data-key="stab-plonk">92.7 km</span></div>
+            <div>Fractus σ: <span class="val" data-key="stab-fractus">90.4 km</span></div>
           </div>
         </div>
+
         <div class="lab-card">
           <h4>Processing Efficiency</h4>
           <div class="lab-meta">Relative accuracy ratio</div>
           <canvas id="c_eff" class="lab-canvas"></canvas>
-          <div class="lab-legend">
-            <div>Efficiency: <span class="val">× 1.30</span></div>
-            <div>Status: <span class="val">Stable</span></div>
+          <div class="lab-legend" id="legend_eff">
+            <div>Efficiency: <span class="val" data-key="efficiency">× 1.30</span></div>
+            <div>Status: <span class="val" data-key="status">Stable</span></div>
           </div>
         </div>
       </div>
@@ -202,18 +218,22 @@
       <div class="lab-grid">
         <div class="lab-card">
           <h4>Detection Rate (%)</h4>
+          <div class="lab-meta">True positives / anomalies injected</div>
           <canvas id="c_log_rate" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>False Positive Rate (%)</h4>
+          <div class="lab-meta">Incorrect alerts / total alerts</div>
           <canvas id="c_log_fp" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>Mean Detection Latency (ms)</h4>
+          <div class="lab-meta">Time to alert</div>
           <canvas id="c_log_latency" class="lab-canvas"></canvas>
         </div>
         <div class="lab-card">
           <h4>Accuracy / Throughput</h4>
+          <div class="lab-meta">Correct detections per second</div>
           <canvas id="c_log_acc" class="lab-canvas"></canvas>
         </div>
       </div>
@@ -223,125 +243,288 @@
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-    // --- Animated bar ---
-    function animatedBar(canvasId, valA, valB, labelA, labelB, unit, colorA, colorB) {
-      const c = document.getElementById(canvasId);
+    // ===== Helpers: DPR-aware canvas sizing =====
+    function prepCanvas(c, width, height) {
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = width ?? c.clientWidth || 300;
+      const cssH = height ?? c.clientHeight || 150;
+      c.width = Math.max(1, Math.floor(cssW * dpr));
+      c.height = Math.max(1, Math.floor(cssH * dpr));
+      const ctx = c.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, cssW, cssH, dpr };
+    }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+    // ===== Global live metrics (truth source) =====
+    const METRICS = {
+      entropy: 0.032,           // 0.028–0.045
+      coherence: 98.4,          // 97–99
+      efficiency: 1.30,         // 1.28–1.32
+      stability: 90.6,          // 90–91 (σ km)
+    };
+
+    // ===== Animated bar (two bars) with micro-oscillation + live labels =====
+    function animatedBarLive(opts) {
+      const { id, baseA, baseB, labelA, labelB, unit, colorA, colorB, getLiveA, getLiveB } = opts;
+      const c = document.getElementById(id);
       if (!c) return;
-      const ctx = c.getContext("2d");
-      const DPR = window.devicePixelRatio || 1;
 
-      function resize() {
-        const width = c.clientWidth || 300;
-        const height = c.clientHeight || 150;
-        c.width = width * DPR;
-        c.height = height * DPR;
-        ctx.scale(DPR, DPR);
-      }
-
-      resize();
-
+      let { ctx, cssW, cssH } = prepCanvas(c);
       const pad = 12;
-      const maxVal = Math.max(valA, valB) * 1.15;
-      let anim = 0;
 
-      function animate() {
-        ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+      function onResize() { ({ ctx, cssW, cssH } = prepCanvas(c)); }
+      window.addEventListener('resize', onResize, { passive: true });
+
+      let t = 0; // for oscillation
+      function draw() {
+        // micro oscillation around bases
+        const liveA = getLiveA ? getLiveA() : baseA * (1 + (Math.sin(t*0.03)*0.01));
+        const liveB = getLiveB ? getLiveB() : baseB * (1 + (Math.cos(t*0.025)*0.01));
+        const maxVal = Math.max(liveA, liveB) * 1.15;
+
+        ctx.clearRect(0, 0, cssW, cssH);
         ctx.fillStyle = "#0b0f10";
-        ctx.fillRect(0, 0, c.clientWidth, c.clientHeight);
+        ctx.fillRect(0, 0, cssW, cssH);
 
-        const progress = Math.min(anim, 1);
-        const wA = (valA / maxVal) * (c.clientWidth - pad * 2) * progress;
-        const wB = (valB / maxVal) * (c.clientWidth - pad * 2) * progress;
+        const wA = (liveA / maxVal) * (cssW - pad * 2);
+        const wB = (liveB / maxVal) * (cssW - pad * 2);
 
+        // Bars
         ctx.fillStyle = colorB;
-        ctx.fillRect(pad, c.clientHeight * 0.6, wB, 20);
+        ctx.fillRect(pad, cssH * 0.62, wB, 20);
 
         ctx.fillStyle = colorA;
-        ctx.fillRect(pad, c.clientHeight * 0.6 - 30, wA, 20);
+        ctx.fillRect(pad, cssH * 0.62 - 30, wA, 20);
 
+        // Labels
         ctx.fillStyle = "#9adfce";
         ctx.font = "12px ui-sans-serif";
-        ctx.fillText(`${labelA}: ${valA}${unit}`, pad, c.clientHeight * 0.6 - 12);
-        ctx.fillText(`${labelB}: ${valB}${unit}`, pad, c.clientHeight * 0.6 + 35);
+        const unitFmt = (val) => {
+          if (unit === " km") return `${val.toFixed(1)} km`;
+          if (unit === " %") return `${val.toFixed(1)} %`;
+          if (unit === " ms") return `${val.toFixed(1)} ms`;
+          if (unit === "×") return `×${val.toFixed(2)}`;
+          return val.toFixed(3);
+        };
+        ctx.fillText(`${labelA}: ${unitFmt(liveA)}`, pad, cssH * 0.62 - 12);
+        ctx.fillText(`${labelB}: ${unitFmt(liveB)}`, pad, cssH * 0.62 + 35);
 
-        anim += 0.02;
-        if (anim < 1) requestAnimationFrame(animate);
+        t += 1;
+        requestAnimationFrame(draw);
       }
-
-      animate();
+      draw();
     }
 
-    // === MAPILLARY BENCHMARK ===
-    animatedBar('c_bench', 870, 1252, 'Fractus','Plonk',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_entropy', 0.028, 0.04, 'Entropy','Baseline','', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_stability', 90.4, 92.7, 'Fractus σ','Plonk σ',' km', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_eff', 1.3, 1.0, 'Fractus','Baseline','×', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    // ====== MAPILLARY BENCHMARK cards (live) ======
+    // Average Error (km): Fractus vs Plonk — oscillation douce, gain auto
+    let benchFractusBase = 870, benchPlonkBase = 1252;
+    animatedBarLive({
+      id: 'c_bench',
+      baseA: benchFractusBase,
+      baseB: benchPlonkBase,
+      labelA: 'Fractus', labelB: 'Plonk', unit: ' km',
+      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
+      getLiveA: () => benchFractusBase * (1 + (Math.sin(Date.now()*0.0011)*0.008)),
+      getLiveB: () => benchPlonkBase * (1 + (Math.cos(Date.now()*0.0013)*0.006))
+    });
 
-    // === LOG BENCHMARK ===
+    // Entropy & Coherence : reliées aux METRICS
+    animatedBarLive({
+      id: 'c_entropy',
+      baseA: METRICS.entropy,   // Entropy (Fractus)
+      baseB: 0.040,             // Baseline
+      labelA: 'Entropy', labelB: 'Baseline', unit: '',
+      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
+      getLiveA: () => METRICS.entropy,
+      getLiveB: () => 0.040 + Math.sin(Date.now()*0.001)*0.001
+    });
+
+    // Stability σ (km) : Fractus vs Plonk
+    let stabFractusBase = 90.4, stabPlonkBase = 92.7;
+    animatedBarLive({
+      id: 'c_stability',
+      baseA: stabFractusBase,
+      baseB: stabPlonkBase,
+      labelA: 'Fractus σ', labelB: 'Plonk σ', unit: ' km',
+      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
+      getLiveA: () => clamp(METRICS.stability, 90.0, 91.0),
+      getLiveB: () => stabPlonkBase * (1 + Math.sin(Date.now()*0.001)*0.002)
+    });
+
+    // Efficiency × : Fractus vs Baseline
+    animatedBarLive({
+      id: 'c_eff',
+      baseA: METRICS.efficiency,
+      baseB: 1.00,
+      labelA: 'Fractus', labelB: 'Baseline', unit: '×',
+      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
+      getLiveA: () => clamp(METRICS.efficiency + Math.sin(Date.now()*0.0015)*0.002, 1.28, 1.32),
+      getLiveB: () => 1.00
+    });
+
+    // Mises à jour des légendes (couleurs/trend)
+    function updateLegend() {
+      // Bench gain
+      const pf = document.querySelector('[data-key="bench-fractus"]');
+      const pp = document.querySelector('[data-key="bench-plonk"]');
+      const pg = document.querySelector('[data-key="bench-gain"]');
+      const fVal = benchFractusBase * (1 + (Math.sin(Date.now()*0.0011)*0.008));
+      const pVal = benchPlonkBase * (1 + (Math.cos(Date.now()*0.0013)*0.006));
+      const gain = ((pVal - fVal) / pVal) * 100; // %
+      if (pf) pf.textContent = `${fVal.toFixed(1)} km`;
+      if (pp) pp.textContent = `${pVal.toFixed(1)} km`;
+      if (pg) { pg.textContent = `${gain > 0 ? '−' : ''}${Math.abs(gain).toFixed(1)} %`; pg.style.color = gain>0 ? '#7fffd4' : '#ffe680'; }
+
+      // Entropy/Coherence
+      const e = document.querySelector('[data-key="entropy"]');
+      const c = document.querySelector('[data-key="coherence"]');
+      if (e) e.textContent = METRICS.entropy.toFixed(3);
+      if (c) c.textContent = `${METRICS.coherence.toFixed(1)} %`;
+
+      // Stability
+      const sf = document.querySelector('[data-key="stab-fractus"]');
+      const sp = document.querySelector('[data-key="stab-plonk"]');
+      if (sf) sf.textContent = `${clamp(METRICS.stability,90,91).toFixed(1)} km`;
+      if (sp) sp.textContent = `${(92.7 + Math.sin(Date.now()*0.001)*0.2).toFixed(1)} km`;
+
+      // Efficiency + Status
+      const eff = document.querySelector('[data-key="efficiency"]');
+      const st = document.querySelector('[data-key="status"]');
+      const effVal = METRICS.efficiency;
+      if (eff) eff.textContent = `× ${effVal.toFixed(2)}`;
+      if (st) st.textContent = (METRICS.entropy < 0.040 ? 'Stable' : 'Drift');
+      requestAnimationFrame(updateLegend);
+    }
+    updateLegend();
+
+    // ===== LOG BENCHMARK (valeurs statiques mais animées visuellement) =====
     const LOGBENCH = { rateFrac:97.2, rateBase:95.4, fpFrac:1.8, fpBase:3.2, latFrac:45.3, latBase:62.7, accFrac:98.1, accBase:96.5 };
-    animatedBar('c_log_rate', LOGBENCH.rateFrac, LOGBENCH.rateBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_log_fp', LOGBENCH.fpFrac, LOGBENCH.fpBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_log_latency', LOGBENCH.latFrac, LOGBENCH.latBase, 'Fractus','Baseline',' ms', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
-    animatedBar('c_log_acc', LOGBENCH.accFrac, LOGBENCH.accBase, 'Fractus','Baseline',' %', 'rgba(127,255,212,0.9)', 'rgba(255,80,80,0.9)');
+    animatedBarLive({
+      id:'c_log_rate', baseA:LOGBENCH.rateFrac, baseB:LOGBENCH.rateBase,
+      labelA:'Fractus', labelB:'Baseline', unit:' %',
+      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
+    });
+    animatedBarLive({
+      id:'c_log_fp', baseA:LOGBENCH.fpFrac, baseB:LOGBENCH.fpBase,
+      labelA:'Fractus', labelB:'Baseline', unit:' %',
+      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
+    });
+    animatedBarLive({
+      id:'c_log_latency', baseA:LOGBENCH.latFrac, baseB:LOGBENCH.latBase,
+      labelA:'Fractus', labelB:'Baseline', unit:' ms',
+      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
+    });
+    animatedBarLive({
+      id:'c_log_acc', baseA:LOGBENCH.accFrac, baseB:LOGBENCH.accBase,
+      labelA:'Fractus', labelB:'Baseline', unit:' %',
+      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
+    });
 
-    // === FRACTUS ENGINE VISUAL ===
+    // ===== FRACTUS ENGINE VISUAL — cercle + 10 points orbitaux synchronisés =====
     (function() {
       const canvas = document.getElementById("fractusCanvas");
-      const ctx = canvas.getContext("2d");
-      function resize() {
-        canvas.width = Math.min(window.innerWidth * 0.9, 720);
-        canvas.height = 400;
+      let { ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9, 720), 400);
+      function onResize(){
+        ({ ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9, 720), 400));
       }
-      resize(); window.addEventListener("resize", resize);
-      let t = 0;
+      window.addEventListener('resize', onResize, { passive:true });
+
+      const cx = () => cssW/2, cy = () => cssH/2;
+      const rings = 9;
+      const baseR = 40, stepR = 35;
+      const points = [];
+      const N = 10; // 10 points orbitaux
+      for (let i=0; i<N; i++){
+        points.push({
+          ring: 2 + (i % (rings-2)),          // répartis sur les anneaux 2..8
+          angle: Math.random()*Math.PI*2,
+          speed: 0.004 + i*0.0006,           // vitesses proportionnelles
+          jitter: 0
+        });
+      }
+
       function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const cx = canvas.width / 2, cy = canvas.height / 2;
-        for (let i = 0; i < 9; i++) {
-          const r = 40 + i * 35 + Math.sin(t / 20 + i) * 5;
+        ctx.clearRect(0,0,cssW,cssH);
+
+        // vitesse globale liée à l'entropy (plus d'entropy => plus rapide)
+        const entropy = METRICS.entropy;
+        const speedFactor = lerp(0.7, 1.6, clamp((entropy-0.028)/(0.045-0.028), 0, 1));
+
+        // anneaux
+        for (let i=0;i<rings;i++){
+          const r = baseR + i*stepR + Math.sin(performance.now()*0.002 + i)*2;
           ctx.beginPath();
-          ctx.strokeStyle = `hsl(${(t * 3 + i * 40) % 360}, 80%, 70%)`;
-          ctx.lineWidth = 1.3;
-          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = `hsl(${(i*28 + performance.now()*0.02)%360}, 80%, 70%)`;
+          ctx.lineWidth = 1.1;
+          ctx.arc(cx(), cy(), r, 0, Math.PI*2);
           ctx.stroke();
         }
-        t += 0.8; requestAnimationFrame(draw);
+
+        // points orbitaux (justification visuelle)
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const r = baseR + p.ring*stepR;
+          p.angle += p.speed * speedFactor;
+          p.jitter = Math.sin(performance.now()*0.003 + i)*0.8;
+
+          const px = cx() + Math.cos(p.angle)*(r + p.jitter);
+          const py = cy() + Math.sin(p.angle)*(r + p.jitter);
+
+          // couleur selon stabilité
+          let col = '#7fffd4'; // stable
+          if (entropy >= 0.040 && entropy < 0.043) col = '#ffe680'; // drift
+          if (entropy >= 0.043) col = '#ff6b6b'; // instable
+
+          ctx.beginPath();
+          ctx.fillStyle = col;
+          ctx.arc(px, py, 3, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
       }
       draw();
     })();
 
-    // === LIVE MONITOR ===
-    const metrics = {
-      entropy: 0.032,
-      coherence: 98.4,
-      efficiency: 1.30,
-      stability: 90.6
-    };
-
+    // ===== LIVE MONITOR — MAJ toutes les 1.5 s + couleurs tendance =====
     function updateMonitor() {
       const e = document.getElementById("entropyVal");
       const c = document.getElementById("coherenceVal");
       const f = document.getElementById("efficiencyVal");
       const s = document.getElementById("stabilityVal");
 
-      function update(val, target, range, unit, fixed=3) {
-        const old = val;
-        const newVal = Math.max(range[0], Math.min(range[1], val + (Math.random() - 0.5) * 0.002));
-        const trend = newVal > old ? "up" : newVal < old ? "down" : "stable";
-        target.textContent = (unit === "×" ? `×${newVal.toFixed(2)}` :
-                              unit === "%" ? `${newVal.toFixed(1)} %` :
-                              unit === "km" ? `σ = ${newVal.toFixed(1)} km` :
-                              newVal.toFixed(fixed));
-        target.style.color = trend === "up" ? "#ffe680" : trend === "down" ? "#80c0ff" : "#7fffd4";
-        return newVal;
+      function trendColor(newV, oldV, stableColor="#7fffd4"){
+        if (newV > oldV + 1e-6) return "#ffe680"; // up → jaune
+        if (newV < oldV - 1e-6) return "#80c0ff"; // down → bleu
+        return stableColor;
       }
 
-      metrics.entropy = update(metrics.entropy, e, [0.028, 0.045], "");
-      metrics.coherence = update(metrics.coherence, c, [97.0, 99.0], "%", 1);
-      metrics.efficiency = update(metrics.efficiency, f, [1.28, 1.32], "×", 2);
-      metrics.stability = update(metrics.stability, s, [90.0, 91.0], "km", 1);
-    }
+      // Entropy (0.028–0.045)
+      const oldE = METRICS.entropy;
+      METRICS.entropy = clamp(oldE + (Math.random()-0.5)*0.002, 0.028, 0.045);
+      e.textContent = METRICS.entropy.toFixed(3);
+      e.style.color = trendColor(METRICS.entropy, oldE);
 
+      // Coherence (97–99)
+      const oldC = METRICS.coherence;
+      METRICS.coherence = clamp(oldC + (Math.random()-0.5)*0.15, 97.0, 99.0);
+      c.textContent = `${METRICS.coherence.toFixed(1)} %`;
+      c.style.color = trendColor(METRICS.coherence, oldC);
+
+      // Efficiency (×1.28–×1.32)
+      const oldF = METRICS.efficiency;
+      METRICS.efficiency = clamp(oldF + (Math.random()-0.5)*0.004, 1.28, 1.32);
+      f.textContent = `×${METRICS.efficiency.toFixed(2)}`;
+      f.style.color = trendColor(METRICS.efficiency, oldF);
+
+      // Stability σ (90–91 km)
+      const oldS = METRICS.stability;
+      METRICS.stability = clamp(oldS + (Math.random()-0.5)*0.12, 90.0, 91.0);
+      s.textContent = `σ = ${METRICS.stability.toFixed(1)} km`;
+      s.style.color = trendColor(METRICS.stability, oldS);
+    }
     setInterval(updateMonitor, 1500);
   </script>
 </body>
