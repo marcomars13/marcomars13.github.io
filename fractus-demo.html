@@ -8,124 +8,64 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/demo.css">
-
   <style>
-    /* ---- GENERAL STYLE ---- */
-    body.fractus-access { opacity: 0; animation: fadeIn 800ms ease forwards; }
+    /* Fade-in labo */
+    body.fractus-access { opacity: 0; animation: fadeIn .8s ease forwards; }
     @keyframes fadeIn { to { opacity: 1; } }
 
     .lab-section { padding: 40px 0 0; }
+    .lab-title { color:#7fffd4; font-size:1.25rem; margin:4px 0 18px; text-align:center; letter-spacing:.3px; }
 
-    .lab-title {
-      color: #7fffd4;
-      font-size: 1.25rem;
-      margin: 4px 0 18px;
-      text-align: center;
-      letter-spacing: 0.3px;
+    .lab-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
+    .lab-card{
+      background:rgba(10,15,15,.9);
+      border:1px solid rgba(127,255,212,.14);
+      border-radius:12px; padding:14px 14px 12px;
+      box-shadow:0 0 14px rgba(127,255,212,.08);
+      position:relative; overflow:hidden;
+    }
+    /* respiration douce */
+    .lab-card::after{
+      content:""; position:absolute; inset:-25%;
+      background:radial-gradient(60% 60% at 30% 30%, rgba(127,255,212,.05), transparent 60%);
+      animation:breathe 4.6s ease-in-out infinite; pointer-events:none;
+    }
+    @keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.05);opacity:1}}
+
+    .lab-card h4{ margin:0 0 8px; color:#bfffea; font-weight:600; }
+    .lab-meta{ font-size:.86rem; color:#9adfce; opacity:.95; margin-bottom:10px; }
+
+    .lab-canvas{
+      width:100%; height:160px!important; display:block; border-radius:8px;
+      background:#0b0f10; border:1px solid rgba(127,255,212,.12);
     }
 
-    .lab-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
+    .lab-legend{
+      margin-top:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:.85rem; color:#9fffe0; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;
+    }
+    .lab-legend .val{ color:#7fffd4; font-weight:600; transition:color .3s ease; }
+    @media (max-width:700px){ .lab-legend{flex-direction:column; align-items:flex-start;} }
+
+    /* Fractus Engine */
+    .fractus-visual{ text-align:center; padding:28px 0 8px; color:#bfffea; max-width:1080px; margin:0 auto; }
+    .fractus-visual h2{ margin-bottom:12px; color:#bfffea; }
+    .fractus-visual canvas{
+      display:block; margin:0 auto; width:100%; max-width:720px; height:400px;
+      background:radial-gradient(circle at center, rgba(0,255,180,.05), #000 80%);
+      border:1px solid rgba(127,255,212,.2); border-radius:16px; box-shadow:0 0 40px rgba(127,255,212,.1);
     }
 
-    .lab-card {
-      background: rgba(10, 15, 15, 0.9);
-      border: 1px solid rgba(127,255,212,0.14);
-      border-radius: 12px;
-      padding: 14px 14px 12px;
-      box-shadow: 0 0 14px rgba(127,255,212,0.08);
-      position: relative;
-      overflow: hidden;
+    .live-monitor{
+      display:flex; justify-content:space-evenly; flex-wrap:wrap;
+      background:rgba(10,15,15,.9); border:1px solid rgba(127,255,212,.12);
+      border-radius:12px; margin-top:12px; padding:10px 0;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9rem; color:#9fffe0;
     }
-    /* respiration lumineuse douce, style labo */
-    .lab-card::after {
-      content: "";
-      position: absolute; inset: -20%;
-      background: radial-gradient(60% 60% at 30% 30%, rgba(127,255,212,0.05), transparent 60%);
-      animation: breathe 4.5s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes breathe {
-      0%,100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.05); opacity: 1; }
-    }
+    .monitor-item{ margin:4px 10px; min-width:140px; }
+    .monitor-item span{ font-weight:600; color:#7fffd4; transition:color .3s ease; }
 
-    .lab-card h4 { margin: 0 0 8px; color: #bfffea; font-weight: 600; }
-
-    .lab-meta {
-      font-size: 0.86rem;
-      color: #9adfce;
-      opacity: 0.95;
-      margin-bottom: 10px;
-    }
-
-    .lab-canvas {
-      width: 100%;
-      height: 160px !important;
-      display: block;
-      border-radius: 8px;
-      background: #0b0f10;
-      border: 1px solid rgba(127,255,212,0.12);
-    }
-
-    .lab-legend {
-      margin-top: 8px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.85rem;
-      color: #9fffe0;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .lab-legend .val { color: #7fffd4; font-weight: 600; transition: color .3s ease; }
-
-    @media (max-width: 700px) {
-      .lab-legend { flex-direction: column; align-items: flex-start; }
-    }
-
-    /* --- FRACTUS ENGINE --- */
-    .fractus-visual {
-      text-align: center;
-      padding: 28px 0 8px;
-      color: #bfffea;
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-    .fractus-visual h2 { margin-bottom: 12px; color: #bfffea; }
-
-    .fractus-visual canvas {
-      display: block;
-      margin: 0 auto;
-      background: radial-gradient(circle at center, rgba(0,255,180,0.05), rgba(0,0,0,1) 80%);
-      border: 1px solid rgba(127,255,212,0.2);
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(127,255,212,0.1);
-      width: 100%;
-      max-width: 720px;
-      height: 400px;
-    }
-
-    .live-monitor {
-      display: flex;
-      justify-content: space-evenly;
-      flex-wrap: wrap;
-      background: rgba(10,15,15,0.9);
-      border: 1px solid rgba(127,255,212,0.12);
-      border-radius: 12px;
-      margin-top: 12px;
-      padding: 10px 0;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.9rem;
-      color: #9fffe0;
-    }
-    .monitor-item { margin: 4px 10px; min-width: 140px; }
-    .monitor-item span { font-weight: 600; color: #7fffd4; transition: color 0.3s ease; }
-
-    footer { margin-top: 28px; }
+    footer{ margin-top:28px; }
   </style>
 </head>
 
@@ -146,9 +86,7 @@
   <header class="demo-hero">
     <div class="hero-inner">
       <h1>🧠 Fractus Scientific Demo</h1>
-      <p class="subtitle">
-        Experimental benchmark and fractal intelligence visualization — Real data, Mapillary & system logs.
-      </p>
+      <p class="subtitle">Experimental benchmark and fractal intelligence visualization — Real data, Mapillary & system logs.</p>
     </div>
   </header>
 
@@ -243,289 +181,208 @@
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-    // ===== Helpers: DPR-aware canvas sizing =====
-    function prepCanvas(c, width, height) {
-      const dpr = window.devicePixelRatio || 1;
-      const cssW = width ?? c.clientWidth || 300;
-      const cssH = height ?? c.clientHeight || 150;
-      c.width = Math.max(1, Math.floor(cssW * dpr));
-      c.height = Math.max(1, Math.floor(cssH * dpr));
-      const ctx = c.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return { ctx, cssW, cssH, dpr };
-    }
-    function lerp(a,b,t){ return a+(b-a)*t; }
-    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
-
-    // ===== Global live metrics (truth source) =====
-    const METRICS = {
-      entropy: 0.032,           // 0.028–0.045
-      coherence: 98.4,          // 97–99
-      efficiency: 1.30,         // 1.28–1.32
-      stability: 90.6,          // 90–91 (σ km)
-    };
-
-    // ===== Animated bar (two bars) with micro-oscillation + live labels =====
-    function animatedBarLive(opts) {
-      const { id, baseA, baseB, labelA, labelB, unit, colorA, colorB, getLiveA, getLiveB } = opts;
-      const c = document.getElementById(id);
-      if (!c) return;
-
-      let { ctx, cssW, cssH } = prepCanvas(c);
-      const pad = 12;
-
-      function onResize() { ({ ctx, cssW, cssH } = prepCanvas(c)); }
-      window.addEventListener('resize', onResize, { passive: true });
-
-      let t = 0; // for oscillation
-      function draw() {
-        // micro oscillation around bases
-        const liveA = getLiveA ? getLiveA() : baseA * (1 + (Math.sin(t*0.03)*0.01));
-        const liveB = getLiveB ? getLiveB() : baseB * (1 + (Math.cos(t*0.025)*0.01));
-        const maxVal = Math.max(liveA, liveB) * 1.15;
-
-        ctx.clearRect(0, 0, cssW, cssH);
-        ctx.fillStyle = "#0b0f10";
-        ctx.fillRect(0, 0, cssW, cssH);
-
-        const wA = (liveA / maxVal) * (cssW - pad * 2);
-        const wB = (liveB / maxVal) * (cssW - pad * 2);
-
-        // Bars
-        ctx.fillStyle = colorB;
-        ctx.fillRect(pad, cssH * 0.62, wB, 20);
-
-        ctx.fillStyle = colorA;
-        ctx.fillRect(pad, cssH * 0.62 - 30, wA, 20);
-
-        // Labels
-        ctx.fillStyle = "#9adfce";
-        ctx.font = "12px ui-sans-serif";
-        const unitFmt = (val) => {
-          if (unit === " km") return `${val.toFixed(1)} km`;
-          if (unit === " %") return `${val.toFixed(1)} %`;
-          if (unit === " ms") return `${val.toFixed(1)} ms`;
-          if (unit === "×") return `×${val.toFixed(2)}`;
-          return val.toFixed(3);
-        };
-        ctx.fillText(`${labelA}: ${unitFmt(liveA)}`, pad, cssH * 0.62 - 12);
-        ctx.fillText(`${labelB}: ${unitFmt(liveB)}`, pad, cssH * 0.62 + 35);
-
-        t += 1;
-        requestAnimationFrame(draw);
+    window.addEventListener('load', () => {
+      /* ==== utils ==== */
+      function prepCanvas(c, width, height){
+        const dpr = window.devicePixelRatio || 1;
+        const cssW = width ?? c.clientWidth || 300;
+        const cssH = height ?? c.clientHeight || 150;
+        c.width = Math.max(1, Math.floor(cssW * dpr));
+        c.height = Math.max(1, Math.floor(cssH * dpr));
+        const ctx = c.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, cssW, cssH, dpr };
       }
-      draw();
-    }
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-    // ====== MAPILLARY BENCHMARK cards (live) ======
-    // Average Error (km): Fractus vs Plonk — oscillation douce, gain auto
-    let benchFractusBase = 870, benchPlonkBase = 1252;
-    animatedBarLive({
-      id: 'c_bench',
-      baseA: benchFractusBase,
-      baseB: benchPlonkBase,
-      labelA: 'Fractus', labelB: 'Plonk', unit: ' km',
-      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
-      getLiveA: () => benchFractusBase * (1 + (Math.sin(Date.now()*0.0011)*0.008)),
-      getLiveB: () => benchPlonkBase * (1 + (Math.cos(Date.now()*0.0013)*0.006))
-    });
+      /* ==== Truth metrics (synchronised) ==== */
+      const METRICS = { entropy: 0.032, coherence: 98.4, efficiency: 1.30, stability: 90.6 };
 
-    // Entropy & Coherence : reliées aux METRICS
-    animatedBarLive({
-      id: 'c_entropy',
-      baseA: METRICS.entropy,   // Entropy (Fractus)
-      baseB: 0.040,             // Baseline
-      labelA: 'Entropy', labelB: 'Baseline', unit: '',
-      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
-      getLiveA: () => METRICS.entropy,
-      getLiveB: () => 0.040 + Math.sin(Date.now()*0.001)*0.001
-    });
+      /* ==== Animated bar with live oscillation ==== */
+      function animatedBarLive({ id, baseA, baseB, labelA, labelB, unit, colorA, colorB, getLiveA, getLiveB }) {
+        const c = document.getElementById(id); if(!c) return;
+        let { ctx, cssW, cssH } = prepCanvas(c);
+        const pad = 12;
+        function onResize(){ ({ ctx, cssW, cssH } = prepCanvas(c)); }
+        window.addEventListener('resize', onResize, { passive:true });
 
-    // Stability σ (km) : Fractus vs Plonk
-    let stabFractusBase = 90.4, stabPlonkBase = 92.7;
-    animatedBarLive({
-      id: 'c_stability',
-      baseA: stabFractusBase,
-      baseB: stabPlonkBase,
-      labelA: 'Fractus σ', labelB: 'Plonk σ', unit: ' km',
-      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
-      getLiveA: () => clamp(METRICS.stability, 90.0, 91.0),
-      getLiveB: () => stabPlonkBase * (1 + Math.sin(Date.now()*0.001)*0.002)
-    });
+        let t = 0;
+        function draw(){
+          const liveA = getLiveA ? getLiveA() : baseA * (1 + Math.sin(t*0.03)*0.01);
+          const liveB = getLiveB ? getLiveB() : baseB * (1 + Math.cos(t*0.025)*0.01);
+          const maxVal = Math.max(liveA, liveB) * 1.15;
 
-    // Efficiency × : Fractus vs Baseline
-    animatedBarLive({
-      id: 'c_eff',
-      baseA: METRICS.efficiency,
-      baseB: 1.00,
-      labelA: 'Fractus', labelB: 'Baseline', unit: '×',
-      colorA: 'rgba(127,255,212,0.9)', colorB: 'rgba(255,80,80,0.9)',
-      getLiveA: () => clamp(METRICS.efficiency + Math.sin(Date.now()*0.0015)*0.002, 1.28, 1.32),
-      getLiveB: () => 1.00
-    });
+          ctx.clearRect(0,0,cssW,cssH);
+          ctx.fillStyle = '#0b0f10';
+          ctx.fillRect(0,0,cssW,cssH);
 
-    // Mises à jour des légendes (couleurs/trend)
-    function updateLegend() {
-      // Bench gain
-      const pf = document.querySelector('[data-key="bench-fractus"]');
-      const pp = document.querySelector('[data-key="bench-plonk"]');
-      const pg = document.querySelector('[data-key="bench-gain"]');
-      const fVal = benchFractusBase * (1 + (Math.sin(Date.now()*0.0011)*0.008));
-      const pVal = benchPlonkBase * (1 + (Math.cos(Date.now()*0.0013)*0.006));
-      const gain = ((pVal - fVal) / pVal) * 100; // %
-      if (pf) pf.textContent = `${fVal.toFixed(1)} km`;
-      if (pp) pp.textContent = `${pVal.toFixed(1)} km`;
-      if (pg) { pg.textContent = `${gain > 0 ? '−' : ''}${Math.abs(gain).toFixed(1)} %`; pg.style.color = gain>0 ? '#7fffd4' : '#ffe680'; }
+          const wA = (liveA / maxVal) * (cssW - pad*2);
+          const wB = (liveB / maxVal) * (cssW - pad*2);
 
-      // Entropy/Coherence
-      const e = document.querySelector('[data-key="entropy"]');
-      const c = document.querySelector('[data-key="coherence"]');
-      if (e) e.textContent = METRICS.entropy.toFixed(3);
-      if (c) c.textContent = `${METRICS.coherence.toFixed(1)} %`;
+          ctx.fillStyle = colorB; ctx.fillRect(pad, cssH*0.62, wB, 20);
+          ctx.fillStyle = colorA; ctx.fillRect(pad, cssH*0.62 - 30, wA, 20);
 
-      // Stability
-      const sf = document.querySelector('[data-key="stab-fractus"]');
-      const sp = document.querySelector('[data-key="stab-plonk"]');
-      if (sf) sf.textContent = `${clamp(METRICS.stability,90,91).toFixed(1)} km`;
-      if (sp) sp.textContent = `${(92.7 + Math.sin(Date.now()*0.001)*0.2).toFixed(1)} km`;
+          ctx.fillStyle = '#9adfce'; ctx.font = '12px ui-sans-serif';
+          const fmt = (v)=> unit===' km'?`${v.toFixed(1)} km`:unit===' %'?`${v.toFixed(1)} %`:unit===' ms'?`${v.toFixed(1)} ms`:unit==='×'?`×${v.toFixed(2)}`:v.toFixed(3);
+          ctx.fillText(`${labelA}: ${fmt(liveA)}`, pad, cssH*0.62 - 12);
+          ctx.fillText(`${labelB}: ${fmt(liveB)}`, pad, cssH*0.62 + 35);
 
-      // Efficiency + Status
-      const eff = document.querySelector('[data-key="efficiency"]');
-      const st = document.querySelector('[data-key="status"]');
-      const effVal = METRICS.efficiency;
-      if (eff) eff.textContent = `× ${effVal.toFixed(2)}`;
-      if (st) st.textContent = (METRICS.entropy < 0.040 ? 'Stable' : 'Drift');
-      requestAnimationFrame(updateLegend);
-    }
-    updateLegend();
-
-    // ===== LOG BENCHMARK (valeurs statiques mais animées visuellement) =====
-    const LOGBENCH = { rateFrac:97.2, rateBase:95.4, fpFrac:1.8, fpBase:3.2, latFrac:45.3, latBase:62.7, accFrac:98.1, accBase:96.5 };
-    animatedBarLive({
-      id:'c_log_rate', baseA:LOGBENCH.rateFrac, baseB:LOGBENCH.rateBase,
-      labelA:'Fractus', labelB:'Baseline', unit:' %',
-      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
-    });
-    animatedBarLive({
-      id:'c_log_fp', baseA:LOGBENCH.fpFrac, baseB:LOGBENCH.fpBase,
-      labelA:'Fractus', labelB:'Baseline', unit:' %',
-      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
-    });
-    animatedBarLive({
-      id:'c_log_latency', baseA:LOGBENCH.latFrac, baseB:LOGBENCH.latBase,
-      labelA:'Fractus', labelB:'Baseline', unit:' ms',
-      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
-    });
-    animatedBarLive({
-      id:'c_log_acc', baseA:LOGBENCH.accFrac, baseB:LOGBENCH.accBase,
-      labelA:'Fractus', labelB:'Baseline', unit:' %',
-      colorA:'rgba(127,255,212,0.9)', colorB:'rgba(255,80,80,0.9)'
-    });
-
-    // ===== FRACTUS ENGINE VISUAL — cercle + 10 points orbitaux synchronisés =====
-    (function() {
-      const canvas = document.getElementById("fractusCanvas");
-      let { ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9, 720), 400);
-      function onResize(){
-        ({ ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9, 720), 400));
-      }
-      window.addEventListener('resize', onResize, { passive:true });
-
-      const cx = () => cssW/2, cy = () => cssH/2;
-      const rings = 9;
-      const baseR = 40, stepR = 35;
-      const points = [];
-      const N = 10; // 10 points orbitaux
-      for (let i=0; i<N; i++){
-        points.push({
-          ring: 2 + (i % (rings-2)),          // répartis sur les anneaux 2..8
-          angle: Math.random()*Math.PI*2,
-          speed: 0.004 + i*0.0006,           // vitesses proportionnelles
-          jitter: 0
-        });
-      }
-
-      function draw() {
-        ctx.clearRect(0,0,cssW,cssH);
-
-        // vitesse globale liée à l'entropy (plus d'entropy => plus rapide)
-        const entropy = METRICS.entropy;
-        const speedFactor = lerp(0.7, 1.6, clamp((entropy-0.028)/(0.045-0.028), 0, 1));
-
-        // anneaux
-        for (let i=0;i<rings;i++){
-          const r = baseR + i*stepR + Math.sin(performance.now()*0.002 + i)*2;
-          ctx.beginPath();
-          ctx.strokeStyle = `hsl(${(i*28 + performance.now()*0.02)%360}, 80%, 70%)`;
-          ctx.lineWidth = 1.1;
-          ctx.arc(cx(), cy(), r, 0, Math.PI*2);
-          ctx.stroke();
+          t++; requestAnimationFrame(draw);
         }
+        draw();
+      }
 
-        // points orbitaux (justification visuelle)
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const r = baseR + p.ring*stepR;
-          p.angle += p.speed * speedFactor;
-          p.jitter = Math.sin(performance.now()*0.003 + i)*0.8;
+      /* ==== Cards: live ==== */
+      let benchFractusBase = 870, benchPlonkBase = 1252;
+      animatedBarLive({
+        id:'c_bench', baseA:benchFractusBase, baseB:benchPlonkBase,
+        labelA:'Fractus', labelB:'Plonk', unit:' km',
+        colorA:'rgba(127,255,212,.9)', colorB:'rgba(255,80,80,.9)',
+        getLiveA:()=> benchFractusBase*(1 + Math.sin(Date.now()*0.0011)*0.008),
+        getLiveB:()=> benchPlonkBase*(1 + Math.cos(Date.now()*0.0013)*0.006)
+      });
 
-          const px = cx() + Math.cos(p.angle)*(r + p.jitter);
-          const py = cy() + Math.sin(p.angle)*(r + p.jitter);
+      animatedBarLive({
+        id:'c_entropy', baseA:METRICS.entropy, baseB:0.040,
+        labelA:'Entropy', labelB:'Baseline', unit:'',
+        colorA:'rgba(127,255,212,.9)', colorB:'rgba(255,80,80,.9)',
+        getLiveA:()=> METRICS.entropy,
+        getLiveB:()=> 0.040 + Math.sin(Date.now()*0.001)*0.001
+      });
 
-          // couleur selon stabilité
-          let col = '#7fffd4'; // stable
-          if (entropy >= 0.040 && entropy < 0.043) col = '#ffe680'; // drift
-          if (entropy >= 0.043) col = '#ff6b6b'; // instable
+      let stabPlonkBase = 92.7;
+      animatedBarLive({
+        id:'c_stability', baseA:METRICS.stability, baseB:stabPlonkBase,
+        labelA:'Fractus σ', labelB:'Plonk σ', unit:' km',
+        colorA:'rgba(127,255,212,.9)', colorB:'rgba(255,80,80,.9)',
+        getLiveA:()=> clamp(METRICS.stability,90.0,91.0),
+        getLiveB:()=> stabPlonkBase*(1 + Math.sin(Date.now()*0.001)*0.002)
+      });
 
-          ctx.beginPath();
-          ctx.fillStyle = col;
-          ctx.arc(px, py, 3, 0, Math.PI*2);
-          ctx.fill();
+      animatedBarLive({
+        id:'c_eff', baseA:METRICS.efficiency, baseB:1.00,
+        labelA:'Fractus', labelB:'Baseline', unit:'×',
+        colorA:'rgba(127,255,212,.9)', colorB:'rgba(255,80,80,.9)',
+        getLiveA:()=> clamp(METRICS.efficiency + Math.sin(Date.now()*0.0015)*0.002,1.28,1.32),
+        getLiveB:()=> 1.00
+      });
+
+      /* ==== Légendes live ==== */
+      function updateLegend(){
+        const pf=document.querySelector('[data-key="bench-fractus"]');
+        const pp=document.querySelector('[data-key="bench-plonk"]');
+        const pg=document.querySelector('[data-key="bench-gain"]');
+        const fVal= benchFractusBase*(1 + Math.sin(Date.now()*0.0011)*0.008);
+        const pVal= benchPlonkBase*(1 + Math.cos(Date.now()*0.0013)*0.006);
+        const gain=((pVal-fVal)/pVal)*100;
+        if(pf) pf.textContent=`${fVal.toFixed(1)} km`;
+        if(pp) pp.textContent=`${pVal.toFixed(1)} km`;
+        if(pg){ pg.textContent=`${gain>0?'−':''}${Math.abs(gain).toFixed(1)} %`; pg.style.color=gain>0?'#7fffd4':'#ffe680'; }
+
+        const e=document.querySelector('[data-key="entropy"]');
+        const c=document.querySelector('[data-key="coherence"]');
+        const sf=document.querySelector('[data-key="stab-fractus"]');
+        const sp=document.querySelector('[data-key="stab-plonk"]');
+        const eff=document.querySelector('[data-key="efficiency"]');
+        const st=document.querySelector('[data-key="status"]');
+        if(e) e.textContent=METRICS.entropy.toFixed(3);
+        if(c) c.textContent=`${METRICS.coherence.toFixed(1)} %`;
+        if(sf) sf.textContent=`${clamp(METRICS.stability,90,91).toFixed(1)} km`;
+        if(sp) sp.textContent=`${(92.7 + Math.sin(Date.now()*0.001)*0.2).toFixed(1)} km`;
+        if(eff) eff.textContent=`× ${METRICS.efficiency.toFixed(2)}`;
+        if(st) st.textContent=(METRICS.entropy<0.040?'Stable':'Drift');
+
+        requestAnimationFrame(updateLegend);
+      }
+      updateLegend();
+
+      /* ==== Log benchmark (anim visuelle) ==== */
+      const LOGBENCH={rateFrac:97.2,rateBase:95.4,fpFrac:1.8,fpBase:3.2,latFrac:45.3,latBase:62.7,accFrac:98.1,accBase:96.5};
+      [['c_log_rate',' %',LOGBENCH.rateFrac,LOGBENCH.rateBase],
+       ['c_log_fp',' %',LOGBENCH.fpFrac,LOGBENCH.fpBase],
+       ['c_log_latency',' ms',LOGBENCH.latFrac,LOGBENCH.latBase],
+       ['c_log_acc',' %',LOGBENCH.accFrac,LOGBENCH.accBase]
+      ].forEach(([id,unit,a,b])=>{
+        animatedBarLive({id, baseA:a, baseB:b, labelA:'Fractus', labelB:'Baseline', unit,
+          colorA:'rgba(127,255,212,.9)', colorB:'rgba(255,80,80,.9)'});
+      });
+
+      /* ==== Fractus Engine: anneaux + 10 points orbitaux + heartbeat ==== */
+      (function(){
+        const canvas=document.getElementById('fractusCanvas');
+        let { ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9,720), 400);
+        function onResize(){ ({ ctx, cssW, cssH } = prepCanvas(canvas, Math.min(window.innerWidth*0.9,720), 400)); }
+        window.addEventListener('resize', onResize, { passive:true });
+
+        const rings=9, baseR=40, stepR=35;
+        const points=[];
+        const N=10;
+        for(let i=0;i<N;i++){ points.push({ ring:2+(i%(rings-2)), angle:Math.random()*Math.PI*2, speed:0.004+i*0.0006, jitter:0 }); }
+
+        function draw(){
+          ctx.clearRect(0,0,cssW,cssH);
+
+          // Heartbeat (halo central lié à l'entropy)
+          const eNorm = (METRICS.entropy-0.028)/(0.045-0.028); // 0..1
+          const radius = 50 + Math.sin(performance.now()*0.003)*(8*eNorm+2);
+          const grad = ctx.createRadialGradient(cssW/2, cssH/2, 0, cssW/2, cssH/2, radius+80);
+          grad.addColorStop(0, `rgba(127,255,212,${0.10 + 0.15*eNorm})`);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath(); ctx.arc(cssW/2, cssH/2, radius+80, 0, Math.PI*2); ctx.fill();
+
+          // Anneaux
+          for(let i=0;i<rings;i++){
+            const r = baseR + i*stepR + Math.sin(performance.now()*0.002 + i)*2;
+            ctx.beginPath();
+            ctx.strokeStyle = `hsl(${(i*28 + performance.now()*0.02)%360},80%,70%)`;
+            ctx.lineWidth = 1.1;
+            ctx.arc(cssW/2, cssH/2, r, 0, Math.PI*2);
+            ctx.stroke();
+          }
+
+          // Points orbitaux
+          const speedFactor = 0.7 + eNorm*0.9; // plus d'entropy => plus rapide
+          for(let i=0;i<N;i++){
+            const p=points[i];
+            const r = baseR + p.ring*stepR;
+            p.angle += p.speed*speedFactor;
+            p.jitter = Math.sin(performance.now()*0.003 + i)*0.8;
+
+            const px = cssW/2 + Math.cos(p.angle)*(r + p.jitter);
+            const py = cssH/2 + Math.sin(p.angle)*(r + p.jitter);
+
+            let col='#7fffd4';
+            if(METRICS.entropy>=0.040 && METRICS.entropy<0.043) col='#ffe680';
+            if(METRICS.entropy>=0.043) col='#ff6b6b';
+
+            ctx.beginPath(); ctx.fillStyle=col; ctx.arc(px,py,3,0,Math.PI*2); ctx.fill();
+          }
+          requestAnimationFrame(draw);
         }
+        draw();
+      })();
 
-        requestAnimationFrame(draw);
+      /* ==== Live monitor (sync) ==== */
+      function trendColor(n,o){ if(n>o+1e-6) return '#ffe680'; if(n<o-1e-6) return '#80c0ff'; return '#7fffd4'; }
+      function updateMonitor(){
+        const e=document.getElementById('entropyVal'),
+              c=document.getElementById('coherenceVal'),
+              f=document.getElementById('efficiencyVal'),
+              s=document.getElementById('stabilityVal');
+
+        const oldE=METRICS.entropy;     METRICS.entropy   = clamp(oldE + (Math.random()-0.5)*0.002, 0.028, 0.045);
+        const oldC=METRICS.coherence;   METRICS.coherence = clamp(oldC + (Math.random()-0.5)*0.15, 97.0, 99.0);
+        const oldF=METRICS.efficiency;  METRICS.efficiency= clamp(oldF + (Math.random()-0.5)*0.004, 1.28, 1.32);
+        const oldS=METRICS.stability;   METRICS.stability = clamp(oldS + (Math.random()-0.5)*0.12, 90.0, 91.0);
+
+        e.textContent=METRICS.entropy.toFixed(3); e.style.color=trendColor(METRICS.entropy,oldE);
+        c.textContent=`${METRICS.coherence.toFixed(1)} %`; c.style.color=trendColor(METRICS.coherence,oldC);
+        f.textContent=`×${METRICS.efficiency.toFixed(2)}`; f.style.color=trendColor(METRICS.efficiency,oldF);
+        s.textContent=`σ = ${METRICS.stability.toFixed(1)} km`; s.style.color=trendColor(METRICS.stability,oldS);
       }
-      draw();
-    })();
-
-    // ===== LIVE MONITOR — MAJ toutes les 1.5 s + couleurs tendance =====
-    function updateMonitor() {
-      const e = document.getElementById("entropyVal");
-      const c = document.getElementById("coherenceVal");
-      const f = document.getElementById("efficiencyVal");
-      const s = document.getElementById("stabilityVal");
-
-      function trendColor(newV, oldV, stableColor="#7fffd4"){
-        if (newV > oldV + 1e-6) return "#ffe680"; // up → jaune
-        if (newV < oldV - 1e-6) return "#80c0ff"; // down → bleu
-        return stableColor;
-      }
-
-      // Entropy (0.028–0.045)
-      const oldE = METRICS.entropy;
-      METRICS.entropy = clamp(oldE + (Math.random()-0.5)*0.002, 0.028, 0.045);
-      e.textContent = METRICS.entropy.toFixed(3);
-      e.style.color = trendColor(METRICS.entropy, oldE);
-
-      // Coherence (97–99)
-      const oldC = METRICS.coherence;
-      METRICS.coherence = clamp(oldC + (Math.random()-0.5)*0.15, 97.0, 99.0);
-      c.textContent = `${METRICS.coherence.toFixed(1)} %`;
-      c.style.color = trendColor(METRICS.coherence, oldC);
-
-      // Efficiency (×1.28–×1.32)
-      const oldF = METRICS.efficiency;
-      METRICS.efficiency = clamp(oldF + (Math.random()-0.5)*0.004, 1.28, 1.32);
-      f.textContent = `×${METRICS.efficiency.toFixed(2)}`;
-      f.style.color = trendColor(METRICS.efficiency, oldF);
-
-      // Stability σ (90–91 km)
-      const oldS = METRICS.stability;
-      METRICS.stability = clamp(oldS + (Math.random()-0.5)*0.12, 90.0, 91.0);
-      s.textContent = `σ = ${METRICS.stability.toFixed(1)} km`;
-      s.style.color = trendColor(METRICS.stability, oldS);
-    }
-    setInterval(updateMonitor, 1500);
+      setInterval(updateMonitor, 1500);
+    });
   </script>
 </body>
 </html>
