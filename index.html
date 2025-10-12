@@ -7,6 +7,35 @@
   <meta name="description" content="Created by Marc Cedrych, France — Author & Researcher.">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ===== MODULE FRACTYS CHART ===== */
+    .chart-section {
+      margin: 60px auto;
+      max-width: 1080px;
+      padding: 24px;
+      background: rgba(0, 20, 20, 0.8);
+      border: 1px solid rgba(0, 255, 200, 0.15);
+      border-radius: 16px;
+      box-shadow: 0 0 18px rgba(0,255,200,0.08);
+      text-align: center;
+    }
+    .chart-section h2 {
+      font-size: 1.6em;
+      color: aquamarine;
+      margin-bottom: 20px;
+      text-shadow: 0 0 8px rgba(0,255,200,0.5);
+    }
+    .chart-frame {
+      width: 100%;
+      height: 880px;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    @media (max-width: 768px) {
+      .chart-frame { height: 700px; }
+    }
+  </style>
 </head>
 
 <body>
@@ -91,11 +120,20 @@
           <!-- Flux X intégré proprement -->
           <div class="x-timeline" id="x-timeline"></div>
         </div>
-
       </div>
     </section>
 
-    <!-- AIRDROP BANNER (clean, sans logo) -->
+    <!-- 🔹 SECTION FRACTYS LIVE CHART -->
+    <section class="chart-section">
+      <h2>📊 Fractys Live Chart (DEXTools)</h2>
+      <iframe
+        class="chart-frame"
+        src="https://www.dextools.io/app/en/solana/pair-explorer/726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c"
+        allowfullscreen>
+      </iframe>
+    </section>
+
+    <!-- AIRDROP BANNER -->
     <section class="airdrop-banner clean">
       <div class="airdrop-content">
         <h2>🎁 Fractys Airdrop is Coming</h2>
@@ -136,28 +174,15 @@
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const container = document.getElementById("x-timeline");
-
       function createFeed() {
         if (window.twttr && twttr.widgets) {
           twttr.widgets.createTimeline(
-            {
-              sourceType: "profile",
-              screenName: "MarcFractys"
-            },
+            { sourceType: "profile", screenName: "MarcFractys" },
             container,
-            {
-              theme: "dark",
-              chrome: "noheader nofooter noborders transparent",
-              tweetLimit: 3,
-              width: "100%",
-              height: "420"
-            }
+            { theme: "dark", chrome: "noheader nofooter noborders transparent", tweetLimit: 3, width: "100%", height: "420" }
           );
-        } else {
-          setTimeout(createFeed, 1000);
-        }
+        } else setTimeout(createFeed, 1000);
       }
-
       createFeed();
     });
   </script>
