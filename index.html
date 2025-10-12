@@ -7,35 +7,6 @@
   <meta name="description" content="Created by Marc Cedrych, France — Author & Researcher.">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    /* ===== MODULE FRACTYS CHART ===== */
-    .chart-section {
-      margin: 60px auto;
-      max-width: 1080px;
-      padding: 24px;
-      background: rgba(0, 20, 20, 0.8);
-      border: 1px solid rgba(0, 255, 200, 0.15);
-      border-radius: 16px;
-      box-shadow: 0 0 18px rgba(0,255,200,0.08);
-      text-align: center;
-    }
-    .chart-section h2 {
-      font-size: 1.6em;
-      color: aquamarine;
-      margin-bottom: 20px;
-      text-shadow: 0 0 8px rgba(0,255,200,0.5);
-    }
-    .chart-frame {
-      width: 100%;
-      height: 880px;
-      border: none;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    @media (max-width: 768px) {
-      .chart-frame { height: 700px; }
-    }
-  </style>
 </head>
 
 <body>
@@ -116,236 +87,115 @@
               </svg>
             </a>
           </div>
-
-          <!-- Flux X intégré proprement -->
           <div class="x-timeline" id="x-timeline"></div>
         </div>
       </div>
     </section>
 
-    
-<!-- 🔹 FRACTYS LIVE ANALYTICS (drop-in) -->
+<!-- 🔹 FRACTYS LIVE ANALYTICS -->
 <div class="card fractys-analytics" id="fractys-analytics">
   <h3>🔮 Fractys Live Analytics</h3>
-
   <div class="stats-grid">
     <div><span>💰</span> Market Cap<br><strong id="fa-marketcap">—</strong></div>
     <div><span>🌊</span> Liquidity<br><strong id="fa-liquidity">—</strong></div>
     <div><span>📊</span> Volume 24h<br><strong id="fa-volume">—</strong></div>
     <div><span>👥</span> Holders<br><strong id="fa-holders">—</strong></div>
   </div>
-
   <div class="chart-container">
     <canvas id="fa-chart" height="220"></canvas>
     <div class="chart-fallback" id="fa-fallback">Loading live chart…</div>
   </div>
-
   <div class="update-info" id="fa-update">⏱️ Updating…</div>
 </div>
 
-<!-- Scoped styles (n’écrase rien ailleurs) -->
 <style>
-  .fractys-analytics{
-    background: radial-gradient(circle at 50% -40%, rgba(0,255,180,.09), rgba(0,35,35,.9));
-    border:1px solid rgba(0,255,200,.18);
-    border-radius:16px; box-shadow:0 0 24px rgba(0,255,200,.12);
-    overflow:hidden; position:relative;
-  }
-  .fractys-analytics h3{
-    text-align:center; color:aquamarine; margin-bottom:14px;
-    text-shadow:0 0 8px rgba(0,255,200,.6);
-  }
-  .stats-grid{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
-    text-align:center; font-size:.92em; color:#a8ffee; margin-bottom:14px;
-  }
-  .stats-grid strong{ color:#fff; font-size:1.08em }
-  .chart-container{
-    position:relative; border-radius:12px; background:rgba(0,0,0,.25);
-    box-shadow: inset 0 0 15px rgba(0,255,200,.18); padding:8px;
-  }
-  .chart-fallback{
-    position:absolute; inset:8px; display:flex; align-items:center; justify-content:center;
-    font-size:.9em; color:#7fffe6; opacity:.8; pointer-events:none;
-  }
-  .update-info{ margin-top:10px; text-align:center; font-size:.75em; color:#66ffe0; opacity:.9 }
-  @media (max-width: 900px){ .stats-grid{ grid-template-columns:repeat(2,1fr) } }
+.fractys-analytics{background:radial-gradient(circle at 50% -40%,rgba(0,255,180,.09),rgba(0,35,35,.9));border:1px solid rgba(0,255,200,.18);border-radius:16px;box-shadow:0 0 24px rgba(0,255,200,.12);overflow:hidden;position:relative;}
+.fractys-analytics h3{text-align:center;color:aquamarine;margin-bottom:14px;text-shadow:0 0 8px rgba(0,255,200,.6);}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;font-size:.92em;color:#a8ffee;margin-bottom:14px;}
+.stats-grid strong{color:#fff;font-size:1.08em}
+.chart-container{position:relative;border-radius:12px;background:rgba(0,0,0,.25);box-shadow:inset 0 0 15px rgba(0,255,200,.18);padding:8px;}
+.chart-fallback{position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;font-size:.9em;color:#7fffe6;opacity:.8;pointer-events:none;}
+.update-info{margin-top:10px;text-align:center;font-size:.75em;color:#66ffe0;opacity:.9}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 (function(){
   const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
   const BASE = "https://api.geckoterminal.com/api/v2";
-  const $ = (id)=>document.getElementById(id);
+  const $ = id=>document.getElementById(id);
+  const elCap=$("fa-marketcap"),elLiq=$("fa-liquidity"),elVol=$("fa-volume"),
+        elHolders=$("fa-holders"),elUpd=$("fa-update"),fallback=$("fa-fallback");
 
-  const elCap = $("fa-marketcap");
-  const elLiq = $("fa-liquidity");
-  const elVol = $("fa-volume");
-  const elHolders = $("fa-holders");
-  const elUpd = $("fa-update");
-  const fallback = $("fa-fallback");
+  const fmtUSD=v=>(!v||v==="")?"—":(Number(v)>=1000?"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:0}):"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:5}));
+  const nowStr=()=>new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
 
-  // ---- Utils
-  const fmtUSD = v => (v==null||v==="") ? "—" :
-    (Number(v)>=1000 ? "$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:0})
-                     : "$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:2}));
-  const nowStr = () => new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) ;
+  const ctx=document.getElementById("fa-chart").getContext("2d");
+  let chart=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"FTS/USD",data:[],borderWidth:2,borderColor:"#00ffe0",backgroundColor:"rgba(0,255,200,0.06)",tension:0.35,pointRadius:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"}},y:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"},beginAtZero:false}}}});
 
-  // ---- Chart
-  const ctx = document.getElementById("fa-chart").getContext("2d");
-  let chart = new Chart(ctx, {
-    type: "line",
-    data: { labels: [], datasets: [{
-      label: "FTS/USD",
-      data: [],
-      borderWidth: 2,
-      borderColor: "#00ffe0",
-      backgroundColor: "rgba(0,255,200,0.06)",
-      tension: 0.35,
-      pointRadius: 0,
-    }]},
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display:false }, tooltip: { mode:'index', intersect:false }},
-      scales: {
-        x: { ticks: { color:'#00fff0' }, grid: { color:'rgba(0,255,200,0.05)'}},
-        y: { ticks: { color:'#00fff0' }, grid: { color:'rgba(0,255,200,0.05)'}, beginAtZero:false }
-      }
-    }
-  });
-
-  // ---- Fetch pool KPIs
   async function fetchKpis(){
-    const url = `${BASE}/networks/solana/pools/${POOL_ID}`;
-    const r = await fetch(url, { headers: { "accept":"application/json" }});
-    const j = await r.json();
-    const a = j?.data?.attributes || {};
-
-    // GeckoTerminal ne fournit pas toujours "market cap" direct pour une micro-cap;
-    // on remonte la liquidité comme proxy visuel + volume 24h.
-    elLiq.textContent = fmtUSD(a.reserve_in_usd);
-    elVol.textContent = fmtUSD(a.volume_usd);
-
-    // Market cap (si dispo) sinon "—"
-    elCap.textContent = a.fdv_usd ? fmtUSD(a.fdv_usd)
-                     : a.market_cap_usd ? fmtUSD(a.market_cap_usd)
-                     : "—";
-
-    // Holders → à brancher plus tard sur Solscan ; on montre "—" par défaut si inconnu
-    if (elHolders.textContent === "—") elHolders.textContent = "—";
-
-    elUpd.textContent = `⏱️ Updated: ${nowStr()} — Source: GeckoTerminal`;
+    const r=await fetch(`${BASE}/networks/solana/pools/${POOL_ID}`,{headers:{"accept":"application/json"}});
+    const j=await r.json();const a=j?.data?.attributes||{};
+    elLiq.textContent=fmtUSD(a.reserve_in_usd);
+    elVol.textContent=fmtUSD(a.volume_usd);
+    elCap.textContent=a.fdv_usd?fmtUSD(a.fdv_usd):a.market_cap_usd?fmtUSD(a.market_cap_usd):"—";
+    if(elHolders.textContent==="—")elHolders.textContent="—";
+    elUpd.textContent=`⏱️ Updated: ${nowStr()} — Source: GeckoTerminal`;
   }
 
-  // ---- Fetch OHLCV for sparkline (multi-fallback)
   async function fetchOhlcv(){
-    const candidates = [
-      `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/hour?aggregate=1&limit=24`,
-      `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/24h?limit=24`,
-      `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/day?aggregate=1&limit=7`
-    ];
-    let data = null, lastErr = null;
-
-    for (const url of candidates){
-      try{
-        const r = await fetch(url, { headers: { "accept":"application/json" }});
-        if (!r.ok) { lastErr = new Error("HTTP "+r.status); continue; }
-        const j = await r.json();
-        const arr = j?.data?.attributes?.ohlcv_list || j?.data || [];
-        if (Array.isArray(arr) && arr.length){
-          data = arr;
-          break;
-        }
-      }catch(e){ lastErr = e; }
-    }
-
-    if (!data){
-      // Fallback visuel si l’endpoint change côté API
-      fallback.textContent = "Chart fallback — awaiting OHLCV endpoint";
-      fallback.style.display = "flex";
-      return;
-    }
-
-    // Forme standard GeckoTerminal OHLCV: [timestamp, open, high, low, close, volume]
-    const labels = [];
-    const values = [];
-    for (const row of data){
-      const ts = row[0] || row.timestamp || row.time;
-      const close = row[4] ?? row.close ?? row[1];
+    const urls=[`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/hour?aggregate=1&limit=24`,
+                `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/24h?limit=24`,
+                `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/day?aggregate=1&limit=7`];
+    let data=null;
+    for(const url of urls){try{const r=await fetch(url,{headers:{"accept":"application/json"}});
+      if(!r.ok)continue;const j=await r.json();const arr=j?.data?.attributes?.ohlcv_list||j?.data||[];
+      if(Array.isArray(arr)&&arr.length){data=arr;break;}}catch(e){}}
+    if(!data){fallback.textContent="Chart fallback — awaiting OHLCV endpoint";fallback.style.display="flex";return;}
+    const labels=[],values=[];
+    for(const row of data){
+      const ts=row[0]||row.timestamp||row.time;
+      let close=row[4]??row.close??row[1];
+      close=Number(close);
+      if(close>1)close=1/close; // inversion automatique si >1$
       labels.push(new Date(ts*1000).toLocaleTimeString([], {hour:"2-digit"}));
-      values.push(Number(close));
+      values.push(Number(close.toFixed(5)));
     }
-
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = values;
+    chart.data.labels=labels;
+    chart.data.datasets[0].data=values;
     chart.update();
-    fallback.style.display = "none";
+    fallback.style.display="none";
   }
 
-  async function refreshAll(){
-    try{
-      await Promise.all([fetchKpis(), fetchOhlcv()]);
-    }catch(e){
-      elUpd.textContent = "⚠️ Data error — retrying…";
-    }
-  }
-
-  // Première charge + rafraîchissement régulier
+  async function refreshAll(){try{await Promise.all([fetchKpis(),fetchOhlcv()]);}
+  catch(e){elUpd.textContent="⚠️ Data error — retrying…";}}
   refreshAll();
-  setInterval(refreshAll, 60_000);
-
-  // 👉 optionnel: setter les holders via Solscan plus tard
-  // fetch('https://public-api.solscan.io/token/holders?tokenAddress=BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy&offset=0&limit=1')
-  //   .then(r=>r.json()).then(j=>{ elHolders.textContent = (j?.total || "—"); })
-  //   .catch(()=>{});
+  setInterval(refreshAll,60000);
 })();
 </script>
 
-    <!-- FOOTER -->
-    <footer>
-      © 2025 Fractys — Created by Marc Cedrych — Built on Solana
-    </footer>
-  </main>
+<footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
+</main>
 
-  <!-- COUNTDOWN -->
-  <script>
-    const launchDate = new Date("October 22, 2025 18:00:00").getTime();
-    setInterval(() => {
-      const el = document.getElementById("countdown");
-      if (!el) return;
-      const diff = launchDate - new Date().getTime();
-      if (diff < 0) { el.textContent = "🚀 LIVE!"; return; }
-      const d = Math.floor(diff/(1000*60*60*24));
-      const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-      const m = Math.floor((diff%(1000*60*60))/(1000*60));
-      const s = Math.floor((diff%(1000*60))/1000);
-      el.textContent = `${d}d ${h}h ${m}m ${s}s`;
-    }, 1000);
-  </script>
+<script>
+const launchDate=new Date("October 22, 2025 18:00:00").getTime();
+setInterval(()=>{const el=document.getElementById("countdown");if(!el)return;
+const diff=launchDate-new Date().getTime();if(diff<0){el.textContent="🚀 LIVE!";return;}
+const d=Math.floor(diff/(1000*60*60*24)),h=Math.floor((diff%(1000*60*60*24))/(1000*60*60)),
+m=Math.floor((diff%(1000*60*60))/(1000*60)),s=Math.floor((diff%(1000*60))/1000);
+el.textContent=`${d}d ${h}h ${m}m ${s}s`;},1000);
+</script>
 
-  <!-- Script officiel des widgets X -->
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-  <!-- Injection forcée du flux X -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const container = document.getElementById("x-timeline");
-      function createFeed() {
-        if (window.twttr && twttr.widgets) {
-          twttr.widgets.createTimeline(
-            { sourceType: "profile", screenName: "MarcFractys" },
-            container,
-            { theme: "dark", chrome: "noheader nofooter noborders transparent", tweetLimit: 3, width: "100%", height: "420" }
-          );
-        } else setTimeout(createFeed, 1000);
-      }
-      createFeed();
-    });
-  </script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){const c=document.getElementById("x-timeline");
+function feed(){if(window.twttr&&twttr.widgets){twttr.widgets.createTimeline({sourceType:"profile",screenName:"MarcFractys"},c,
+{theme:"dark",chrome:"noheader nofooter noborders transparent",tweetLimit:3,width:"100%",height:"420"});}
+else setTimeout(feed,1000);}feed();});
+</script>
 </body>
 </html>
 
