@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Fractys (FTS) — Official</title>
   <meta name="description" content="Created by Marc Cedrych, France — Author & Researcher.">
-  <meta name="author" content="Marc Cedrych">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -77,7 +76,7 @@
                 <path d="M18.244 2H21l-6.475 7.396L22 22h-5.654l-4.377-6.44L6.018 22H3.25l6.89-7.872L2 2h5.75l4.006 5.93L18.244 2zm-2.037 18h1.17L8.338 4h-1.26l9.129 16z"/>
               </svg>
             </a>
-            <a href="https://t.me/FractysToken" target="_blank" title="Telegram">
+            <a href="https://t.me/FractusToken" target="_blank" title="Telegram">
               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M9.993 15.574l-.395 4.453c.564 0 .806-.243 1.097-.534l2.628-2.497 5.443 3.99c.997.549 1.704.26 1.96-.918l3.55-16.662c.316-1.422-.513-1.977-1.488-1.632L1.723 9.683c-1.378.54-1.357 1.313-.235 1.66l4.37 1.364 10.145-6.4c.477-.289.911-.13.553.184"/>
               </svg>
@@ -88,26 +87,7 @@
               </svg>
             </a>
           </div>
-
-          <!-- Textual links for Solscan / SEO -->
-          <p class="social-links-text">
-            Official Channels:<br>
-            <a href="https://x.com/MarcFractys" target="_blank">X (Twitter)</a> ·
-            <a href="https://t.me/FractysToken" target="_blank">Telegram</a> ·
-            <a href="https://github.com/marcomars13" target="_blank">GitHub</a>
-          </p>
-
-          <!-- ✅ X (Twitter) Live Feed -->
-          <div class="x-timeline" id="x-timeline">
-            <blockquote class="twitter-timeline"
-              data-theme="dark"
-              data-chrome="noheader nofooter noborders transparent"
-              data-tweet-limit="3"
-              href="https://twitter.com/MarcFractys">
-              Tweets by @MarcFractys
-            </blockquote>
-          </div>
-          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          <div class="x-timeline" id="x-timeline"></div>
         </div>
       </div>
     </section>
@@ -129,32 +109,7 @@
 </div>
 
 <style>
-.social-links-text {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #7fffe6;
-  opacity: 0.7;
-  text-align: center;
-}
-.x-timeline {
-  width: 100%;
-  max-width: 480px;
-  margin: 10px auto 0;
-  border-radius: 12px;
-  box-shadow: 0 0 18px rgba(0,255,200,0.1);
-  overflow: hidden;
-}
-.x-timeline:hover {
-  box-shadow: 0 0 28px rgba(0,255,255,0.35);
-}
-.fractys-analytics {
-  background: radial-gradient(circle at 50% -40%, rgba(0,255,180,.09), rgba(0,35,35,.9));
-  border: 1px solid rgba(0,255,200,.18);
-  border-radius: 16px;
-  box-shadow: 0 0 24px rgba(0,255,200,.12);
-  overflow: hidden;
-  position: relative;
-}
+.fractys-analytics{background:radial-gradient(circle at 50% -40%,rgba(0,255,180,.09),rgba(0,35,35,.9));border:1px solid rgba(0,255,200,.18);border-radius:16px;box-shadow:0 0 24px rgba(0,255,200,.12);overflow:hidden;position:relative;}
 .fractys-analytics h3{text-align:center;color:aquamarine;margin-bottom:14px;text-shadow:0 0 8px rgba(0,255,200,.6);}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;font-size:.92em;color:#a8ffee;margin-bottom:14px;}
 .stats-grid strong{color:#fff;font-size:1.08em}
@@ -166,41 +121,64 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// --- GeckoTerminal Data Fetch ---
 (function(){
-  const POOL_ID="726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
-  const BASE="https://api.geckoterminal.com/api/v2";
-  const $=id=>document.getElementById(id);
+  const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
+  const BASE = "https://api.geckoterminal.com/api/v2";
+  const $ = id=>document.getElementById(id);
   const elCap=$("fa-marketcap"),elLiq=$("fa-liquidity"),elVol=$("fa-volume"),
         elHolders=$("fa-holders"),elUpd=$("fa-update"),fallback=$("fa-fallback");
+
   const fmtUSD=v=>(!v||v==="")?"—":(Number(v)>=1000?"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:0}):"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:5}));
   const nowStr=()=>new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+
   const ctx=document.getElementById("fa-chart").getContext("2d");
   let chart=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"FTS/USD",data:[],borderWidth:2,borderColor:"#00ffe0",backgroundColor:"rgba(0,255,200,0.06)",tension:0.35,pointRadius:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"}},y:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"},beginAtZero:false}}}});
-  async function fetchKpis(){const r=await fetch(`${BASE}/networks/solana/pools/${POOL_ID}`,{headers:{"accept":"application/json"}});
+
+  async function fetchKpis(){
+    const r=await fetch(`${BASE}/networks/solana/pools/${POOL_ID}`,{headers:{"accept":"application/json"}});
     const j=await r.json();const a=j?.data?.attributes||{};
     elLiq.textContent=fmtUSD(a.reserve_in_usd);
     elVol.textContent=fmtUSD(a.volume_usd);
     elCap.textContent=a.fdv_usd?fmtUSD(a.fdv_usd):a.market_cap_usd?fmtUSD(a.market_cap_usd):"—";
     if(elHolders.textContent==="—")elHolders.textContent="—";
-    elUpd.textContent=`⏱️ Updated: ${nowStr()} — Source: GeckoTerminal`;}
-  async function fetchOhlcv(){const urls=[`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/hour?aggregate=1&limit=24`,`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/24h?limit=24`,`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/day?aggregate=1&limit=7`];
-    let data=null;for(const url of urls){try{const r=await fetch(url,{headers:{"accept":"application/json"}});if(!r.ok)continue;
-      const j=await r.json();const arr=j?.data?.attributes?.ohlcv_list||j?.data||[];if(Array.isArray(arr)&&arr.length){data=arr;break;}}catch(e){}}
+    elUpd.textContent=`⏱️ Updated: ${nowStr()} — Source: GeckoTerminal`;
+  }
+
+  async function fetchOhlcv(){
+    const urls=[`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/hour?aggregate=1&limit=24`,
+                `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/24h?limit=24`,
+                `${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/day?aggregate=1&limit=7`];
+    let data=null;
+    for(const url of urls){try{const r=await fetch(url,{headers:{"accept":"application/json"}});
+      if(!r.ok)continue;const j=await r.json();const arr=j?.data?.attributes?.ohlcv_list||j?.data||[];
+      if(Array.isArray(arr)&&arr.length){data=arr;break;}}catch(e){}}
     if(!data){fallback.textContent="Chart fallback — awaiting OHLCV endpoint";fallback.style.display="flex";return;}
-    const labels=[],values=[];for(const row of data){const ts=row[0]||row.timestamp||row.time;let close=row[4]??row.close??row[1];
-      close=Number(close);if(close>1)close=1/close;labels.push(new Date(ts*1000).toLocaleTimeString([], {hour:"2-digit"}));values.push(Number(close.toFixed(5))); }
-    chart.data.labels=labels;chart.data.datasets[0].data=values;chart.update();fallback.style.display="none";}
-  async function refreshAll(){try{await Promise.all([fetchKpis(),fetchOhlcv()]);}catch(e){elUpd.textContent="⚠️ Data error — retrying…";}}
-  refreshAll();setInterval(refreshAll,60000);
+    const labels=[],values=[];
+    for(const row of data){
+      const ts=row[0]||row.timestamp||row.time;
+      let close=row[4]??row.close??row[1];
+      close=Number(close);
+      if(close>1)close=1/close;
+      labels.push(new Date(ts*1000).toLocaleTimeString([], {hour:"2-digit"}));
+      values.push(Number(close.toFixed(5)));
+    }
+    chart.data.labels=labels;
+    chart.data.datasets[0].data=values;
+    chart.update();
+    fallback.style.display="none";
+  }
+
+  async function refreshAll(){try{await Promise.all([fetchKpis(),fetchOhlcv()]);}
+  catch(e){elUpd.textContent="⚠️ Data error — retrying…";}}
+  refreshAll();
+  setInterval(refreshAll,60000);
 })();
 </script>
 
 <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 </main>
 
-<!-- Countdown -->
 <script>
 const launchDate=new Date("October 22, 2025 18:00:00").getTime();
 setInterval(()=>{const el=document.getElementById("countdown");if(!el)return;
@@ -208,6 +186,14 @@ const diff=launchDate-new Date().getTime();if(diff<0){el.textContent="🚀 LIVE!
 const d=Math.floor(diff/(1000*60*60*24)),h=Math.floor((diff%(1000*60*60*24))/(1000*60*60)),
 m=Math.floor((diff%(1000*60*60))/(1000*60)),s=Math.floor((diff%(1000*60))/1000);
 el.textContent=`${d}d ${h}h ${m}m ${s}s`;},1000);
+</script>
+
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){const c=document.getElementById("x-timeline");
+function feed(){if(window.twttr&&twttr.widgets){twttr.widgets.createTimeline({sourceType:"profile",screenName:"MarcFractys"},c,
+{theme:"dark",chrome:"noheader nofooter noborders transparent",tweetLimit:3,width:"100%",height:"420"});}
+else setTimeout(feed,1000);}feed();});
 </script>
 
 </body>
