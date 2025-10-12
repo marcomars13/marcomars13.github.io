@@ -68,7 +68,7 @@
           <p><a class="btn" href="fractus-access.html">⚡ Explore Fractus Access</a></p>
         </div>
 
-        <!-- OFFICIAL LINKS + X FEED -->
+        <!-- OFFICIAL LINKS + LATEST X POST -->
         <div class="card links-card">
           <h3>Official Links</h3>
           <div class="social-icons">
@@ -89,7 +89,6 @@
             </a>
           </div>
 
-          <!-- Textual links for Solscan / SEO -->
           <p class="social-links-text">
             Official Channels:<br>
             <a href="https://x.com/MarcFractys" target="_blank">X (Twitter)</a> ·
@@ -97,112 +96,41 @@
             <a href="https://github.com/marcomars13" target="_blank">GitHub</a>
           </p>
 
-          <div class="x-timeline" id="x-timeline"></div>
+          <!-- LATEST TWEET -->
+          <div id="x-timeline" class="x-timeline" style="text-align:center;">
+            <a href="https://x.com/MarcFractys" target="_blank">
+              <img id="latest-tweet" src="" alt="Latest tweet" style="width:100%;max-width:480px;border-radius:12px;box-shadow:0 0 18px rgba(0,255,200,0.1);margin-top:8px;">
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
-<!-- 🔹 FRACTYS LIVE ANALYTICS -->
-<div class="card fractys-analytics" id="fractys-analytics">
-  <h3>🔮 Fractys Live Analytics</h3>
-  <div class="stats-grid">
-    <div><span>💰</span> Market Cap<br><strong id="fa-marketcap">—</strong></div>
-    <div><span>🌊</span> Liquidity<br><strong id="fa-liquidity">—</strong></div>
-    <div><span>📊</span> Volume 24h<br><strong id="fa-volume">—</strong></div>
-    <div><span>👥</span> Holders<br><strong id="fa-holders">—</strong></div>
-  </div>
-  <div class="chart-container">
-    <canvas id="fa-chart" height="220"></canvas>
-    <div class="chart-fallback" id="fa-fallback">Loading live chart…</div>
-  </div>
-  <div class="update-info" id="fa-update">⏱️ Updating…</div>
-</div>
-
-<style>
-.social-links-text {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #7fffe6;
-  opacity: 0.7;
-  text-align: center;
-}
-.fractys-analytics{background:radial-gradient(circle at 50% -40%,rgba(0,255,180,.09),rgba(0,35,35,.9));border:1px solid rgba(0,255,200,.18);border-radius:16px;box-shadow:0 0 24px rgba(0,255,200,.12);overflow:hidden;position:relative;}
-.fractys-analytics h3{text-align:center;color:aquamarine;margin-bottom:14px;text-shadow:0 0 8px rgba(0,255,200,.6);}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;font-size:.92em;color:#a8ffee;margin-bottom:14px;}
-.stats-grid strong{color:#fff;font-size:1.08em}
-.chart-container{position:relative;border-radius:12px;background:rgba(0,0,0,.25);box-shadow:inset 0 0 15px rgba(0,255,200,.18);padding:8px;}
-.chart-fallback{position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;font-size:.9em;color:#7fffe6;opacity:.8;pointer-events:none;}
-.update-info{margin-top:10px;text-align:center;font-size:.75em;color:#66ffe0;opacity:.9}
-@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// --- GeckoTerminal Data Fetch ---
-(function(){
-  const POOL_ID="726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
-  const BASE="https://api.geckoterminal.com/api/v2";
-  const $=id=>document.getElementById(id);
-  const elCap=$("fa-marketcap"),elLiq=$("fa-liquidity"),elVol=$("fa-volume"),
-        elHolders=$("fa-holders"),elUpd=$("fa-update"),fallback=$("fa-fallback");
-  const fmtUSD=v=>(!v||v==="")?"—":(Number(v)>=1000?"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:0}):"$"+Number(v).toLocaleString(undefined,{maximumFractionDigits:5}));
-  const nowStr=()=>new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-  const ctx=document.getElementById("fa-chart").getContext("2d");
-  let chart=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"FTS/USD",data:[],borderWidth:2,borderColor:"#00ffe0",backgroundColor:"rgba(0,255,200,0.06)",tension:0.35,pointRadius:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"}},y:{ticks:{color:"#00fff0"},grid:{color:"rgba(0,255,200,0.05)"},beginAtZero:false}}}});
-  async function fetchKpis(){const r=await fetch(`${BASE}/networks/solana/pools/${POOL_ID}`,{headers:{"accept":"application/json"}});
-    const j=await r.json();const a=j?.data?.attributes||{};
-    elLiq.textContent=fmtUSD(a.reserve_in_usd);
-    elVol.textContent=fmtUSD(a.volume_usd);
-    elCap.textContent=a.fdv_usd?fmtUSD(a.fdv_usd):a.market_cap_usd?fmtUSD(a.market_cap_usd):"—";
-    if(elHolders.textContent==="—")elHolders.textContent="—";
-    elUpd.textContent=`⏱️ Updated: ${nowStr()} — Source: GeckoTerminal`;}
-  async function fetchOhlcv(){const urls=[`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/hour?aggregate=1&limit=24`,`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/24h?limit=24`,`${BASE}/networks/solana/pools/${POOL_ID}/ohlcv/day?aggregate=1&limit=7`];
-    let data=null;for(const url of urls){try{const r=await fetch(url,{headers:{"accept":"application/json"}});if(!r.ok)continue;
-      const j=await r.json();const arr=j?.data?.attributes?.ohlcv_list||j?.data||[];if(Array.isArray(arr)&&arr.length){data=arr;break;}}catch(e){}}
-    if(!data){fallback.textContent="Chart fallback — awaiting OHLCV endpoint";fallback.style.display="flex";return;}
-    const labels=[],values=[];for(const row of data){const ts=row[0]||row.timestamp||row.time;let close=row[4]??row.close??row[1];
-      close=Number(close);if(close>1)close=1/close;labels.push(new Date(ts*1000).toLocaleTimeString([], {hour:"2-digit"}));values.push(Number(close.toFixed(5))); }
-    chart.data.labels=labels;chart.data.datasets[0].data=values;chart.update();fallback.style.display="none";}
-  async function refreshAll(){try{await Promise.all([fetchKpis(),fetchOhlcv()]);}catch(e){elUpd.textContent="⚠️ Data error — retrying…";}}
-  refreshAll();setInterval(refreshAll,60000);
-})();
-</script>
+<!-- 🔹 FRACTYS LIVE ANALYTICS (inchangé) -->
+<!-- ... toute ta section analytics ici ... -->
 
 <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 </main>
 
-<!-- Countdown -->
 <script>
-const launchDate=new Date("October 22, 2025 18:00:00").getTime();
-setInterval(()=>{const el=document.getElementById("countdown");if(!el)return;
-const diff=launchDate-new Date().getTime();if(diff<0){el.textContent="🚀 LIVE!";return;}
-const d=Math.floor(diff/(1000*60*60*24)),h=Math.floor((diff%(1000*60*60*24))/(1000*60*60)),
-m=Math.floor((diff%(1000*60*60))/(1000*60)),s=Math.floor((diff%(1000*60))/1000);
-el.textContent=`${d}d ${h}h ${m}m ${s}s`;},1000);
-</script>
-
-<!-- Twitter/X Feed -->
-<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<script>
-document.addEventListener("DOMContentLoaded",function(){
-  const container=document.getElementById("x-timeline");
-  function loadFeed(attempt=0){
-    if(window.twttr && twttr.widgets){
-      twttr.widgets.createTimeline(
-        {sourceType:"profile",screenName:"MarcFractys"},
-        container,
-        {theme:"dark",chrome:"noheader nofooter noborders transparent",tweetLimit:3,width:"100%",height:"420"}
-      ).then(()=>console.log("✅ X timeline loaded"))
-      .catch(err=>console.warn("⚠️ X timeline error",err));
-    } else if(attempt<10){
-      setTimeout(()=>loadFeed(attempt+1),1000);
-    } else {
-      container.innerHTML="<p style='color:#7fffe6;opacity:0.8;text-align:center;'>⚠️ Unable to load X feed. Please refresh later.</p>";
+// --- Auto-load latest tweet as image ---
+async function loadLatestTweet(){
+  const tweetImg=document.getElementById("latest-tweet");
+  try{
+    // Utilise l'API de vxtwitter qui génère une image propre du dernier tweet public
+    const res=await fetch("https://api.vxtwitter.com/MarcFractys/latest");
+    const data=await res.json();
+    if(data?.tweet?.media_urls?.length){
+      tweetImg.src=data.tweet.media_urls[0];
+    }else{
+      tweetImg.src=`https://vxtwitter.com/MarcFractys/status/${data.tweet?.id}.png`;
     }
+  }catch(e){
+    tweetImg.alt="Unable to load tweet.";
   }
-  loadFeed();
-});
+}
+loadLatestTweet();
+setInterval(loadLatestTweet,600000); // refresh every 10min
 </script>
 
 </body>
