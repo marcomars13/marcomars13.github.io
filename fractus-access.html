@@ -18,8 +18,8 @@
       animation: iconPulse 5s ease-in-out infinite;
     }
     @keyframes iconPulse {
-      0%, 100% { filter: drop-shadow(0 0 8px rgba(127,255,212,0.5)); }
-      50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
+      0%,100%{filter:drop-shadow(0 0 8px rgba(127,255,212,0.5));}
+      50%{filter:drop-shadow(0 0 20px rgba(127,255,212,1));}
     }
     #status-box {
       margin-top:30px;padding:15px;border-radius:10px;
@@ -101,19 +101,19 @@
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
-  <!-- SCRIPT PHANTOM FIX CHROME -->
+  <!-- === SCRIPT PHANTOM CHROME FIX + CORS === -->
   <script type="module">
     import {
       Connection,
       PublicKey,
       Transaction
-    } from "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.js";
+    } from "https://esm.sh/@solana/web3.js@1.95.3";
 
     import {
       getAssociatedTokenAddress,
       createTransferInstruction,
       TOKEN_PROGRAM_ID
-    } from "https://unpkg.com/@solana/spl-token@0.3.9/lib/index.iife.js";
+    } from "https://esm.sh/@solana/spl-token@0.3.9";
 
     const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
     const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
