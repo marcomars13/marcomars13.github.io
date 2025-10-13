@@ -116,86 +116,100 @@
   </footer>
 
   <!-- SCRIPT DE CONNEXION PHANTOM -->
-  <script type="module">
-    import {
-      Connection,
-      PublicKey,
-      Transaction,
-      SystemProgram
-    } from "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.js";
+<script type="module">
+  import {
+    Connection,
+    PublicKey,
+    Transaction
+  } from "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.js";
 
-    // === CONFIG PRINCIPALE ===
-    const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
-    const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
-    const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
+  import {
+    getAssociatedTokenAddress,
+    createTransferInstruction,
+    TOKEN_PROGRAM_ID
+  } from "https://unpkg.com/@solana/spl-token@0.3.9/lib/index.iife.js";
 
-    let wallet = null;
-    const connection = new Connection(RPC_URL, "confirmed");
+  // === CONFIG PRINCIPALE ===
+  const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
+  const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
+  const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
+  const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj"); // ton wallet principal
 
-    // === 1. Connexion Phantom ===
-    const connectBtn = document.getElementById("connect-wallet");
-    connectBtn.addEventListener("click", async () => {
-      if (!window.solana || !window.solana.isPhantom) {
-        alert("Phantom Wallet not found. Please install it.");
+  let wallet = null;
+  const connection = new Connection(RPC_URL, "confirmed");
+
+  // === 1. Connexion Phantom ===
+  const connectBtn = document.getElementById("connect-wallet");
+  connectBtn.addEventListener("click", async () => {
+    if (!window.solana || !window.solana.isPhantom) {
+      alert("Phantom Wallet not found. Please install it.");
+      return;
+    }
+    try {
+      const resp = await window.solana.connect();
+      wallet = resp.publicKey;
+      connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0, 6)}...${wallet.toString().slice(-4)}`;
+      connectBtn.style.background = "#7fffd4";
+    } catch (err) {
+      alert("Wallet connection cancelled.");
+    }
+  });
+
+  // === 2. Paiement FTS réel (token SPL) ===
+  document.querySelectorAll(".pay-btn").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      e.preventDefault();
+      const card = e.target.closest(".card");
+      const amount = parseFloat(card.dataset.amount);
+      const statusBox = document.getElementById("status-box");
+      statusBox.style.display = "block";
+      statusBox.style.color = "#7fffd4";
+      statusBox.textContent = `⏳ Preparing transfer of ${amount} FTS...`;
+
+      if (!wallet) {
+        statusBox.textContent = "❌ Connect your wallet first.";
         return;
       }
+
       try {
-        const resp = await window.solana.connect();
-        wallet = resp.publicKey.toString();
-        connectBtn.textContent = `✅ Connected: ${wallet.slice(0, 6)}...${wallet.slice(-4)}`;
-        connectBtn.style.background = "#7fffd4";
+        // 📦 Trouver les ATA (comptes associés)
+        const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
+        const toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
+
+        // 🔁 Créer une instruction de transfert
+        const ix = createTransferInstruction(
+          fromTokenAccount,
+          toTokenAccount,
+          wallet,
+          amount * 1_000_000, // si FTS a 6 décimales
+          [],
+          TOKEN_PROGRAM_ID
+        );
+
+        const tx = new Transaction().add(ix);
+        tx.feePayer = wallet;
+        tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+        // ✍️ Signature via Phantom
+        const signed = await window.solana.signTransaction(tx);
+        const txid = await connection.sendRawTransaction(signed.serialize());
+        await connection.confirmTransaction(txid);
+
+        statusBox.style.color = "#7fffd4";
+        statusBox.textContent = `✅ FTS Payment successful!\nTX: ${txid}`;
+
+        // 🔗 Mise à jour backend Fractus
+        await fetch(`${API_URL}?fts_amount=${amount}`, { method: "POST" });
+
       } catch (err) {
-        alert("Wallet connection cancelled.");
+        statusBox.style.color = "#ff5555";
+        statusBox.textContent = `❌ Payment failed:\n${err.message}`;
+        console.error(err);
       }
     });
+  });
+</script>
 
-    // === 2. Paiement SPL token (simulation FTS) ===
-    document.querySelectorAll(".pay-btn").forEach(btn => {
-      btn.addEventListener("click", async e => {
-        e.preventDefault();
-        const card = e.target.closest(".card");
-        const amount = parseFloat(card.dataset.amount);
-        const statusBox = document.getElementById("status-box");
-        statusBox.style.display = "block";
-        statusBox.textContent = `⏳ Processing ${amount} FTS payment...`;
-
-        if (!wallet) {
-          statusBox.textContent = "❌ Connect your wallet first.";
-          return;
-        }
-
-        try {
-          const latest = await connection.getLatestBlockhash();
-
-          // Exemple transaction “placeholder” pour validation côté réseau
-          const tx = new Transaction().add(
-            SystemProgram.transfer({
-              fromPubkey: new PublicKey(wallet),
-              toPubkey: new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj"), // ton wallet principal
-              lamports: 1000 // montant symbolique (sera remplacé par FTS SPL tx réelle)
-            })
-          );
-          tx.feePayer = new PublicKey(wallet);
-          tx.recentBlockhash = latest.blockhash;
-
-          const signed = await window.solana.signTransaction(tx);
-          const txid = await connection.sendRawTransaction(signed.serialize());
-          await connection.confirmTransaction(txid);
-
-          statusBox.style.color = "#7fffd4";
-          statusBox.textContent = `✅ Payment simulated on Solana\nTX: ${txid}\nRecording ledger...`;
-
-          // Appel backend pour journaliser
-          await fetch(`${API_URL}?fts_amount=${amount}`, { method: "POST" });
-
-        } catch (err) {
-          statusBox.style.color = "#ff5555";
-          statusBox.textContent = `❌ Payment failed:\n${err.message}`;
-          console.error(err);
-        }
-      });
-    });
-  </script>
 </body>
 </html>
 
