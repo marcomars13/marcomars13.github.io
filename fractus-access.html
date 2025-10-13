@@ -10,11 +10,39 @@
   <link rel="stylesheet" href="access.css">
 
   <style>
-    .icon-fractal { color: var(--accent); filter: drop-shadow(0 0 8px rgba(127,255,212,0.6)) drop-shadow(0 0 16px rgba(127,255,212,0.4)) drop-shadow(0 0 30px rgba(127,255,212,0.25)); animation: iconPulse 5s ease-in-out infinite; }
-    @keyframes iconPulse { 0%,100%{filter:drop-shadow(0 0 8px rgba(127,255,212,0.5));}50%{filter:drop-shadow(0 0 20px rgba(127,255,212,1));}}
-    #status-box {margin-top:30px;padding:15px;border-radius:10px;background:rgba(0,0,0,0.5);color:var(--accent,#7fffd4);font-family:monospace;text-align:center;white-space:pre-line;box-shadow:0 0 20px rgba(127,255,212,0.4);display:none;transition:all .3s ease;}
-    .wallet-btn {margin-top:20px;padding:10px 22px;background:var(--accent);color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;box-shadow:0 0 20px rgba(127,255,212,0.6);transition:all .3s ease;}
-    .wallet-btn:hover {background:#9fffe0;box-shadow:0 0 25px rgba(127,255,212,0.9);}
+    .icon-fractal {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px rgba(127,255,212,0.6))
+              drop-shadow(0 0 16px rgba(127,255,212,0.4))
+              drop-shadow(0 0 30px rgba(127,255,212,0.25));
+      animation: iconPulse 5s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(127,255,212,0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
+    }
+    #status-box {
+      margin-top:30px;padding:15px;border-radius:10px;
+      background:rgba(0,0,0,0.5);color:var(--accent,#7fffd4);
+      font-family:monospace;text-align:center;white-space:pre-line;
+      box-shadow:0 0 20px rgba(127,255,212,0.4);
+      display:none;transition:all .3s ease;
+    }
+    .wallet-btn {
+      margin-top:20px;padding:10px 22px;
+      background:var(--accent);color:#000;font-weight:bold;
+      border:none;border-radius:8px;cursor:pointer;
+      box-shadow:0 0 20px rgba(127,255,212,0.6);
+      transition:all .3s ease;
+    }
+    .wallet-btn:hover {
+      background:#9fffe0;
+      box-shadow:0 0 25px rgba(127,255,212,0.9);
+    }
+    #fts-balance {
+      margin-top:10px;font-family:monospace;
+      color:#7fffd4;text-align:center;
+    }
   </style>
 </head>
 
@@ -36,12 +64,30 @@
       <h1><span class="icon-fractal">🌀</span> Fractus Access</h1>
       <p>Access the <strong>Fractus Algorithm</strong> — a fractal engine merging AI, mathematics, and blockchain validation — using your <strong>Fractys (FTS)</strong> tokens.<br>Choose your license tier below to unlock your level of exploration.</p>
       <button id="connect-wallet" class="wallet-btn">🔗 Connect Wallet</button>
+      <div id="fts-balance"></div>
     </div>
 
     <div class="license-grid">
-      <div class="card license-card" data-amount="50"><h2>Trial Access</h2><p>24 hours of full access. 1 dataset or image sequence.</p><div class="price">50 FTS</div><a href="#" class="btn glow pay-btn">💰 Pay & Activate</a></div>
-      <div class="card license-card" data-amount="200"><h2>Research License</h2><p>30 days, up to 10 analyses per month. Academic use.</p><div class="price">200 FTS</div><a href="#" class="btn glow pay-btn">💰 Pay & Activate</a></div>
-      <div class="card license-card" data-amount="1000"><h2>Professional License</h2><p>1 year of Pro API access with premium support.</p><div class="price">1000 FTS</div><a href="#" class="btn glow pay-btn">💰 Pay & Activate</a></div>
+      <div class="card license-card" data-amount="50">
+        <h2>Trial Access</h2>
+        <p>24 hours of full access. 1 dataset or image sequence.</p>
+        <div class="price">50 FTS</div>
+        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+      </div>
+
+      <div class="card license-card" data-amount="200">
+        <h2>Research License</h2>
+        <p>30 days, up to 10 analyses per month. Academic use.</p>
+        <div class="price">200 FTS</div>
+        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+      </div>
+
+      <div class="card license-card" data-amount="1000">
+        <h2>Professional License</h2>
+        <p>1 year of Pro API access with premium support.</p>
+        <div class="price">1000 FTS</div>
+        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+      </div>
     </div>
 
     <div id="status-box"></div>
@@ -55,110 +101,131 @@
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
-  <!-- SCRIPT DE CONNEXION PHANTOM -->
-<script type="module">
-  import {
-    Connection,
-    PublicKey,
-    Transaction
-  } from "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.js";
+  <!-- SCRIPT PHANTOM FIX CHROME -->
+  <script type="module">
+    import {
+      Connection,
+      PublicKey,
+      Transaction
+    } from "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.js";
 
-  import {
-    getAssociatedTokenAddress,
-    createTransferInstruction,
-    TOKEN_PROGRAM_ID
-  } from "https://unpkg.com/@solana/spl-token@0.3.9/lib/index.iife.js";
+    import {
+      getAssociatedTokenAddress,
+      createTransferInstruction,
+      TOKEN_PROGRAM_ID
+    } from "https://unpkg.com/@solana/spl-token@0.3.9/lib/index.iife.js";
 
-  // === CONFIG PRINCIPALE ===
-  const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
-  const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
-  const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
-  const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
+    const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
+    const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
+    const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
+    const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
 
-  let wallet = null;
-  const connection = new Connection(RPC_URL, "confirmed");
+    let wallet = null;
+    const connection = new Connection(RPC_URL, "confirmed");
+    const connectBtn = document.getElementById("connect-wallet");
+    const statusBox = document.getElementById("status-box");
+    const balanceDiv = document.getElementById("fts-balance");
 
-  // === Fonction pour détecter Phantom correctement ===
-  function getProvider() {
-    if ("phantom" in window) {
-      const provider = window.phantom?.solana;
-      if (provider?.isPhantom) return provider;
+    // === Détection Phantom universelle (Chrome + Safari) ===
+    async function getProvider() {
+      if ("phantom" in window) {
+        const provider = window.phantom?.solana;
+        if (provider?.isPhantom) return provider;
+      }
+      // Chrome fallback : attendre l’injection
+      return new Promise(resolve => {
+        window.addEventListener("solana#initialized", () => {
+          resolve(window.phantom?.solana);
+        }, { once: true });
+        setTimeout(() => resolve(window.phantom?.solana), 3000);
+      });
     }
-    return null;
-  }
 
-  const provider = getProvider();
-  const connectBtn = document.getElementById("connect-wallet");
-
-  // === 1. Connexion Phantom ===
-  connectBtn.addEventListener("click", async () => {
-    if (!provider) {
-      alert("Phantom Wallet not detected. Please install Phantom extension.");
-      window.open("https://phantom.app/", "_blank");
-      return;
-    }
-    try {
-      const resp = await provider.connect({ onlyIfTrusted: false });
-      wallet = resp.publicKey;
-      connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0,6)}...${wallet.toString().slice(-4)}`;
-      connectBtn.style.background = "#7fffd4";
-      console.log("Connected wallet:", wallet.toString());
-    } catch (err) {
-      console.error("Connection error:", err);
-      alert("Wallet connection cancelled or failed.");
-    }
-  });
-
-  // === 2. Paiement FTS SPL ===
-  document.querySelectorAll(".pay-btn").forEach(btn => {
-    btn.addEventListener("click", async e => {
-      e.preventDefault();
-      const card = e.target.closest(".card");
-      const amount = parseFloat(card.dataset.amount);
-      const statusBox = document.getElementById("status-box");
-      statusBox.style.display = "block";
-      statusBox.style.color = "#7fffd4";
-      statusBox.textContent = `⏳ Preparing transfer of ${amount} FTS...`;
-
-      if (!wallet) {
-        statusBox.textContent = "❌ Connect your wallet first.";
+    // === 1. Connexion Phantom ===
+    connectBtn.addEventListener("click", async () => {
+      const provider = await getProvider();
+      if (!provider) {
+        alert("Phantom Wallet not detected. Please install the Phantom extension.");
+        window.open("https://phantom.app/", "_blank");
         return;
       }
-
       try {
-        const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
-        const toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
-
-        const ix = createTransferInstruction(
-          fromTokenAccount,
-          toTokenAccount,
-          wallet,
-          amount * 1_000_000,
-          [],
-          TOKEN_PROGRAM_ID
-        );
-
-        const tx = new Transaction().add(ix);
-        tx.feePayer = wallet;
-        tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-        const signed = await provider.signTransaction(tx);
-        const txid = await connection.sendRawTransaction(signed.serialize());
-        await connection.confirmTransaction(txid);
-
+        const resp = await provider.connect({ onlyIfTrusted: false });
+        wallet = resp.publicKey;
+        connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0,6)}...${wallet.toString().slice(-4)}`;
+        connectBtn.style.background = "#7fffd4";
+        statusBox.style.display = "block";
         statusBox.style.color = "#7fffd4";
-        statusBox.textContent = `✅ FTS Payment successful!\nTX: ${txid}`;
+        statusBox.textContent = `🔗 Wallet connected: ${wallet}`;
+        console.log("Connected wallet:", wallet.toString());
 
-        await fetch(`${API_URL}?fts_amount=${amount}`, { method: "POST" });
+        // === Affichage du solde FTS ===
+        try {
+          const ata = await getAssociatedTokenAddress(FTS_MINT, wallet);
+          const balanceInfo = await connection.getTokenAccountBalance(ata);
+          const balance = balanceInfo?.value?.uiAmount || 0;
+          balanceDiv.textContent = `💰 Balance: ${balance} FTS`;
+        } catch (err) {
+          balanceDiv.textContent = "💰 Balance: 0 FTS";
+          console.warn("Unable to fetch FTS balance:", err);
+        }
 
       } catch (err) {
-        console.error("Payment error:", err);
-        statusBox.style.color = "#ff5555";
-        statusBox.textContent = `❌ Payment failed:\n${err.message}`;
+        console.error("Connection error:", err);
+        alert("Wallet connection cancelled or failed.");
       }
     });
-  });
-</script>
+
+    // === 2. Paiement FTS SPL ===
+    document.querySelectorAll(".pay-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const card = e.target.closest(".card");
+        const amount = parseFloat(card.dataset.amount);
+        statusBox.style.display = "block";
+        statusBox.style.color = "#7fffd4";
+        statusBox.textContent = `⏳ Preparing transfer of ${amount} FTS...`;
+
+        if (!wallet) {
+          statusBox.textContent = "❌ Connect your wallet first.";
+          return;
+        }
+
+        try {
+          const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
+          const toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
+
+          const ix = createTransferInstruction(
+            fromTokenAccount,
+            toTokenAccount,
+            wallet,
+            amount * 1_000_000,
+            [],
+            TOKEN_PROGRAM_ID
+          );
+
+          const tx = new Transaction().add(ix);
+          tx.feePayer = wallet;
+          tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+          const provider = await getProvider();
+          const signed = await provider.signTransaction(tx);
+          const txid = await connection.sendRawTransaction(signed.serialize());
+          await connection.confirmTransaction(txid);
+
+          statusBox.style.color = "#7fffd4";
+          statusBox.textContent = `✅ FTS Payment successful!\nTX: ${txid}`;
+
+          await fetch(`${API_URL}?fts_amount=${amount}`, { method: "POST" });
+
+        } catch (err) {
+          console.error("Payment error:", err);
+          statusBox.style.color = "#ff5555";
+          statusBox.textContent = `❌ Payment failed:\n${err.message}`;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
 
