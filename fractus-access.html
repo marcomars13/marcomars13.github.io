@@ -22,7 +22,6 @@
       50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
     }
 
-    /* Zone de retour */
     #status-box {
       margin-top: 30px;
       padding: 15px;
@@ -84,13 +83,12 @@
       </div>
     </div>
 
-    <!-- Zone de retour -->
     <div id="status-box"></div>
 
     <div class="license-footer">
       <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments are simulated locally via your backend on port 8001.</small>
+      <small>Payments are securely routed through Fractus Local API via ngrok.</small>
     </div>
   </main>
 
@@ -100,7 +98,8 @@
 
   <!-- SCRIPT DE CONNEXION -->
   <script>
-  const API_URL = "http://127.0.0.1:8001/api/payment_split";
+  // ✅ Remplace l’API locale par ton tunnel Ngrok
+  const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
 
   document.querySelectorAll('.pay-btn').forEach(btn => {
     btn.addEventListener('click', async e => {
@@ -109,13 +108,22 @@
       const amount = card.dataset.amount;
       const statusBox = document.getElementById('status-box');
       statusBox.style.display = 'block';
+      statusBox.style.color = '#7fffd4';
       statusBox.textContent = `⏳ Processing payment of ${amount} FTS...`;
 
       try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 7000);
+
         const res = await fetch(`${API_URL}?fts_amount=${amount}`, {
-          method: 'POST'
+          method: 'POST',
+          signal: controller.signal
         });
+        clearTimeout(timeout);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+
         if (data.success) {
           statusBox.style.color = '#7fffd4';
           statusBox.textContent =
