@@ -101,19 +101,19 @@
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
-  <!-- === SCRIPT PHANTOM CHROME FIX + CORS === -->
+  <!-- === SCRIPT PHANTOM + IMPORTS LOCAUX === -->
   <script type="module">
     import {
       Connection,
       PublicKey,
       Transaction
-    } from "https://esm.sh/@solana/web3.js@1.95.3";
+    } from "./js/web3.js";
 
     import {
       getAssociatedTokenAddress,
       createTransferInstruction,
       TOKEN_PROGRAM_ID
-    } from "https://esm.sh/@solana/spl-token@0.3.9";
+    } from "./js/spl-token.js";
 
     const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
     const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
@@ -126,22 +126,17 @@
     const statusBox = document.getElementById("status-box");
     const balanceDiv = document.getElementById("fts-balance");
 
-    // === Détection Phantom universelle (Chrome + Safari) ===
     async function getProvider() {
       if ("phantom" in window) {
         const provider = window.phantom?.solana;
         if (provider?.isPhantom) return provider;
       }
-      // Chrome fallback : attendre l’injection
       return new Promise(resolve => {
-        window.addEventListener("solana#initialized", () => {
-          resolve(window.phantom?.solana);
-        }, { once: true });
+        window.addEventListener("solana#initialized", () => resolve(window.phantom?.solana), { once: true });
         setTimeout(() => resolve(window.phantom?.solana), 3000);
       });
     }
 
-    // === 1. Connexion Phantom ===
     connectBtn.addEventListener("click", async () => {
       const provider = await getProvider();
       if (!provider) {
@@ -159,7 +154,6 @@
         statusBox.textContent = `🔗 Wallet connected: ${wallet}`;
         console.log("Connected wallet:", wallet.toString());
 
-        // === Affichage du solde FTS ===
         try {
           const ata = await getAssociatedTokenAddress(FTS_MINT, wallet);
           const balanceInfo = await connection.getTokenAccountBalance(ata);
@@ -176,7 +170,6 @@
       }
     });
 
-    // === 2. Paiement FTS SPL ===
     document.querySelectorAll(".pay-btn").forEach(btn => {
       btn.addEventListener("click", async e => {
         e.preventDefault();
@@ -199,9 +192,7 @@
             fromTokenAccount,
             toTokenAccount,
             wallet,
-            amount * 1_000_000,
-            [],
-            TOKEN_PROGRAM_ID
+            amount * 1_000_000
           );
 
           const tx = new Transaction().add(ix);
@@ -228,4 +219,3 @@
   </script>
 </body>
 </html>
-
