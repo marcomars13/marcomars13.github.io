@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="access.css">
 
   <style>
+    /* ---------- STYLE FRACTAL ---------- */
     .icon-fractal {
       color: var(--accent);
       filter: drop-shadow(0 0 8px rgba(127,255,212,0.6))
@@ -17,11 +18,13 @@
               drop-shadow(0 0 30px rgba(127,255,212,0.25));
       animation: iconPulse 5s ease-in-out infinite;
     }
+
     @keyframes iconPulse {
       0%, 100% { filter: drop-shadow(0 0 8px rgba(127,255,212,0.5)); }
       50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
     }
 
+    /* Zone d’affichage des messages */
     #status-box {
       margin-top: 30px;
       padding: 15px;
@@ -36,25 +39,24 @@
       transition: all 0.3s ease;
     }
 
+    /* Bouton de connexion wallet */
     #connect-btn {
-      background: rgba(127,255,212,0.1);
-      border: 1px solid rgba(127,255,212,0.6);
+      background: rgba(127,255,212,0.08);
+      border: 1px solid rgba(127,255,212,0.4);
       color: var(--accent, #7fffd4);
       padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 20px;
-      transition: all 0.3s ease;
     }
-    #connect-btn:hover {
-      background: rgba(127,255,212,0.25);
-      transform: scale(1.05);
-    }
+    #connect-btn:hover { background: rgba(127,255,212,0.25); }
   </style>
 </head>
 
 <body class="fractus-access">
+
+  <!-- ================= NAVIGATION ================= -->
   <nav>
     <div class="brand">
       <img src="logo.png" alt="Fractys logo"/>
@@ -67,21 +69,25 @@
     </div>
   </nav>
 
+  <!-- ================= CONTENU PRINCIPAL ================= -->
   <main class="container">
+
+    <!-- ----- INTRO ----- -->
     <div class="access-header">
       <h1><span class="icon-fractal">🌀</span> Fractus Access</h1>
       <p>
-        Access the <strong>Fractus Algorithm</strong> — a fractal engine merging AI, mathematics, and blockchain validation — using your
-        <strong>Fractys (FTS)</strong> tokens.<br>
+        Access the <strong>Fractus Algorithm</strong> — a fractal engine merging AI, mathematics, and blockchain validation —
+        using your <strong>Fractys (FTS)</strong> tokens.<br>
         Choose your license tier below to unlock your level of exploration.
       </p>
     </div>
 
-    <!-- 🔹 Bouton connexion Phantom -->
+    <!-- ----- BOUTON CONNEXION WALLET ----- -->
     <div style="text-align:center;">
       <button id="connect-btn">🔗 Connect Wallet (Phantom)</button>
     </div>
 
+    <!-- ----- OFFRES ----- -->
     <div class="license-grid">
       <div class="card license-card" data-amount="50">
         <h2>Trial Access</h2>
@@ -105,94 +111,176 @@
       </div>
     </div>
 
+    <!-- ----- MESSAGE BOX ----- -->
     <div id="status-box"></div>
 
+    <!-- ----- FOOTER INFO ----- -->
     <div class="license-footer">
       <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments are executed securely on Solana blockchain.</small>
+      <small>Payments are executed directly on Solana Mainnet using the FTS token.</small>
     </div>
+
   </main>
 
   <footer>
     © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
 
-  <!-- DEPENDANCE SOLANA WEB3 -->
+  <!-- ================= DEPENDANCES JS ================= -->
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@solana/spl-token@0.3.8/dist/browser/index.iife.min.js"></script>
 
   <script>
-  const { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram } = solanaWeb3;
+  (async ()=>{
+    // ===========================================================
+    // CONFIGURATION PRINCIPALE
+    // ===========================================================
+    const TOKEN_MINT = "BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy"; // mint officiel FTS
+    const NETWORK = "mainnet-beta"; // réseau de production Solana
+    const RPC_URL = "https://api.mainnet-beta.solana.com"; // endpoint RPC public
+    const POOL_WALLET = "AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje"; // ton pool wallet
+    const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split"; // backend Fractus local API
 
-  const statusBox = document.getElementById('status-box');
-  const connectBtn = document.getElementById('connect-btn');
-  const poolWallet = new PublicKey("AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje"); // Pool wallet Fractys
+    // ===========================================================
+    // LIBS SOLANA
+    // ===========================================================
+    const { Connection, PublicKey, Transaction, clusterApiUrl } = solanaWeb3;
+    const spl = window.splToken;
+    const connection = new Connection(RPC_URL, "confirmed");
 
-  let walletAddress = null;
-  const connection = new Connection(clusterApiUrl("mainnet-beta"), "confirmed");
+    // ===========================================================
+    // VARIABLES
+    // ===========================================================
+    const statusBox = document.getElementById('status-box');
+    const connectBtn = document.getElementById('connect-btn');
+    let walletPubkey = null;
 
-  // ✅ Connexion Phantom
-  connectBtn.addEventListener("click", async () => {
-    try {
-      if (!window.solana || !window.solana.isPhantom) {
-        alert("Phantom Wallet not found. Please install it from https://phantom.app");
-        return;
-      }
-      const resp = await window.solana.connect();
-      walletAddress = resp.publicKey.toString();
-      connectBtn.textContent = "✅ Connected: " + walletAddress.slice(0, 6) + "...";
-      connectBtn.disabled = true;
+    // ===========================================================
+    // FONCTIONS UTILITAIRES
+    // ===========================================================
+    function showStatus(message, color="#7fffd4") {
       statusBox.style.display = "block";
-      statusBox.textContent = "Wallet connected successfully!";
-    } catch (err) {
-      console.error(err);
-      alert("Connection failed.");
+      statusBox.style.color = color;
+      statusBox.textContent = message;
     }
-  });
 
-  // ✅ Paiement (en SOL pour test - ensuite en SPL FTS)
-  document.querySelectorAll('.pay-btn').forEach(btn => {
-    btn.addEventListener('click', async e => {
-      e.preventDefault();
-      if (!walletAddress) {
-        alert("Please connect your Phantom wallet first.");
-        return;
+    async function ensurePhantom() {
+      if (!window.solana || !window.solana.isPhantom) {
+        alert("Phantom Wallet not found. Please install it: https://phantom.app");
+        throw new Error("Phantom not installed");
       }
+    }
 
-      const card = e.target.closest('.card');
-      const amount = card.dataset.amount;
-      statusBox.style.display = 'block';
-      statusBox.style.color = '#7fffd4';
-      statusBox.textContent = `⏳ Sending ${amount} FTS from your wallet...`;
-
+    // ===========================================================
+    // CONNEXION DU WALLET PHANTOM
+    // ===========================================================
+    connectBtn.addEventListener("click", async ()=>{
       try {
-        const transaction = new Transaction().add(
-          SystemProgram.transfer({
-            fromPubkey: new PublicKey(walletAddress),
-            toPubkey: poolWallet,
-            lamports: amount * 1000000 // simulate token equivalent (1e6 lamports = 0.001 SOL)
-          })
-        );
-
-        transaction.feePayer = new PublicKey(walletAddress);
-        const { blockhash } = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash;
-
-        const signedTx = await window.solana.signTransaction(transaction);
-        const signature = await connection.sendRawTransaction(signedTx.serialize());
-        await connection.confirmTransaction(signature);
-
-        statusBox.style.color = '#7fffd4';
-        statusBox.textContent = `✅ Transaction confirmed!\nTX: ${signature}\nAmount: ${amount} FTS (simulated)`;
-
+        await ensurePhantom();
+        const resp = await window.solana.connect();
+        walletPubkey = resp.publicKey;
+        connectBtn.textContent = "✅ Connected: " + walletPubkey.toString().slice(0,6) + "...";
+        connectBtn.disabled = true;
+        showStatus("Wallet connected: " + walletPubkey.toString());
       } catch (err) {
         console.error(err);
-        statusBox.style.color = '#ff5555';
-        statusBox.textContent = `❌ Payment failed: ${err.message}`;
+        showStatus("Connection failed: " + err.message, "#ff5555");
       }
     });
-  });
+
+    // ===========================================================
+    // TRANSFERT SPL TOKEN (FTS)
+    // ===========================================================
+    async function sendFTS(amountFTS) {
+      if (!walletPubkey) throw new Error("Wallet not connected");
+
+      const mintPubkey = new PublicKey(TOKEN_MINT);
+      const receiverPubkey = new PublicKey(POOL_WALLET);
+
+      // Récupération ou création du compte associé
+      const senderATA = await spl.getAssociatedTokenAddress(mintPubkey, walletPubkey);
+      const receiverATA = await spl.getAssociatedTokenAddress(mintPubkey, receiverPubkey);
+
+      const tx = new Transaction();
+
+      // Si le compte ATA du receveur n'existe pas → le créer
+      const receiverInfo = await connection.getAccountInfo(receiverATA);
+      if (!receiverInfo) {
+        tx.add(
+          spl.createAssociatedTokenAccountInstruction(
+            walletPubkey, receiverATA, receiverPubkey, mintPubkey
+          )
+        );
+      }
+
+      // Ajout de l’instruction de transfert
+      const decimals = 9; // la plupart des SPL tokens ont 9 décimales
+      const amountRaw = BigInt(amountFTS * (10 ** decimals));
+
+      tx.add(
+        spl.createTransferInstruction(
+          senderATA, receiverATA, walletPubkey, amountRaw
+        )
+      );
+
+      // Préparation de la transaction
+      const { blockhash } = await connection.getLatestBlockhash("finalized");
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = walletPubkey;
+
+      // Signature Phantom
+      const signedTx = await window.solana.signTransaction(tx);
+      const signature = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(signature, "confirmed");
+
+      return signature;
+    }
+
+    // ===========================================================
+    // PAIEMENT : CLICK SUR "PAY & ACTIVATE"
+    // ===========================================================
+    document.querySelectorAll(".pay-btn").forEach(btn=>{
+      btn.addEventListener("click", async (e)=>{
+        e.preventDefault();
+        try { await ensurePhantom(); } catch { return; }
+        if (!walletPubkey) { alert("Connect your wallet first."); return; }
+
+        const card = e.target.closest(".card");
+        const amount = Number(card.dataset.amount);
+        showStatus(`⏳ Sending ${amount} FTS... please approve in Phantom.`);
+
+        try {
+          // 1️⃣ Envoi réel du token
+          const txSig = await sendFTS(amount);
+          showStatus(`✅ Transaction sent!\nTX: ${txSig}\nRecording in ledger...`);
+
+          // 2️⃣ Enregistrement backend ledger
+          const res = await fetch(`${API_URL}?fts_amount=${amount}&wallet=${walletPubkey.toString()}&tx=${txSig}`, { method: 'POST' });
+          const data = await res.json();
+
+          if (data.success) {
+            showStatus(
+`✅ Payment confirmed
+💰 Amount: ${data.fts_spent} FTS
+🌀 Pool: ${data.distribution.pool} FTS
+👤 Main: ${data.distribution.main} FTS
+🏦 Treasury: ${data.distribution.treasury} FTS
+
+TX: ${txSig}
+Recorded: ${data.timestamp}`
+            );
+          } else {
+            showStatus("⚠️ On-chain success but ledger update failed.", "#ffcc55");
+          }
+        } catch (err) {
+          console.error(err);
+          showStatus("❌ Payment failed: " + (err.message || err), "#ff5555");
+        }
+      });
+    });
+
+  })();
   </script>
 </body>
 </html>
-
