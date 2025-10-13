@@ -6,15 +6,10 @@
   <title>Fractus Access — Powered by Fractys</title>
   <meta name="description" content="Access the Fractus Algorithm using Fractys (FTS).">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  <!-- STYLES PRINCIPAUX -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- STYLES SPÉCIFIQUES -->
   <link rel="stylesheet" href="access.css">
 
   <style>
-    /* ICONES HARMONISÉES AU STYLE GLOW FRACTAL */
     .icon-fractal {
       color: var(--accent);
       filter: drop-shadow(0 0 8px rgba(127,255,212,0.6))
@@ -22,23 +17,28 @@
               drop-shadow(0 0 30px rgba(127,255,212,0.25));
       animation: iconPulse 5s ease-in-out infinite;
     }
-
     @keyframes iconPulse {
-      0%, 100% {
-        filter: drop-shadow(0 0 8px rgba(127,255,212,0.5))
-                drop-shadow(0 0 16px rgba(127,255,212,0.3));
-      }
-      50% {
-        filter: drop-shadow(0 0 14px rgba(127,255,212,1))
-                drop-shadow(0 0 28px rgba(127,255,212,0.6))
-                drop-shadow(0 0 40px rgba(127,255,212,0.3));
-      }
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(127,255,212,0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
+    }
+
+    /* Zone de retour */
+    #status-box {
+      margin-top: 30px;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.5);
+      color: var(--accent, #7fffd4);
+      font-family: monospace;
+      text-align: center;
+      white-space: pre-line;
+      box-shadow: 0 0 20px rgba(127,255,212,0.4);
+      display: none;
     }
   </style>
 </head>
 
 <body class="fractus-access">
-  <!-- NAVIGATION -->
   <nav>
     <div class="brand">
       <img src="logo.png" alt="Fractys logo"/>
@@ -51,7 +51,6 @@
     </div>
   </nav>
 
-  <!-- CONTENU PRINCIPAL -->
   <main class="container">
     <div class="access-header">
       <h1><span class="icon-fractal">🌀</span> Fractus Access</h1>
@@ -62,57 +61,80 @@
       </p>
     </div>
 
-    <!-- LICENCES -->
     <div class="license-grid">
-      <!-- TRIAL -->
-      <div class="card license-card">
+      <div class="card license-card" data-amount="50">
         <h2>Trial Access</h2>
-        <p>
-          24 hours of full access to Fractus Engine.<br>
-          Run one dataset or image sequence.<br>
-          Proof of contribution on-chain.
-        </p>
+        <p>24 hours of full access. 1 dataset or image sequence.</p>
         <div class="price">50 FTS</div>
-        <a href="#" class="btn glow">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
       </div>
 
-      <!-- RESEARCH -->
-      <div class="card license-card">
+      <div class="card license-card" data-amount="200">
         <h2>Research License</h2>
-        <p>
-          30 days of advanced access.<br>
-          Up to 10 analyses per month.<br>
-          For personal or academic use.
-        </p>
+        <p>30 days, up to 10 analyses per month. Academic use.</p>
         <div class="price">200 FTS</div>
-        <a href="#" class="btn glow">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
       </div>
 
-      <!-- PRO -->
-      <div class="card license-card">
+      <div class="card license-card" data-amount="1000">
         <h2>Professional License</h2>
-        <p>
-          1 year of Pro API access.<br>
-          For commercial or AI integrations.<br>
-          Includes premium support & updates.
-        </p>
+        <p>1 year of Pro API access with premium support.</p>
         <div class="price">1000 FTS</div>
-        <a href="#" class="btn glow">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
       </div>
     </div>
 
-    <!-- FOOTER D’INFORMATION -->
+    <!-- Zone de retour -->
+    <div id="status-box"></div>
+
     <div class="license-footer">
       <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments will be verified on-chain (Solana) and recorded transparently.</small>
+      <small>Payments are simulated locally via your backend on port 8001.</small>
     </div>
   </main>
 
-  <!-- FOOTER -->
   <footer>
     © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
+
+  <!-- SCRIPT DE CONNEXION -->
+  <script>
+  const API_URL = "http://127.0.0.1:8001/api/payment_split";
+
+  document.querySelectorAll('.pay-btn').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.preventDefault();
+      const card = e.target.closest('.card');
+      const amount = card.dataset.amount;
+      const statusBox = document.getElementById('status-box');
+      statusBox.style.display = 'block';
+      statusBox.textContent = `⏳ Processing payment of ${amount} FTS...`;
+
+      try {
+        const res = await fetch(`${API_URL}?fts_amount=${amount}`, {
+          method: 'POST'
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusBox.style.color = '#7fffd4';
+          statusBox.textContent =
+            `✅ Payment successful!\n` +
+            `• Amount: ${data.fts_spent} FTS\n` +
+            `• Pool: ${data.distribution.pool} FTS\n` +
+            `• Main: ${data.distribution.main} FTS\n` +
+            `• Treasury: ${data.distribution.treasury} FTS\n\n` +
+            `Transaction recorded at ${data.timestamp}`;
+        } else {
+          throw new Error("Backend returned error");
+        }
+      } catch (err) {
+        statusBox.style.color = '#ff5555';
+        statusBox.textContent = `❌ Payment failed: ${err.message}`;
+      }
+    });
+  });
+  </script>
 </body>
 </html>
 
