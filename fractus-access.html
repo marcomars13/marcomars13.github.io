@@ -33,155 +33,24 @@
       white-space: pre-line;
       box-shadow: 0 0 20px rgba(127,255,212,0.4);
       display: none;
-    }
-  </style>
-</head>
-
-<body class="fractus-access">
-  <nav>
-    <div class="brand">
-      <img src="logo.png" alt="Fractys logo"/>
-      <span>Fractys (FTS)</span>
-    </div>
-    <div class="links">
-      <a href="index.html">Home</a>
-      <a href="airdrop.html">Airdrop</a>
-      <a href="fractus-access.html" class="active">Fractus Access</a>
-    </div>
-  </nav>
-
-  <main class="container">
-    <div class="access-header">
-      <h1><span class="icon-fractal">🌀</span> Fractus Access</h1>
-      <p>
-        Access the <strong>Fractus Algorithm</strong> — a fractal engine merging AI, mathematics, and blockchain validation — using your
-        <strong>Fractys (FTS)</strong> tokens.<br>
-        Choose your license tier below to unlock your level of exploration.
-      </p>
-    </div>
-
-    <div class="license-grid">
-      <div class="card license-card" data-amount="50">
-        <h2>Trial Access</h2>
-        <p>24 hours of full access. 1 dataset or image sequence.</p>
-        <div class="price">50 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
-      </div>
-
-      <div class="card license-card" data-amount="200">
-        <h2>Research License</h2>
-        <p>30 days, up to 10 analyses per month. Academic use.</p>
-        <div class="price">200 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
-      </div>
-
-      <div class="card license-card" data-amount="1000">
-        <h2>Professional License</h2>
-        <p>1 year of Pro API access with premium support.</p>
-        <div class="price">1000 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
-      </div>
-    </div>
-
-    <div id="status-box"></div>
-
-    <div class="license-footer">
-      <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
-      Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments are securely routed through Fractus Local API via ngrok.</small>
-    </div>
-  </main>
-
-  <footer>
-    © 2025 Fractys — Created by Marc Cedrych — Built on Solana
-  </footer>
-
-  <!-- SCRIPT DE CONNEXION -->
-  <script>
-  // ✅ Remplace l’API locale par ton tunnel Ngrok
-  const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
-
-  document.querySelectorAll('.pay-btn').forEach(btn => {
-    btn.addEventListener('click', async e => {
-      e.preventDefault();
-      const card = e.target.closest('.card');
-      const amount = card.dataset.amount;
-      const statusBox = document.getElementById('status-box');
-      statusBox.style.display = 'block';
-      statusBox.style.color = '#7fffd4';
-      statusBox.textContent = `⏳ Processing payment of ${amount} FTS...`;
-
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 7000);
-
-        const res = await fetch(`${API_URL}?fts_amount=${amount}`, {
-          method: 'POST',
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        if (data.success) {
-          statusBox.style.color = '#7fffd4';
-          statusBox.textContent =
-            `✅ Payment successful!\n` +
-            `• Amount: ${data.fts_spent} FTS\n` +
-            `• Pool: ${data.distribution.pool} FTS\n` +
-            `• Main: ${data.distribution.main} FTS\n` +
-            `• Treasury: ${data.distribution.treasury} FTS\n\n` +
-            `Transaction recorded at ${data.timestamp}`;
-        } else {
-          throw new Error("Backend returned error");
-        }
-      } catch (err) {
-        statusBox.style.color = '#ff5555';
-        statusBox.textContent = `❌ Payment failed: ${err.message}`;
-      }
-    });
-  });
-  </script>
-</body>
-</html>
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Fractus Access — Powered by Fractys</title>
-  <meta name="description" content="Access the Fractus Algorithm using Fractys (FTS).">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="access.css">
-
-  <style>
-    .icon-fractal {
-      color: var(--accent);
-      filter: drop-shadow(0 0 8px rgba(127,255,212,0.6))
-              drop-shadow(0 0 16px rgba(127,255,212,0.4))
-              drop-shadow(0 0 30px rgba(127,255,212,0.25));
-      animation: iconPulse 5s ease-in-out infinite;
-    }
-    @keyframes iconPulse {
-      0%, 100% { filter: drop-shadow(0 0 8px rgba(127,255,212,0.5)); }
-      50% { filter: drop-shadow(0 0 20px rgba(127,255,212,1)); }
-    }
-
-    #status-box {
-      margin-top: 30px;
-      padding: 15px;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.5);
-      color: var(--accent, #7fffd4);
-      font-family: monospace;
-      text-align: center;
-      white-space: pre-line;
-      box-shadow: 0 0 20px rgba(127,255,212,0.4);
-      display: none;
       transition: all 0.3s ease;
     }
+
+    #connect-btn {
+      background: rgba(127,255,212,0.1);
+      border: 1px solid rgba(127,255,212,0.6);
+      color: var(--accent, #7fffd4);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    #connect-btn:hover {
+      background: rgba(127,255,212,0.25);
+      transform: scale(1.05);
+    }
   </style>
 </head>
 
@@ -208,26 +77,31 @@
       </p>
     </div>
 
+    <!-- 🔹 Bouton connexion Phantom -->
+    <div style="text-align:center;">
+      <button id="connect-btn">🔗 Connect Wallet (Phantom)</button>
+    </div>
+
     <div class="license-grid">
       <div class="card license-card" data-amount="50">
         <h2>Trial Access</h2>
         <p>24 hours of full access. 1 dataset or image sequence.</p>
         <div class="price">50 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">💠 Pay & Activate</a>
       </div>
 
       <div class="card license-card" data-amount="200">
         <h2>Research License</h2>
         <p>30 days, up to 10 analyses per month. Academic use.</p>
         <div class="price">200 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">💠 Pay & Activate</a>
       </div>
 
       <div class="card license-card" data-amount="1000">
         <h2>Professional License</h2>
         <p>1 year of Pro API access with premium support.</p>
         <div class="price">1000 FTS</div>
-        <a href="#" class="btn glow pay-btn">🔗 Pay & Activate</a>
+        <a href="#" class="btn glow pay-btn">💠 Pay & Activate</a>
       </div>
     </div>
 
@@ -236,7 +110,7 @@
     <div class="license-footer">
       <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments are securely routed through Fractus Local API via ngrok (HTTPS).</small>
+      <small>Payments are executed securely on Solana blockchain.</small>
     </div>
   </main>
 
@@ -244,54 +118,77 @@
     © 2025 Fractys — Created by Marc Cedrych — Built on Solana
   </footer>
 
-  <!-- SCRIPT DE CONNEXION -->
-  <script>
-  // ✅ Tunnel ngrok actif (HTTPS obligatoire depuis fractys.io)
-  const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
+  <!-- DEPENDANCE SOLANA WEB3 -->
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
+  <script>
+  const { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram } = solanaWeb3;
+
+  const statusBox = document.getElementById('status-box');
+  const connectBtn = document.getElementById('connect-btn');
+  const poolWallet = new PublicKey("AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje"); // Pool wallet Fractys
+
+  let walletAddress = null;
+  const connection = new Connection(clusterApiUrl("mainnet-beta"), "confirmed");
+
+  // ✅ Connexion Phantom
+  connectBtn.addEventListener("click", async () => {
+    try {
+      if (!window.solana || !window.solana.isPhantom) {
+        alert("Phantom Wallet not found. Please install it from https://phantom.app");
+        return;
+      }
+      const resp = await window.solana.connect();
+      walletAddress = resp.publicKey.toString();
+      connectBtn.textContent = "✅ Connected: " + walletAddress.slice(0, 6) + "...";
+      connectBtn.disabled = true;
+      statusBox.style.display = "block";
+      statusBox.textContent = "Wallet connected successfully!";
+    } catch (err) {
+      console.error(err);
+      alert("Connection failed.");
+    }
+  });
+
+  // ✅ Paiement (en SOL pour test - ensuite en SPL FTS)
   document.querySelectorAll('.pay-btn').forEach(btn => {
     btn.addEventListener('click', async e => {
       e.preventDefault();
+      if (!walletAddress) {
+        alert("Please connect your Phantom wallet first.");
+        return;
+      }
+
       const card = e.target.closest('.card');
       const amount = card.dataset.amount;
-      const statusBox = document.getElementById('status-box');
       statusBox.style.display = 'block';
       statusBox.style.color = '#7fffd4';
-      statusBox.textContent = `⏳ Processing payment of ${amount} FTS via Fractus API...`;
+      statusBox.textContent = `⏳ Sending ${amount} FTS from your wallet...`;
 
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
+        const transaction = new Transaction().add(
+          SystemProgram.transfer({
+            fromPubkey: new PublicKey(walletAddress),
+            toPubkey: poolWallet,
+            lamports: amount * 1000000 // simulate token equivalent (1e6 lamports = 0.001 SOL)
+          })
+        );
 
-        const res = await fetch(`${API_URL}?fts_amount=${amount}`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          mode: 'cors', // ✅ essentiel pour l’appel inter-domaine
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
+        transaction.feePayer = new PublicKey(walletAddress);
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        const signedTx = await window.solana.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signedTx.serialize());
+        await connection.confirmTransaction(signature);
 
-        if (data.success) {
-          statusBox.style.color = '#7fffd4';
-          statusBox.textContent =
-            `✅ Payment successful!\n\n` +
-            `💰 Amount: ${data.fts_spent} FTS\n` +
-            `🌀 Pool: ${data.distribution.pool} FTS\n` +
-            `👤 Main: ${data.distribution.main} FTS\n` +
-            `🏦 Treasury: ${data.distribution.treasury} FTS\n\n` +
-            `⏱ Transaction recorded at ${data.timestamp}`;
-        } else {
-          throw new Error("Backend returned error");
-        }
+        statusBox.style.color = '#7fffd4';
+        statusBox.textContent = `✅ Transaction confirmed!\nTX: ${signature}\nAmount: ${amount} FTS (simulated)`;
+
       } catch (err) {
+        console.error(err);
         statusBox.style.color = '#ff5555';
-        statusBox.textContent = `❌ Payment failed: ${err.message}\nCheck ngrok connection or backend (port 8001).`;
+        statusBox.textContent = `❌ Payment failed: ${err.message}`;
       }
     });
   });
