@@ -7,6 +7,29 @@
   <meta name="description" content="Created by Marc Cedrych, France — Author & Researcher.">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ---- Social icons unified look ---- */
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .social-icons a svg {
+      width: 30px;
+      height: 30px;
+      color: #7fffd4;
+      filter: drop-shadow(0 0 6px rgba(127,255,212,0.5))
+              drop-shadow(0 0 14px rgba(127,255,212,0.3));
+      transition: transform 0.25s ease, filter 0.3s ease;
+    }
+    .social-icons a:hover svg {
+      transform: scale(1.12);
+      filter: drop-shadow(0 0 10px rgba(127,255,212,0.8))
+              drop-shadow(0 0 20px rgba(127,255,212,0.6));
+    }
+  </style>
 </head>
 
 <body>
@@ -66,48 +89,60 @@
           <p><a class="btn" href="https://solscan.io/token/BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy" target="_blank">Open Token Page →</a></p>
           <p><a class="btn" href="fractus-access.html">⚡ Explore Fractus Access</a></p>
         </div>
-<!-- OFFICIAL LINKS -->
-<div class="card links-card">
-  <h3>Official Links</h3>
-  <div class="social-icons">
-    <a href="https://x.com/MarcFractys" target="_blank" title="X (Twitter)">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M18.244 2H21l-6.475 7.396L22 22h-5.654l-4.377-6.44L6.018 22H3.25l6.89-7.872L2 2h5.75l4.006 5.93L18.244 2zm-2.037 18h1.17L8.338 4h-1.26l9.129 16z"/>
-      </svg>
-    </a>
-    <a href="https://t.me/fractustoken" target="_blank" title="Telegram">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M9.993 15.574l-.395 4.453c.564 0 .806-.243 1.097-.534l2.628-2.497 5.443 3.99c.997.549 1.704.26 1.96-.918l3.55-16.662c.316-1.422-.513-1.977-1.488-1.632L1.723 9.683c-1.378.54-1.357 1.313-.235 1.66l4.37 1.364 10.145-6.4c.477-.289.911-.13.553.184"/>
-      </svg>
-    </a>
-    <a href="https://github.com/marcomars13" target="_blank" title="GitHub">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.084 3.292 9.388 7.861 10.912.575.106.788-.25.788-.555v-1.936c-3.202.694-3.878-1.376-3.878-1.376-.523-1.327-1.278-1.682-1.278-1.682-1.045-.715.08-.7.08-.7 1.155.082 1.764 1.187 1.764 1.187 1.027 1.758 2.696 1.25 3.352.956.103-.743.402-1.25.73-1.54-2.554-.29-5.238-1.277-5.238-5.681 0-1.255.448-2.282 1.184-3.087-.119-.29-.512-1.458.112-3.04 0 0 .965-.308 3.164 1.176A10.978 10.978 0 0 1 12 6.844a10.94 10.94 0 0 1 2.88.387c2.197-1.484 3.16-1.176 3.16-1.176.626 1.582.233 2.75.115 3.04.738.805 1.182 1.832 1.182 3.087 0 4.418-2.69 5.387-5.252 5.673.414.358.782 1.068.782 2.152v3.189c0 .309.21.666.794.552C20.714 21.38 24 17.08 24 12 24 5.648 18.852.5 12 .5z"/>
-      </svg>
-    </a>
-  </div>
 
-  <!-- Stylish Telegram Join Button -->
-  <div style="text-align:center;margin-top:16px;">
-    <a href="https://t.me/fractustoken"
-       target="_blank"
-       style="display:inline-block;
-              background:linear-gradient(90deg,#00ffc3,#007aff);
-              color:#000;
-              font-weight:600;
-              padding:10px 24px;
-              border-radius:14px;
-              text-decoration:none;
-              box-shadow:0 0 14px rgba(0,255,200,.3);
-              transition:all .25s ease;
-              font-family:system-ui;">
-      💬 Join Fractys Channel →
-    </a>
-  </div>
-</div>
+        <!-- OFFICIAL LINKS -->
+        <div class="card links-card">
+          <h3>Official Links</h3>
+          <div class="social-icons">
+            <!-- X -->
+            <a href="https://x.com/MarcFractys" target="_blank" title="X (Twitter)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M18.244 2H21l-6.475 7.396L22 22h-5.654l-4.377-6.44L6.018 22H3.25l6.89-7.872L2 2h5.75l4.006 5.93L18.244 2zm-2.037 18h1.17L8.338 4h-1.26l9.129 16z"/>
+              </svg>
+            </a>
 
-          <div class="x-timeline" id="x-timeline"></div>
+            <!-- Telegram -->
+            <a href="https://t.me/fractustoken" target="_blank" title="Telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9.993 15.574l-.395 4.453c.564 0 .806-.243 1.097-.534l2.628-2.497 5.443 3.99c.997.549 1.704.26 1.96-.918l3.55-16.662c.316-1.422-.513-1.977-1.488-1.632L1.723 9.683c-1.378.54-1.357 1.313-.235 1.66l4.37 1.364 10.145-6.4c.477-.289.911-.13.553.184"/>
+              </svg>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/marcomars13" target="_blank" title="GitHub">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.084 3.292 9.388 7.861 10.912.575.106.788-.25.788-.555v-1.936c-3.202.694-3.878-1.376-3.878-1.376-.523-1.327-1.278-1.682-1.278-1.682-1.045-.715.08-.7.08-.7 1.155.082 1.764 1.187 1.764 1.187 1.027 1.758 2.696 1.25 3.352.956.103-.743.402-1.25.73-1.54-2.554-.29-5.238-1.277-5.238-5.681 0-1.255.448-2.282 1.184-3.087-.119-.29-.512-1.458.112-3.04 0 0 .965-.308 3.164 1.176A10.978 10.978 0 0 1 12 6.844a10.94 10.94 0 0 1 2.88.387c2.197-1.484 3.16-1.176 3.16-1.176.626 1.582.233 2.75.115 3.04.738.805 1.182 1.832 1.182 3.087 0 4.418-2.69 5.387-5.252 5.673.414.358.782 1.068.782 2.152v3.189c0 .309.21.666.794.552C20.714 21.38 24 17.08 24 12 24 5.648 18.852.5 12 .5z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:contact@fractys.io" title="Email Fractys">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M2 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2zm0 2h20v.01L12 13 2 6.01V6zm0 3.236l9.553 6.27a1 1 0 0 0 1.074 0L22 9.236V18H2V9.236z"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Stylish Telegram Join Button -->
+          <div style="text-align:center;margin-top:16px;">
+            <a href="https://t.me/fractustoken"
+               target="_blank"
+               style="display:inline-block;
+                      background:linear-gradient(90deg,#00ffc3,#007aff);
+                      color:#000;
+                      font-weight:600;
+                      padding:10px 24px;
+                      border-radius:14px;
+                      text-decoration:none;
+                      box-shadow:0 0 14px rgba(0,255,200,.3);
+                      transition:all .25s ease;
+                      font-family:system-ui;">
+              💬 Join Fractys Channel →
+            </a>
+          </div>
         </div>
+
+        <div class="x-timeline" id="x-timeline"></div>
       </div>
     </section>
 
@@ -127,23 +162,16 @@
   <div class="update-info" id="fa-update">⏱️ Updating…</div>
 </div>
 
-<style>
-.fractys-analytics{background:radial-gradient(circle at 50% -40%,rgba(0,255,180,.09),rgba(0,35,35,.9));border:1px solid rgba(0,255,200,.18);border-radius:16px;box-shadow:0 0 24px rgba(0,255,200,.12);overflow:hidden;position:relative;}
-.fractys-analytics h3{text-align:center;color:aquamarine;margin-bottom:14px;text-shadow:0 0 8px rgba(0,255,200,.6);}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;font-size:.92em;color:#a8ffee;margin-bottom:14px;}
-.stats-grid strong{color:#fff;font-size:1.08em}
-.chart-container{position:relative;border-radius:12px;background:rgba(0,0,0,.25);box-shadow:inset 0 0 15px rgba(0,255,200,.18);padding:8px;}
-.chart-fallback{position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;font-size:.9em;color:#7fffe6;opacity:.8;pointer-events:none;}
-.update-info{margin-top:10px;text-align:center;font-size:.75em;color:#66ffe0;opacity:.9}
-@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
-</style>
+<footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
+</main>
 
+<!-- JS Fractys Analytics (inchangé) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 (function(){
-  const POOL_ID = "726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
-  const BASE = "https://api.geckoterminal.com/api/v2";
-  const $ = id=>document.getElementById(id);
+  const POOL_ID="726rzzA2A7h3r7XPDuA8VfctM49KqezSL5N9dqE69u1c";
+  const BASE="https://api.geckoterminal.com/api/v2";
+  const $=id=>document.getElementById(id);
   const elCap=$("fa-marketcap"),elLiq=$("fa-liquidity"),elVol=$("fa-volume"),
         elHolders=$("fa-holders"),elUpd=$("fa-update"),fallback=$("fa-fallback");
 
@@ -195,18 +223,6 @@
 })();
 </script>
 
-<footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
-</main>
-
-<script>
-const launchDate=new Date("October 22, 2025 18:00:00").getTime();
-setInterval(()=>{const el=document.getElementById("countdown");if(!el)return;
-const diff=launchDate-new Date().getTime();if(diff<0){el.textContent="🚀 LIVE!";return;}
-const d=Math.floor(diff/(1000*60*60*24)),h=Math.floor((diff%(1000*60*60*24))/(1000*60*60)),
-m=Math.floor((diff%(1000*60*60))/(1000*60)),s=Math.floor((diff%(1000*60))/1000);
-el.textContent=`${d}d ${h}h ${m}m ${s}s`;},1000);
-</script>
-
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script>
 document.addEventListener("DOMContentLoaded",function(){const c=document.getElementById("x-timeline");
@@ -217,5 +233,6 @@ else setTimeout(feed,1000);}feed();});
 
 </body>
 </html>
+
 
 
