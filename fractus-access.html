@@ -46,15 +46,6 @@
       margin-top:10px;font-family:monospace;
       color:#7fffd4;text-align:center;
     }
-    .contact-links a {
-      color:#7fffd4;
-      text-decoration:none;
-      font-weight:bold;
-    }
-    .contact-links a:hover {
-      color:#9fffe0;
-      text-decoration:underline;
-    }
   </style>
 </head>
 
@@ -123,7 +114,9 @@
 
   <!-- === SCRIPT SECTION === -->
   <script type="module">
-    const API_BASE = "https://fractys.io/api";
+    // ✅ Utilisation du backend local FastAPI (port 9091)
+    const API_BASE = "http://127.0.0.1:9091/api";
+
     import {
       getAssociatedTokenAddress,
       createTransferInstruction,
@@ -135,7 +128,7 @@
     const { Connection, PublicKey, Transaction } = window.solanaWeb3;
     const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
     const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
-    const RECEIVER = new PublicKey("AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje");
+    const RECEIVER = new PublicKey("AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje"); // ✅ nouvelle adresse
     const DECIMALS = 9n;
     const connection = new Connection(RPC_URL, "confirmed");
     let walletPk = null;
