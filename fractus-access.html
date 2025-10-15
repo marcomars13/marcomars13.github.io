@@ -46,6 +46,15 @@
       margin-top:10px;font-family:monospace;
       color:#7fffd4;text-align:center;
     }
+    .contact-links a {
+      color:#7fffd4;
+      text-decoration:none;
+      font-weight:bold;
+    }
+    .contact-links a:hover {
+      color:#9fffe0;
+      text-decoration:underline;
+    }
   </style>
 </head>
 
@@ -236,16 +245,16 @@
           if (!resp.ok) throw new Error(`Backend validation failed (${resp.status})`);
           const data = await resp.json();
 
-          showStatus(`✅ Payment validated.\nLicense: ${license_type.toUpperCase()} (exp: ${data.expires_at || "—"})`);
+          showStatus(`✅ Payment validated.
+License: ${license_type.toUpperCase()} (exp: ${data.expires_at || "—"})
 
-          // 🔒 Redirection vers la page sécurisée après 1.5s
-          if (data?.jwt) {
-            const target = `fractus-acces-timed.html?token=${encodeURIComponent(data.jwt)}`;
-            showStatus(`✅ Access granted. Redirecting to secure area...`);
-            setTimeout(() => {
-              window.location.href = target;
-            }, 1500);
-          }
+🧠 Next step:
+Please contact our team to describe what you’d like to do with Fractus.
+We’ll prepare a personalized configuration or dataset for you.
+
+📩 Telegram: @FTSLicenceBot
+📧 Email: contact@fractys.io
+`, true);
 
         } catch (err) {
           console.error("Payment error:", err);
@@ -256,5 +265,4 @@
   </script>
 </body>
 </html>
-
 
