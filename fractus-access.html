@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="access.css">
 
-  <!-- Solana Web3 (global: window.solanaWeb3) -->
+  <!-- Solana Web3 -->
   <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 
   <style>
@@ -112,13 +112,9 @@
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
-  <!-- Everything below runs as an ES module -->
+  <!-- === SCRIPT SECTION === -->
   <script type="module">
-    // 👉 Backend base URL (LOCAL pour les tests)
-    //    Remets "https://fractys.io/api" quand ton backend est déployé derrière ce domaine.
-    const API_BASE = "http://127.0.0.1:9091/api";
-
-    // SPL-Token (ESM via CDN)
+    const API_BASE = "https://fractys.io/api";
     import {
       getAssociatedTokenAddress,
       createTransferInstruction,
@@ -128,13 +124,10 @@
     } from "https://esm.sh/@solana/spl-token@0.4.7";
 
     const { Connection, PublicKey, Transaction } = window.solanaWeb3;
-
-    // --- CONFIG MAINNET ---
     const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
     const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
     const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
-    const DECIMALS = 9n; // bigint
-
+    const DECIMALS = 9n;
     const connection = new Connection(RPC_URL, "confirmed");
     let walletPk = null;
 
@@ -142,22 +135,17 @@
     const statusBox = document.getElementById("status-box");
     const balanceDiv = document.getElementById("fts-balance");
 
-    const showStatus = (msg, ok=true) => {
+    const showStatus = (msg, ok = true) => {
       statusBox.style.display = "block";
       statusBox.style.color = ok ? "#7fffd4" : "#ff5555";
       statusBox.textContent = msg;
     };
 
-    const toUnits = (amountFloat) => {
-      // amountFloat like 50 → 50 * 10^9 as bigint
-      const scaled = Math.round(Number(amountFloat) * 10 ** Number(DECIMALS));
-      return BigInt(scaled);
-    };
+    const toUnits = (amountFloat) => BigInt(Math.round(amountFloat * 10 ** Number(DECIMALS)));
 
     async function getProvider() {
-      if ("phantom" in window && window.phantom?.solana?.isPhantom) {
+      if ("phantom" in window && window.phantom?.solana?.isPhantom)
         return window.phantom.solana;
-      }
       return new Promise((resolve) => {
         window.addEventListener("solana#initialized", () => resolve(window.phantom?.solana), { once: true });
         setTimeout(() => resolve(window.phantom?.solana), 3000);
@@ -165,18 +153,10 @@
     }
 
     async function ensureAta(payerPk, ownerPk, mintPk) {
-      const ata = await getAssociatedTokenAddress(
-        mintPk,
-        ownerPk,
-        false,
-        TOKEN_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID
-      );
+      const ata = await getAssociatedTokenAddress(mintPk, ownerPk, false, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID);
       const info = await connection.getAccountInfo(ata);
       if (!info) {
-        const ix = createAssociatedTokenAccountInstruction(
-          payerPk, ata, ownerPk, mintPk, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID
-        );
+        const ix = createAssociatedTokenAccountInstruction(payerPk, ata, ownerPk, mintPk, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID);
         const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
         const tx = new Transaction({ feePayer: payerPk, recentBlockhash: blockhash }).add(ix);
         const provider = await getProvider();
@@ -199,8 +179,6 @@
         connectBtn.textContent = `✅ Connected: ${walletPk.toString().slice(0,6)}...${walletPk.toString().slice(-4)}`;
         connectBtn.style.background = "#7fffd4";
         showStatus(`🔗 Wallet connected: ${walletPk}`);
-
-        // Try to read FTS balance
         try {
           const ata = await getAssociatedTokenAddress(FTS_MINT, walletPk, false, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID);
           const info = await connection.getTokenAccountBalance(ata);
@@ -229,20 +207,10 @@
         }
 
         try {
-          // Ensure ATAs
           const fromAta = await ensureAta(walletPk, walletPk, FTS_MINT);
-          const toAta   = await ensureAta(walletPk, RECEIVER, FTS_MINT);
+          const toAta = await ensureAta(walletPk, RECEIVER, FTS_MINT);
 
-          // Build transfer
-          const ix = createTransferInstruction(
-            fromAta,
-            toAta,
-            walletPk,
-            toUnits(amount), // bigint amount
-            [],
-            TOKEN_PROGRAM_ID
-          );
-
+          const ix = createTransferInstruction(fromAta, toAta, walletPk, toUnits(amount), [], TOKEN_PROGRAM_ID);
           const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
           const tx = new Transaction({ feePayer: walletPk, recentBlockhash: blockhash }).add(ix);
 
@@ -250,13 +218,11 @@
           const { signature } = await provider.signAndSendTransaction(tx);
           await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
 
-          // License type from card title
           const title = (card.querySelector("h2")?.textContent || "").toLowerCase();
           let license_type = "trial";
           if (title.includes("research")) license_type = "research";
           if (title.includes("professional")) license_type = "pro";
 
-          // Backend validation (LOCAL)
           const resp = await fetch(`${API_BASE}/payment/confirm`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -267,19 +233,20 @@
             })
           });
 
-          if (!resp.ok) {
-            // Affiche aussi la réponse brute pour debug (souvent utile en cas de 405/500)
-            const txt = await resp.text().catch(() => "");
-            throw new Error(`Backend validation failed (${resp.status}) ${txt ? "→ " + txt : ""}`);
-          }
+          if (!resp.ok) throw new Error(`Backend validation failed (${resp.status})`);
           const data = await resp.json();
 
           showStatus(`✅ Payment validated.\nLicense: ${license_type.toUpperCase()} (exp: ${data.expires_at || "—"})`);
 
+          // 🔒 Redirection vers la page sécurisée après 1.5s
           if (data?.jwt) {
-            // Ouvre le bot avec le JWT
-            window.open(`https://t.me/FTSLicenceBot?start=${encodeURIComponent(data.jwt)}`, "_blank");
+            const target = `fractus-acces-timed.html?token=${encodeURIComponent(data.jwt)}`;
+            showStatus(`✅ Access granted. Redirecting to secure area...`);
+            setTimeout(() => {
+              window.location.href = target;
+            }, 1500);
           }
+
         } catch (err) {
           console.error("Payment error:", err);
           showStatus(`❌ Payment failed:\n${err.message || err}`, false);
