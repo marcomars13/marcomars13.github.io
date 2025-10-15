@@ -33,19 +33,20 @@
     <div class="license-grid">
       <div class="card license-card" data-amount="50">
         <h2>Trial Access</h2><p>24 h of full access.</p><div class="price">50 FTS</div>
-        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+        <button class="btn glow pay-btn">💰 Pay & Activate</button>
       </div>
       <div class="card license-card" data-amount="200">
         <h2>Research License</h2><p>30 days academic use.</p><div class="price">200 FTS</div>
-        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+        <button class="btn glow pay-btn">💰 Pay & Activate</button>
       </div>
       <div class="card license-card" data-amount="1000">
         <h2>Professional License</h2><p>1 year Pro API access.</p><div class="price">1000 FTS</div>
-        <a href="#" class="btn glow pay-btn">💰 Pay & Activate</a>
+        <button class="btn glow pay-btn">💰 Pay & Activate</button>
       </div>
     </div>
 
     <div id="status-box"></div>
+
     <div class="license-footer">
       💠 Only 15 000 FTS exist.<br>
       <small>Payments validated via Fractus API (FastAPI) + Solana RPC.</small>
@@ -68,50 +69,100 @@
     const RECEIVER = new PublicKey("AujPwkfvposKUN31mMZMKa8tQrPcyRGdLHnuFHhoVGje");
     const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632","confirmed");
     const DECIMALS = 9n;
-    let walletPk=null;
+    let walletPk = null;
 
-    const connectBtn=document.getElementById("connect-wallet");
-    const statusBox=document.getElementById("status-box");
-    const balanceDiv=document.getElementById("fts-balance");
-    const showStatus=(m,ok=true)=>{statusBox.style.display="block";statusBox.style.color=ok?"#7fffd4":"#ff5555";statusBox.textContent=m;};
-    const toUnits=a=>BigInt(Math.round(a*10**Number(DECIMALS)));
-    async function getProvider(){if("phantom" in window&&window.phantom?.solana?.isPhantom)return window.phantom.solana;return new Promise(r=>{window.addEventListener("solana#initialized",()=>r(window.phantom?.solana),{once:true});setTimeout(()=>r(window.phantom?.solana),3e3);});}
-    async function ensureAta(payer,owner,mint){const ata=await getAssociatedTokenAddress(mint,owner,false,TOKEN_PROGRAM_ID,ASSOCIATED_TOKEN_PROGRAM_ID);const info=await connection.getAccountInfo(ata);if(!info){const ix=createAssociatedTokenAccountInstruction(payer,ata,owner,mint);const{blockhash,lastValidBlockHeight}=await connection.getLatestBlockhash();const tx=new Transaction({feePayer:payer,recentBlockhash:blockhash}).add(ix);const provider=await getProvider();const{signature}=await provider.signAndSendTransaction(tx);await connection.confirmTransaction({signature,blockhash,lastValidBlockHeight},"confirmed");}return ata;}
+    const connectBtn = document.getElementById("connect-wallet");
+    const statusBox = document.getElementById("status-box");
+    const balanceDiv = document.getElementById("fts-balance");
+    const showStatus = (m, ok = true) => {
+      statusBox.style.display = "block";
+      statusBox.style.color = ok ? "#7fffd4" : "#ff5555";
+      statusBox.textContent = m;
+    };
+    const toUnits = a => BigInt(Math.round(a * 10 ** Number(DECIMALS)));
 
-    connectBtn.addEventListener("click",async()=>{const p=await getProvider();if(!p){alert("Phantom not detected.");return;}try{const r=await p.connect({onlyIfTrusted:false});walletPk=r.publicKey;connectBtn.textContent=`✅ ${walletPk.toString().slice(0,6)}...${walletPk.toString().slice(-4)}`;showStatus(`🔗 Wallet connected: ${walletPk}`);}catch(e){console.error(e);}});
+    async function getProvider() {
+      if ("phantom" in window && window.phantom?.solana?.isPhantom)
+        return window.phantom.solana;
+      return new Promise(r => {
+        window.addEventListener("solana#initialized", () => r(window.phantom?.solana), { once: true });
+        setTimeout(() => r(window.phantom?.solana), 3000);
+      });
+    }
 
-    document.querySelectorAll(".pay-btn").forEach(b=>b.addEventListener("click",async e=>{
-      e.preventDefault();const c=e.currentTarget.closest(".card");const amount=parseFloat(c.dataset.amount);
-      showStatus(`⏳ Preparing transfer of ${amount} FTS...`);
-      if(!walletPk){showStatus("❌ Connect wallet first.",false);return;}
-      try{
-        const fromAta=await ensureAta(walletPk,walletPk,FTS_MINT);
-        const toAta=await ensureAta(walletPk,RECEIVER,FTS_MINT);
-        const ix=createTransferInstruction(fromAta,toAta,walletPk,toUnits(amount),[],TOKEN_PROGRAM_ID);
-        const{blockhash,lastValidBlockHeight}=await connection.getLatestBlockhash();
-        const tx=new Transaction({feePayer:walletPk,recentBlockhash:blockhash}).add(ix);
-        const p=await getProvider();const{signature}=await p.signAndSendTransaction(tx);
-        await connection.confirmTransaction({signature,blockhash,lastValidBlockHeight},"confirmed");
+    async function ensureAta(payer, owner, mint) {
+      const ata = await getAssociatedTokenAddress(mint, owner, false, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID);
+      const info = await connection.getAccountInfo(ata);
+      if (!info) {
+        const ix = createAssociatedTokenAccountInstruction(payer, ata, owner, mint);
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+        const tx = new Transaction({ feePayer: payer, recentBlockhash: blockhash }).add(ix);
+        const provider = await getProvider();
+        const { signature } = await provider.signAndSendTransaction(tx);
+        await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+      }
+      return ata;
+    }
 
-        const title=(c.querySelector("h2")?.textContent||"").toLowerCase();
-        let type="trial";if(title.includes("research"))type="research";if(title.includes("professional"))type="pro";
+    connectBtn.addEventListener("click", async () => {
+      const p = await getProvider();
+      if (!p) {
+        alert("Phantom not detected."); return;
+      }
+      try {
+        const r = await p.connect({ onlyIfTrusted: false });
+        walletPk = r.publicKey;
+        connectBtn.textContent = `✅ ${walletPk.toString().slice(0, 6)}...${walletPk.toString().slice(-4)}`;
+        showStatus(`🔗 Wallet connected: ${walletPk}`);
+      } catch (e) { console.error(e); }
+    });
 
-        const resp=await fetch(`${API_BASE}/payment/confirm`,{
-          method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({wallet:walletPk.toString(),tx_sig:signature,license_type:type})
-        });
-        const data=await resp.json();
-        showStatus(`✅ Payment validated.
-License: ${type.toUpperCase()} (exp: ${data.expires_at||"—"})
+    document.querySelectorAll(".pay-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        e.stopPropagation(); // 🧩 empêche toute action par défaut du bouton
+        const card = e.currentTarget.closest(".card");
+        const amount = parseFloat(card.dataset.amount);
+        showStatus(`⏳ Preparing transfer of ${amount} FTS...`);
+        if (!walletPk) { showStatus("❌ Connect wallet first.", false); return; }
+
+        try {
+          const fromAta = await ensureAta(walletPk, walletPk, FTS_MINT);
+          const toAta = await ensureAta(walletPk, RECEIVER, FTS_MINT);
+          const ix = createTransferInstruction(fromAta, toAta, walletPk, toUnits(amount), [], TOKEN_PROGRAM_ID);
+          const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+          const tx = new Transaction({ feePayer: walletPk, recentBlockhash: blockhash }).add(ix);
+          const provider = await getProvider();
+          const { signature } = await provider.signAndSendTransaction(tx);
+          await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+
+          const title = (card.querySelector("h2")?.textContent || "").toLowerCase();
+          let type = "trial";
+          if (title.includes("research")) type = "research";
+          if (title.includes("professional")) type = "pro";
+
+          const resp = await fetch(`${API_BASE}/payment/confirm`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ wallet: walletPk.toString(), tx_sig: signature, license_type: type })
+          });
+          const data = await resp.json();
+
+          showStatus(`✅ Payment validated.
+License: ${type.toUpperCase()} (exp: ${data.expires_at || "—"})
 
 🧠 Next step:
 Please contact our team to describe what you want to do with Fractus.
 We’ll prepare a personalized configuration for you.
 
 📩 Telegram @FTSLicenceBot
-📧 contact@fractys.io`,true);
-      }catch(err){console.error(err);showStatus(`❌ Payment failed:\n${err.message||err}`,false);}
-    }));
+📧 contact@fractys.io`, true);
+        } catch (err) {
+          console.error(err);
+          showStatus(`❌ Payment failed:\n${err.message || err}`, false);
+        }
+      });
+    });
   </script>
 </body>
 </html>
