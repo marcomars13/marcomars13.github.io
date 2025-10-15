@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="access.css">
 
-  <!-- ✅ Librairie Solana Web3 -->
+  <!-- Solana Web3 -->
   <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 
   <style>
@@ -113,20 +113,35 @@
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
   <script>
-  const API_BASE = "https://fractys.io/api"; // 🔗 Ton backend réel
+  // 👉 Mets ici l'URL publique de ton backend (ex: https://api.fractys.io/api)
+  const API_BASE = "https://fractys.io/api";
+
   const { Connection, PublicKey, Transaction } = solanaWeb3;
 
-  import("./js/spl-token.js").then(module => {
-    const { getAssociatedTokenAddress, createTransferInstruction, createAssociatedTokenAccountInstruction } = module;
+  import("./js/spl-token.js").then(async module => {
+    const {
+      getAssociatedTokenAddress,
+      createTransferInstruction,
+      createAssociatedTokenAccountInstruction,
+      TOKEN_PROGRAM_ID
+    } = module;
+
+    // --- CONFIG MAINNET ---
     const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
     const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
     const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
+    const DECIMALS = 9; // FTS has 9 decimals → amount * 10^9
 
     const connection = new Connection(RPC_URL, "confirmed");
     let wallet = null;
+
     const connectBtn = document.getElementById("connect-wallet");
     const statusBox = document.getElementById("status-box");
     const balanceDiv = document.getElementById("fts-balance");
+
+    function lamports(amount) {
+      return BigInt(Math.trunc(amount * (10 ** DECIMALS)));
+    }
 
     async function getProvider() {
       if ("phantom" in window) {
@@ -139,6 +154,7 @@
       });
     }
 
+    // -------- Connect Wallet (avec retry Phantom) --------
     connectBtn.addEventListener("click", async () => {
       const provider = await getProvider();
       if (!provider) {
@@ -146,27 +162,36 @@
         return;
       }
       try {
-        const resp = await provider.connect({ onlyIfTrusted: false });
+        let resp;
+        try {
+          resp = await provider.connect({ onlyIfTrusted: false });
+        } catch {
+          await new Promise(r => setTimeout(r, 1500));
+          resp = await provider.connect();
+        }
         wallet = resp.publicKey;
+
         connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0,6)}...${wallet.toString().slice(-4)}`;
         connectBtn.style.background = "#7fffd4";
         statusBox.style.display = "block";
+        statusBox.style.color = "#7fffd4";
         statusBox.textContent = `🔗 Wallet connected: ${wallet}`;
 
         try {
-          const ata = await getAssociatedTokenAddress(FTS_MINT, wallet);
-          const balanceInfo = await connection.getTokenAccountBalance(ata);
-          const balance = balanceInfo?.value?.uiAmount || 0;
-          balanceDiv.textContent = `💰 Balance: ${balance} FTS`;
+          const ata = await getAssociatedTokenAddress(FTS_MINT, wallet, false, TOKEN_PROGRAM_ID);
+          const info = await connection.getTokenAccountBalance(ata);
+          const bal = info?.value?.uiAmount ?? 0;
+          balanceDiv.textContent = `💰 Balance: ${bal} FTS`;
         } catch {
           balanceDiv.textContent = "💰 Balance: 0 FTS";
         }
       } catch (err) {
         console.error("Connection error:", err);
-        alert("Wallet connection failed.");
+        alert("Wallet connection cancelled or failed.");
       }
     });
 
+    // -------- Paiement + validation backend --------
     document.querySelectorAll(".pay-btn").forEach(btn => {
       btn.addEventListener("click", async e => {
         e.preventDefault();
@@ -182,20 +207,48 @@
         }
 
         try {
-          const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
-          let toTokenAccount;
-
-          try {
-            toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
-          } catch {
-            const ataIx = createAssociatedTokenAccountInstruction(wallet, toTokenAccount, RECEIVER, FTS_MINT);
-            const createTx = new Transaction().add(ataIx);
+          // 1) S'assure que le compte associé FTS de l'émetteur existe
+          let fromAta = await getAssociatedTokenAddress(FTS_MINT, wallet, false, TOKEN_PROGRAM_ID);
+          const fromInfo = await connection.getAccountInfo(fromAta);
+          if (!fromInfo) {
+            const createFromIx = createAssociatedTokenAccountInstruction(
+              wallet,         // payer
+              fromAta,        // ATA à créer
+              wallet,         // owner
+              FTS_MINT
+            );
+            const createFromTx = new Transaction().add(createFromIx);
             const provider = await getProvider();
-            const signedCreate = await provider.signTransaction(createTx);
-            await connection.sendRawTransaction(signedCreate.serialize());
+            const signedCreateFrom = await provider.signTransaction(createFromTx);
+            await connection.sendRawTransaction(signedCreateFrom.serialize());
+            await connection.confirmTransaction(await connection.getLatestBlockhash());
           }
 
-          const ix = createTransferInstruction(fromTokenAccount, toTokenAccount, wallet, amount * 1_000_000);
+          // 2) S'assure que le compte associé FTS du RECEIVER existe
+          const toAta = await getAssociatedTokenAddress(FTS_MINT, RECEIVER, false, TOKEN_PROGRAM_ID);
+          const toInfo = await connection.getAccountInfo(toAta);
+          if (!toInfo) {
+            const createToIx = createAssociatedTokenAccountInstruction(
+              wallet,   // payer des frais de création
+              toAta,
+              RECEIVER,
+              FTS_MINT
+            );
+            const createToTx = new Transaction().add(createToIx);
+            const provider = await getProvider();
+            const signedCreateTo = await provider.signTransaction(createToTx);
+            await connection.sendRawTransaction(signedCreateTo.serialize());
+            await connection.confirmTransaction(await connection.getLatestBlockhash());
+          }
+
+          // 3) Transfert FTS
+          const ix = createTransferInstruction(
+            fromAta,
+            toAta,
+            wallet,
+            Number(lamports(amount))  // amount * 10^DECIMALS
+          );
+
           const tx = new Transaction().add(ix);
           tx.feePayer = wallet;
           tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
@@ -203,9 +256,9 @@
           const provider = await getProvider();
           const signed = await provider.signTransaction(tx);
           const txid = await connection.sendRawTransaction(signed.serialize());
-          await connection.confirmTransaction(txid);
+          await connection.confirmTransaction(txid, "confirmed");
 
-          // ✅ Validation backend + redirection Telegram
+          // 4) Validation backend + lien bot Telegram
           const title = card.querySelector("h2")?.textContent?.toLowerCase() || "";
           let license_type = "trial";
           if (title.includes("research")) license_type = "research";
@@ -225,8 +278,9 @@
           const data = await resp.json();
 
           statusBox.textContent = `✅ Payment validated.\nLicense: ${license_type.toUpperCase()} (exp: ${data.expires_at})`;
-          window.open(`https://t.me/FTSLicenceBot?start=${encodeURIComponent(data.jwt)}`, "_blank");
-
+          if (data?.jwt) {
+            window.open(`https://t.me/FTSLicenceBot?start=${encodeURIComponent(data.jwt)}`, "_blank");
+          }
         } catch (err) {
           console.error("Payment error:", err);
           statusBox.style.color = "#ff5555";
