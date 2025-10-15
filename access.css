@@ -173,3 +173,47 @@ body.fractus-access main {
     padding: 0 10px;
   }
 }
+#status-box {
+  margin-top:30px;
+  padding:20px 25px;
+  border-radius:14px;
+  background:rgba(0,0,0,0.65);
+  color:#7fffd4;
+  font-family:"Courier New", monospace;
+  font-size:1.05rem;
+  line-height:1.6;
+  text-align:left;
+  box-shadow:0 0 25px rgba(127,255,212,0.45),
+             0 0 50px rgba(127,255,212,0.2);
+  display:none;
+  transition:all .4s ease;
+  max-width:780px;
+  margin-left:auto;
+  margin-right:auto;
+  white-space:pre-line;
+}
+#status-box strong {
+  font-size:1.2rem;
+  color:#00ffc6;
+}
+.status-header {
+  font-size:1.3rem;
+  font-weight:bold;
+  color:#00ffc6;
+  text-align:center;
+  margin-bottom:10px;
+}
+.status-nextstep {
+  margin-top:8px;
+  color:#bfffe9;
+}
+.status-contact {
+  margin-top:12px;
+  font-weight:bold;
+  color:#aaffee;
+}
+.status-contact span {
+  display:block;
+  margin-top:4px;
+  font-family:monospace;
+}
