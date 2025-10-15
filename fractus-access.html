@@ -114,8 +114,9 @@
 
   <!-- Everything below runs as an ES module -->
   <script type="module">
-    // 👉 Backend public base URL
-    const API_BASE = "https://fractys.io/api"; // ex: https://api.fractys.io/api
+    // 👉 Backend base URL (LOCAL pour les tests)
+    //    Remets "https://fractys.io/api" quand ton backend est déployé derrière ce domaine.
+    const API_BASE = "http://127.0.0.1:9091/api";
 
     // SPL-Token (ESM via CDN)
     import {
@@ -255,7 +256,7 @@
           if (title.includes("research")) license_type = "research";
           if (title.includes("professional")) license_type = "pro";
 
-          // Backend validation
+          // Backend validation (LOCAL)
           const resp = await fetch(`${API_BASE}/payment/confirm`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -266,12 +267,17 @@
             })
           });
 
-          if (!resp.ok) throw new Error(`Backend validation failed (${resp.status})`);
+          if (!resp.ok) {
+            // Affiche aussi la réponse brute pour debug (souvent utile en cas de 405/500)
+            const txt = await resp.text().catch(() => "");
+            throw new Error(`Backend validation failed (${resp.status}) ${txt ? "→ " + txt : ""}`);
+          }
           const data = await resp.json();
 
           showStatus(`✅ Payment validated.\nLicense: ${license_type.toUpperCase()} (exp: ${data.expires_at || "—"})`);
 
           if (data?.jwt) {
+            // Ouvre le bot avec le JWT
             window.open(`https://t.me/FTSLicenceBot?start=${encodeURIComponent(data.jwt)}`, "_blank");
           }
         } catch (err) {
@@ -283,6 +289,5 @@
   </script>
 </body>
 </html>
->
 
 
