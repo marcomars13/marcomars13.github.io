@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="access.css">
 
+  <!-- ✅ Librairie Solana Web3 indispensable -->
+  <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
+
   <style>
     .icon-fractal {
       color: var(--accent);
@@ -95,180 +98,139 @@
     <div class="license-footer">
       <span class="icon-fractal">💠</span> Only <strong>15,000 FTS</strong> exist.<br>
       Each transaction fuels open research and strengthens the network.<br><br>
-      <small>Payments are securely routed through Fractus Local API via ngrok and Solana Mainnet RPC (Helius).</small>
+      <small>Payments validated via Fractus API (FastAPI) and Solana Mainnet RPC (Helius).</small>
     </div>
   </main>
-  <!-- ====== FTS LICENCE BOT ACCESS ====== -->
-<div class="telegram-access">
-  <a href="https://t.me/FTSLicenceBot?start=access" target="_blank" class="btn-telegram">
-    <img src="telegram-icon.svg" alt="Telegram" class="tg-icon">
-    <span>Open FTS Licence Bot</span>
-  </a>
-  <p class="tg-note">Activate or manage your license directly via our official Telegram bot.</p>
-</div>
 
-<style>
-.telegram-access {
-  margin-top: 60px;
-  text-align: center;
-  animation: fadeIn 1.2s ease-in-out;
-}
-
-.btn-telegram {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  border-radius: 40px;
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.05em;
-  text-decoration: none;
-  box-shadow: 0 0 12px rgba(0,255,255,0.25);
-  transition: all 0.25s ease-in-out;
-}
-
-.btn-telegram:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0,255,255,0.5);
-}
-
-.tg-icon {
-  width: 24px;
-  height: 24px;
-  filter: drop-shadow(0 0 6px rgba(0,255,255,0.6));
-}
-
-.tg-note {
-  color: #aaa;
-  font-size: 0.9em;
-  margin-top: 8px;
-  letter-spacing: 0.3px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
+  <div class="telegram-access">
+    <a href="https://t.me/FTSLicenceBot?start=access" target="_blank" class="btn-telegram">
+      <img src="telegram-icon.svg" alt="Telegram" class="tg-icon">
+      <span>Open FTS Licence Bot</span>
+    </a>
+    <p class="tg-note">Activate or manage your license directly via our official Telegram bot.</p>
+  </div>
 
   <footer>© 2025 Fractys — Created by Marc Cedrych — Built on Solana</footer>
 
-  <!-- === SCRIPT PHANTOM + FIX WEB3 GLOBAL === -->
+  <!-- === SCRIPT PHANTOM + VALIDATION LICENCE + BOT TELEGRAM === -->
   <script>
-    // Récupération des classes depuis la lib globale
-    const { Connection, PublicKey, Transaction } = solanaWeb3;
+  const API_BASE = "http://127.0.0.1:9091"; // 👉 ton backend local FastAPI
 
-    // Import dynamique du module SPL Token
-    import("./js/spl-token.js").then(module => {
-      const getAssociatedTokenAddress = module.getAssociatedTokenAddress;
-      const createTransferInstruction = module.createTransferInstruction;
-      const TOKEN_PROGRAM_ID = module.TOKEN_PROGRAM_ID;
+  const { Connection, PublicKey, Transaction } = solanaWeb3;
 
-      const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
-      const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
-      const API_URL = "https://spontaneously-exorbitant-hye.ngrok-free.dev/api/payment_split";
-      const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
+  import("./js/spl-token.js").then(module => {
+    const getAssociatedTokenAddress = module.getAssociatedTokenAddress;
+    const createTransferInstruction = module.createTransferInstruction;
+    const TOKEN_PROGRAM_ID = module.TOKEN_PROGRAM_ID;
 
-      let wallet = null;
-      const connection = new Connection(RPC_URL, "confirmed");
-      const connectBtn = document.getElementById("connect-wallet");
-      const statusBox = document.getElementById("status-box");
-      const balanceDiv = document.getElementById("fts-balance");
+    const FTS_MINT = new PublicKey("BMAT7DrBHBEqxm8vxUwcYaKjKBdvGEM2uLH3XuztFawy");
+    const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=66c2b758-b174-477a-aebb-2f064546f632";
+    const RECEIVER = new PublicKey("Ai5a3hEMApgb1cMaZE37nLMDSzEL56yF6XJ1VWo1HUYj");
 
-      async function getProvider() {
-        if ("phantom" in window) {
-          const provider = window.phantom?.solana;
-          if (provider?.isPhantom) return provider;
-        }
-        return new Promise(resolve => {
-          window.addEventListener("solana#initialized", () => resolve(window.phantom?.solana), { once: true });
-          setTimeout(() => resolve(window.phantom?.solana), 3000);
-        });
+    let wallet = null;
+    const connection = new Connection(RPC_URL, "confirmed");
+    const connectBtn = document.getElementById("connect-wallet");
+    const statusBox = document.getElementById("status-box");
+    const balanceDiv = document.getElementById("fts-balance");
+
+    async function getProvider() {
+      if ("phantom" in window) {
+        const provider = window.phantom?.solana;
+        if (provider?.isPhantom) return provider;
       }
+      return new Promise(resolve => {
+        window.addEventListener("solana#initialized", () => resolve(window.phantom?.solana), { once: true });
+        setTimeout(() => resolve(window.phantom?.solana), 3000);
+      });
+    }
 
-      connectBtn.addEventListener("click", async () => {
-        const provider = await getProvider();
-        if (!provider) {
-          alert("Phantom Wallet not detected. Please install the Phantom extension.");
-          window.open("https://phantom.app/", "_blank");
+    connectBtn.addEventListener("click", async () => {
+      const provider = await getProvider();
+      if (!provider) {
+        alert("Phantom Wallet not detected. Please install the Phantom extension.");
+        window.open("https://phantom.app/", "_blank");
+        return;
+      }
+      try {
+        const resp = await provider.connect({ onlyIfTrusted: false });
+        wallet = resp.publicKey;
+        connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0,6)}...${wallet.toString().slice(-4)}`;
+        connectBtn.style.background = "#7fffd4";
+        statusBox.style.display = "block";
+        statusBox.style.color = "#7fffd4";
+        statusBox.textContent = `🔗 Wallet connected: ${wallet}`;
+
+        const ata = await getAssociatedTokenAddress(FTS_MINT, wallet);
+        const balanceInfo = await connection.getTokenAccountBalance(ata);
+        const balance = balanceInfo?.value?.uiAmount || 0;
+        balanceDiv.textContent = `💰 Balance: ${balance} FTS`;
+
+      } catch (err) {
+        console.error("Connection error:", err);
+        alert("Wallet connection cancelled or failed.");
+      }
+    });
+
+    // === Paiement + Validation via Backend + Bot ===
+    document.querySelectorAll(".pay-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const card = e.target.closest(".card");
+        const amount = parseFloat(card.dataset.amount);
+        statusBox.style.display = "block";
+        statusBox.style.color = "#7fffd4";
+        statusBox.textContent = `⏳ Preparing transfer of ${amount} FTS...`;
+
+        if (!wallet) {
+          statusBox.textContent = "❌ Connect your wallet first.";
           return;
         }
-        try {
-          const resp = await provider.connect({ onlyIfTrusted: false });
-          wallet = resp.publicKey;
-          connectBtn.textContent = `✅ Connected: ${wallet.toString().slice(0,6)}...${wallet.toString().slice(-4)}`;
-          connectBtn.style.background = "#7fffd4";
-          statusBox.style.display = "block";
-          statusBox.style.color = "#7fffd4";
-          statusBox.textContent = `🔗 Wallet connected: ${wallet}`;
-          console.log("Connected wallet:", wallet.toString());
 
-          // Afficher le solde FTS
-          try {
-            const ata = await getAssociatedTokenAddress(FTS_MINT, wallet);
-            const balanceInfo = await connection.getTokenAccountBalance(ata);
-            const balance = balanceInfo?.value?.uiAmount || 0;
-            balanceDiv.textContent = `💰 Balance: ${balance} FTS`;
-          } catch (err) {
-            balanceDiv.textContent = "💰 Balance: 0 FTS";
-            console.warn("Unable to fetch FTS balance:", err);
-          }
+        try {
+          const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
+          const toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
+
+          const ix = createTransferInstruction(fromTokenAccount, toTokenAccount, wallet, amount * 1_000_000);
+          const tx = new Transaction().add(ix);
+          tx.feePayer = wallet;
+          tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+          const provider = await getProvider();
+          const signed = await provider.signTransaction(tx);
+          const txid = await connection.sendRawTransaction(signed.serialize());
+          await connection.confirmTransaction(txid);
+
+          // === Validation via backend FastAPI ===
+          const title = card.querySelector("h2")?.textContent?.toLowerCase() || "";
+          let license_type = "trial";
+          if (title.includes("research")) license_type = "research";
+          if (title.includes("professional")) license_type = "pro";
+
+          const resp = await fetch(`${API_BASE}/api/payment/confirm`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              wallet: wallet.toString(),
+              tx_sig: txid,
+              license_type
+            })
+          });
+
+          if (!resp.ok) throw new Error(`Backend validation failed (${resp.status})`);
+          const data = await resp.json();
+
+          statusBox.textContent = `✅ Payment validated.\nLicense: ${license_type.toUpperCase()} (exp: ${data.expires_at})`;
+          const jwtToken = data.jwt;
+          window.open(`https://t.me/FTSLicenceBot?start=${encodeURIComponent(jwtToken)}`, "_blank");
 
         } catch (err) {
-          console.error("Connection error:", err);
-          alert("Wallet connection cancelled or failed.");
+          console.error("Payment error:", err);
+          statusBox.style.color = "#ff5555";
+          statusBox.textContent = `❌ Payment failed:\n${err.message}`;
         }
       });
-
-      document.querySelectorAll(".pay-btn").forEach(btn => {
-        btn.addEventListener("click", async e => {
-          e.preventDefault();
-          const card = e.target.closest(".card");
-          const amount = parseFloat(card.dataset.amount);
-          statusBox.style.display = "block";
-          statusBox.style.color = "#7fffd4";
-          statusBox.textContent = `⏳ Preparing transfer of ${amount} FTS...`;
-
-          if (!wallet) {
-            statusBox.textContent = "❌ Connect your wallet first.";
-            return;
-          }
-
-          try {
-            const fromTokenAccount = await getAssociatedTokenAddress(FTS_MINT, wallet);
-            const toTokenAccount = await getAssociatedTokenAddress(FTS_MINT, RECEIVER);
-
-            const ix = createTransferInstruction(
-              fromTokenAccount,
-              toTokenAccount,
-              wallet,
-              amount * 1_000_000
-            );
-
-            const tx = new Transaction().add(ix);
-            tx.feePayer = wallet;
-            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-            const provider = await getProvider();
-            const signed = await provider.signTransaction(tx);
-            const txid = await connection.sendRawTransaction(signed.serialize());
-            await connection.confirmTransaction(txid);
-
-            statusBox.style.color = "#7fffd4";
-            statusBox.textContent = `✅ FTS Payment successful!\nTX: ${txid}`;
-
-            await fetch(`${API_URL}?fts_amount=${amount}`, { method: "POST" });
-
-          } catch (err) {
-            console.error("Payment error:", err);
-            statusBox.style.color = "#ff5555";
-            statusBox.textContent = `❌ Payment failed:\n${err.message}`;
-          }
-        });
-      });
     });
+  });
   </script>
 </body>
 </html>
