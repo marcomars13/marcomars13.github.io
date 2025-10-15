@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fractus Secure Access — Fractys</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: monospace;
+      background: radial-gradient(circle at 30% 30%, #001010, #000);
+      color: #7fffd4;
+      text-align: center;
+      margin: 0;
+      padding: 5%;
+    }
+    .panel {
+      border: 1px solid rgba(127,255,212,.3);
+      border-radius: 12px;
+      background: rgba(0,20,20,.6);
+      box-shadow: 0 0 20px rgba(127,255,212,.2);
+      padding: 30px;
+      max-width: 600px;
+      margin: 5% auto;
+    }
+    button {
+      margin-top: 25px;
+      padding: 10px 24px;
+      background: #7fffd4;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #9fffe0; }
+    #expired {
+      color: #ff5555;
+      font-weight: bold;
+    }
+    #loader {
+      margin-top:40px;
+      opacity:.8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="panel">
+    <h1>🌀 Fractus Access</h1>
+    <p id="status">Checking your licence...</p>
+    <div id="loader">⌛</div>
+    <div id="access-zone" style="display:none">
+      <p>Welcome <span id="wallet"></span></p>
+      <p>Licence type: <b id="license"></b></p>
+      <p>Expires: <span id="expires"></span></p>
+      <button id="run">▶️ Launch Fractus Algorithm</button>
+    </div>
+    <div id="expired" style="display:none">
+      ❌ Licence expired or invalid.<br>
+      <a href="fractus-access.html">Renew licence</a>
+    </div>
+  </div>
+
+  <script>
+  const API_BASE = "http://127.0.0.1:9091/api"; // à passer sur https://fractys.io/api en prod
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+
+  const statusEl = document.getElementById("status");
+  const zone = document.getElementById("access-zone");
+  const expired = document.getElementById("expired");
+
+  if (!token) {
+    statusEl.textContent = "❌ No token provided.";
+    expired.style.display = "block";
+  } else {
+    // Vérifie la validité du JWT
+    fetch(`${API_BASE}/bot/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jwt: token })
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.status === "valid") {
+        statusEl.style.display = "none";
+        document.getElementById("loader").style.display = "none";
+        zone.style.display = "block";
+        document.getElementById("wallet").textContent = data.wallet;
+        document.getElementById("license").textContent = data.license_type.toUpperCase();
+        document.getElementById("expires").textContent = new Date(data.exp * 1000).toLocaleString();
+
+        // Lancer l’algo Fractus (appel backend)
+        document.getElementById("run").onclick = async () => {
+          const r = await fetch(`${API_BASE}/fractus/run`, {
+            method: "GET",
+            headers: { "Authorization": "Bearer " + token }
+          });
+          const result = await r.json();
+          alert("✅ " + (result.message || "Fractus executed successfully"));
+        };
+      } else {
+        statusEl.style.display = "none";
+        document.getElementById("loader").style.display = "none";
+        expired.style.display = "block";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      statusEl.textContent = "⚠️ Error contacting server.";
+    });
+  }
+  </script>
+</body>
+</html>
