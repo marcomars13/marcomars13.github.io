@@ -29,6 +29,40 @@
       filter: drop-shadow(0 0 10px rgba(127,255,212,0.8))
               drop-shadow(0 0 20px rgba(127,255,212,0.6));
     }
+
+    /* ---- Fractus section ---- */
+    #fractus {
+      margin: 60px auto;
+      max-width: 1080px;
+      background: rgba(10,15,15,0.9);
+      border: 1px solid rgba(127,255,212,0.15);
+      border-radius: 16px;
+      padding: 40px 28px;
+      box-shadow: 0 0 18px rgba(0,255,200,0.05);
+    }
+    #fractus h2 {
+      text-align: center;
+      color: #7fffd4;
+      font-size: 2.1em;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      text-shadow: 0 0 12px rgba(127,255,212,0.4);
+    }
+    #fractus h3 {
+      color: #00ffd0;
+      margin-top: 28px;
+      text-shadow: 0 0 8px rgba(127,255,212,0.25);
+    }
+    #fractus ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    #fractus ul li {
+      margin: 6px 0;
+    }
+    #fractus p {
+      line-height: 1.6;
+    }
   </style>
 </head>
 
@@ -123,7 +157,6 @@
             </a>
           </div>
 
-          <!-- Stylish Telegram Join Button -->
           <div style="text-align:center;margin-top:16px;">
             <a href="https://t.me/fractustoken"
                target="_blank"
@@ -146,26 +179,73 @@
       </div>
     </section>
 
-<!-- 🔹 FRACTYS LIVE ANALYTICS -->
-<div class="card fractys-analytics" id="fractys-analytics">
-  <h3>🔮 Fractys Live Analytics</h3>
-  <div class="stats-grid">
-    <div><span>💰</span> Market Cap<br><strong id="fa-marketcap">—</strong></div>
-    <div><span>🌊</span> Liquidity<br><strong id="fa-liquidity">—</strong></div>
-    <div><span>📊</span> Volume 24h<br><strong id="fa-volume">—</strong></div>
-    <div><span>👥</span> Holders<br><strong id="fa-holders">—</strong></div>
-  </div>
-  <div class="chart-container">
-    <canvas id="fa-chart" height="220"></canvas>
-    <div class="chart-fallback" id="fa-fallback">Loading live chart…</div>
-  </div>
-  <div class="update-info" id="fa-update">⏱️ Updating…</div>
-</div>
+    <!-- 🧬 FRACTUS SECTION -->
+    <section id="fractus">
+      <h2>Fractus — The Algorithm</h2>
+      <p>
+        Developed single-handedly by researcher and creator <strong>Marc Cedrych</strong>, 
+        <em>Fractus</em> is a fractal algorithm for pattern compression, reduction, and anomaly detection.
+        It identifies the self-similar structures that compose complex data — images, DNA, logs, or even AI models — 
+        turning chaos into readable order.
+      </p>
 
-<footer>© 2025 Fractys — Created by Marc C — Built on Solana</footer>
-</main>
+      <h3>Advantages</h3>
+      <ul>
+        <li>⚡ <strong>Energy & computation savings</strong> — Fractus pre-filters data, reducing neural workload.</li>
+        <li>🧠 <strong>Performance boost</strong> — Cleaner data means faster, more coherent AI predictions.</li>
+        <li>🔍 <strong>Full traceability</strong> — Every test, metric, and output is recorded and verifiable.</li>
+        <li>🔒 <strong>Ethical & transparent development</strong> — Built from scratch by one independent mind.</li>
+      </ul>
 
-<!-- JS Fractys Analytics (inchangé) -->
+      <h3>Fields of Application</h3>
+      <ul>
+        <li>🧬 Bioinformatics (DNA, protein sequencing)</li>
+        <li>🌍 AI & geolocation (Mapillary, Plonk)</li>
+        <li>🧩 System anomaly detection</li>
+        <li>🧠 Cognitive research & data learning</li>
+        <li>🌐 Compression of large-scale datasets</li>
+      </ul>
+
+      <h3>Building the Foundation</h3>
+      <p>
+        <strong>Fractys.io</strong> is not just a website — it’s the foundation of a greater vision: 
+        testing <em>Fractus</em> publicly, proving its stability, and preparing the next step — 
+        <strong>fundraising, team building, and scaling the algorithm</strong> into a universal tool for science and AI.
+      </p>
+
+      <h3>FTS — The Access Token</h3>
+      <p>
+        The <strong>FTS token</strong> serves as a key to the ecosystem: it allows real users to test Fractus, 
+        access demo modules, and support the project transparently through blockchain-based validation.
+      </p>
+
+      <h3>✳️ One Mind. One Code. One Vision.</h3>
+      <p>
+        Fractus is not the product of a lab — it’s the result of one man’s determination to prove that 
+        consciousness, mathematics, and creativity can converge into a new form of intelligence.
+      </p>
+    </section>
+
+    <!-- 🔹 FRACTYS LIVE ANALYTICS -->
+    <div class="card fractys-analytics" id="fractys-analytics">
+      <h3>🔮 Fractys Live Analytics</h3>
+      <div class="stats-grid">
+        <div><span>💰</span> Market Cap<br><strong id="fa-marketcap">—</strong></div>
+        <div><span>🌊</span> Liquidity<br><strong id="fa-liquidity">—</strong></div>
+        <div><span>📊</span> Volume 24h<br><strong id="fa-volume">—</strong></div>
+        <div><span>👥</span> Holders<br><strong id="fa-holders">—</strong></div>
+      </div>
+      <div class="chart-container">
+        <canvas id="fa-chart" height="220"></canvas>
+        <div class="chart-fallback" id="fa-fallback">Loading live chart…</div>
+      </div>
+      <div class="update-info" id="fa-update">⏱️ Updating…</div>
+    </div>
+
+    <footer>© 2025 Fractys — Created by Marc C — Built on Solana</footer>
+  </main>
+
+<!-- JS ANALYTICS & TWITTER FEED -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 (function(){
